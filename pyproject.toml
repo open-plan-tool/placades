@@ -14,10 +14,11 @@ license = "MIT"
 license-files = ["LICENSE"]
 description = "SHORT DESCRIPTION"
 authors = [
-    { name = "Open Plan Community", email = "MAIL@OPEN.PLAN:DE" },
+    { name = "Open Plan Community", email = "openplan@ifam.fraunhofer.de" },
 ]
 classifiers = [
-    # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
+    # complete classifier list:
+    # http://pypi.python.org/pypi?%3Aaction=list_classifiers
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Operating System :: Unix",
@@ -33,10 +34,6 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
-    # uncomment if you test on these interpreters:
-    # "Programming Language :: Python :: Implementation :: IronPython",
-    # "Programming Language :: Python :: Implementation :: Jython",
-    # "Programming Language :: Python :: Implementation :: Stackless",
     "Topic :: Utilities",
 ]
 keywords = [

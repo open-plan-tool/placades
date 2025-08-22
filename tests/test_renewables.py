@@ -1,5 +1,6 @@
 import pytest
 from oemof.solph import EnergySystem
+from oemof.solph import Facade
 from oemof.solph import create_time_index
 from oemof.solph.buses import Bus
 from oemof.solph.components import Source
@@ -31,7 +32,7 @@ class TestPV:
     def test_add_function(self, energysystem, pv_params):
         energysystem.add(PV(**pv_params))
         test_flows = energysystem.flows()
-        assert list(test_flows[list(test_flows.keys())[0]].fix) == [
+        assert list(test_flows[next(iter(test_flows.keys()))].fix) == [
             0.1,
             0.5,
             0.8,
@@ -94,7 +95,7 @@ class TestPV:
         assert pv.el_bus.label == "SingleBus"
 
     @pytest.mark.parametrize(
-        "peak_capacity,normalised_output,bus_label",
+        ("peak_capacity", "normalised_output", "bus_label"),
         [
             (100, [0.1, 0.5, 0.8], "Bus1"),
             (250, [0.0, 0.2, 0.4, 0.6, 0.8, 1.0], "Bus2"),
@@ -132,7 +133,6 @@ class TestPV:
 
     def test_inheritance_from_facade(self, pv_params):
         """Test that PV correctly inherits from Facade."""
-        from oemof.solph import Facade
 
         pv = PV(**pv_params)
         assert isinstance(pv, Facade)
@@ -154,18 +154,6 @@ class TestPV:
 
 class TestPVIntegration:
     """Integration tests for PV class."""
-
-    @pytest.fixture
-    def complete_pv_setup(self):
-        """Complete PV setup for integration testing."""
-        bus = Bus(label="IntegrationBus")
-        pv = PV(
-            label="integration_pv",
-            el_bus=bus,
-            peak_capacity=150,
-            normalised_output=[0.0, 0.3, 0.7, 0.5, 0.1],
-        )
-        return pv, bus
 
     def test_multiple_pv_instances_different_buses(self):
         """Test creating multiple PV instances with different buses."""

@@ -54,7 +54,7 @@ dependencies = [
 
 [tool.ruff]
 extend-exclude = ["static", "ci/templates"]
-line-length = 140
+line-length = 79
 src = ["src", "tests"]
 target-version = "py39"
 

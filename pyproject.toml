@@ -41,6 +41,8 @@ keywords = [
 ]
 requires-python = ">=3.9"
 dependencies = [
+    "oemof-network @ git+https://github.com/oemof/oemof-network.git@features/add-subnetworks",
+    "oemof-solph @ git+https://github.com/oemof/oemof-solph.git@features/add-facades",
 ]
 
 [project.optional-dependencies]

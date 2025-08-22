@@ -1,7 +1,7 @@
 __version__ = "0.0.0"
 
-from .core import compute
+from .renewables import PV
 
 __all__ = [
-    "compute",
+    "PV",
 ]

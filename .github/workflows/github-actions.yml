@@ -37,21 +37,11 @@ jobs:
             python_arch: 'x64'
             tox_env: 'py313'
             os: 'windows-latest'
-#          - name: 'py313 (windows)'
-#            python: '3.13'
-#            python_arch: 'x86'
-#            tox_env: 'py313'
-#            os: 'windows-latest'
           - name: 'py313 (macos)'
             python: '3.13'
             python_arch: 'arm64'
             tox_env: 'py313'
             os: 'macos-latest'
-          - name: 'pypy311 (ubuntu)'
-            python: 'pypy-3.11'
-            python_arch: 'x64'
-            tox_env: 'pypy311'
-            os: 'ubuntu-latest'
     steps:
     - uses: actions/checkout@v4
       with:
@@ -70,6 +60,18 @@ jobs:
     - name: test
       run: >
         tox -e ${{ matrix.tox_env }} -v
+    - name: Creating coverage folder
+      run: |
+        mkdir -p coverage
+    - name: Coverage Bagdge
+      uses: tj-actions/coverage-badge-py@v1.8
+      with:
+        output: coverage/coverage.svg
+    - name: Publish coverage report to coverage-badge branch
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: coverage-badge
+        folder: coverage
   finish:
     needs: test
     if: ${{ always() }}
@@ -78,15 +80,3 @@ jobs:
     - uses: codecov/codecov-action@v5
       with:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-    - name: Creating coverage folder
-      run: |
-        mkdir -p coverage
-    -   name: Coverage Bagdge
-        uses: tj-actions/coverage-badge-py@v1.8
-        with:
-            output: coverage/coverage.svg
-    -   name: Publish coverage report to coverage-badge branch
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-            branch: coverage-badge
-            folder: coverage

@@ -80,8 +80,8 @@ jobs:
           tox --version
           pip list --format=freeze
       - name: test
-        run: |
-          pytest --cov
+        run: >
+           tox -e py313 -v
       - name: Creating coverage folder
         run: |
           mkdir -p coverage

@@ -1,3 +1,5 @@
 pip>=24.2
 setuptools>=69
 tox>=4
+pytest
+pytest-cov

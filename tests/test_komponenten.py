@@ -254,7 +254,3 @@ def sample_energy_system():
         },
         "components": {"chp": chp, "battery": battery},
     }
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

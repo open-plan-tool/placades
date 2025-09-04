@@ -46,7 +46,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# rst = ["docutils>=0.11"]
+dev = ["pytest"]
+dummy = ["oemof"]
 
 [project.urls]
 "Sources" = "https://github.com/open-plan-tool/placades"

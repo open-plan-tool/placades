@@ -21,9 +21,9 @@ Overview
     :alt: GitHub Actions Build Status
     :target: https://github.com/open-plan-tool/placades/actions
 
-.. |codecov| image:: https://codecov.io/gh/open-plan-tool/placades/branch/main/graphs/badge.svg?branch=main
+.. |codecov| image:: https://raw.githubusercontent.com/open-plan-tool/placades/coverage-badge/coverage.svg
     :alt: Coverage Status
-    :target: https://app.codecov.io/github/open-plan-tool/placades
+    :target: https://github.com/open-plan-tool/placades/actions
 
 .. |version| image:: https://img.shields.io/pypi/v/placades.svg
     :alt: PyPI Package latest release

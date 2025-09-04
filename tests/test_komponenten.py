@@ -222,35 +222,3 @@ class TestIntegration:
         )
 
         assert battery.bus_electricity.carrier == "electricity"
-
-
-# Fixture für alle Tests
-@pytest.fixture(scope="session")
-def sample_energy_system():
-    """Beispiel-Energiesystem für komplexere Tests"""
-    gas_bus = CarrierBus(label="gas", carrier="natural_gas")
-    electricity_bus = CarrierBus(label="electricity", carrier="electricity")
-    heat_bus = CarrierBus(label="heat", carrier="heat")
-
-    chp = CHP(
-        label="chp_1MW",
-        bus_gas=gas_bus,
-        bus_electricity=electricity_bus,
-        bus_heat=heat_bus,
-        electrical_capacity=1000,
-    )
-
-    battery = Battery(
-        label="battery_10MWh",
-        bus_electricity=electricity_bus,
-        storage_capacity=10000,
-    )
-
-    return {
-        "buses": {
-            "gas": gas_bus,
-            "electricity": electricity_bus,
-            "heat": heat_bus,
-        },
-        "components": {"chp": chp, "battery": battery},
-    }

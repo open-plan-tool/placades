@@ -1,6 +1,5 @@
 import pytest
 from oemof.solph import EnergySystem
-from oemof.solph import Facade
 from oemof.solph import create_time_index
 from oemof.solph.buses import Bus
 from oemof.solph.components import Source
@@ -47,16 +46,12 @@ class TestPV:
         """Test basic initialization of PV class."""
         pv = PV(**pv_params)
 
-        assert pv.label.label == "test_pv"
+        assert pv.label == "test_pv"
         assert pv.bus_electricity == pv_params["bus_electricity"]
         assert pv.bus_electricity.label == "TestBus"
         assert pv.peak_capacity == 100
         assert pv.normalised_output == [0.1, 0.5, 0.8, 0.3]
 
-    def test_init_facade_type(self, pv_params):
-        """Test that facade_type is set correctly."""
-        pv = PV(**pv_params)
-        assert pv.facade_type == PV
 
     def test_peak_capacity_zero(self):
         """Test initialization with zero peak capacity."""
@@ -131,11 +126,6 @@ class TestPV:
         assert pv.peak_capacity == -100
         assert pv.bus_electricity.label == "NegativeBus"
 
-    def test_inheritance_from_facade(self, pv_params):
-        """Test that PV correctly inherits from Facade."""
-
-        pv = PV(**pv_params)
-        assert isinstance(pv, Facade)
 
     def test_bus_object_properties(self, pv_params):
         """Test that the bus object is correctly handled."""

@@ -1,11 +1,12 @@
 from oemof.solph import Bus
-from oemof.solph import Facade
 from oemof.solph.components import Converter
 from oemof.solph.components import GenericStorage
 from oemof.solph.flows import Flow
 
+from oemof.network import SubNetwork
 
-class CHP(Facade):
+
+class CHP(SubNetwork):
     """Blockheizkraftwerk (BHKW) basierend auf Converter"""
 
     def __init__(
@@ -71,9 +72,8 @@ class CHP(Facade):
         # Todo: Worauf beziehen sich die variablen Kosten? Wahrscheinlich auf
         #  Strom, denn auch die Max Leistung wurde für Strom angegeben.
         self.variable_costs = opex
-        super().__init__(label=label, facade_type=type(self))
+        super().__init__(label=label)
 
-    def define_subnetwork(self):
         self.subnode(
             Converter,
             inputs={self.bus_gas: Flow()},
@@ -88,11 +88,11 @@ class CHP(Facade):
                 self.bus_electricity: self.electrical_efficiency,
                 self.bus_heat: self.thermal_efficiency,
             },
-            label="chp_converter",
+            local_name="chp_converter",
         )
 
 
-class Battery(Facade):
+class Battery(SubNetwork):
     """Batteriespeicher basierend auf GenericStorage"""
 
     def __init__(
@@ -167,9 +167,8 @@ class Battery(Facade):
         #  Strom, denn auch die Max Leistung wurde für Strom angegeben.
         self.variable_costs = opex
         self.initial_storage_level = initial_storage_level
-        super().__init__(label=label, facade_type=type(self))
+        super().__init__(label=label)
 
-    def define_subnetwork(self):
         # Berechne Leistungen
         max_charge_power = self.storage_capacity * self.max_charge_rate
         max_discharge_power = self.storage_capacity * self.max_discharge_rate
@@ -193,7 +192,7 @@ class Battery(Facade):
             outflow_conversion_factor=self.discharge_efficiency,
             loss_rate=self.self_discharge_rate,
             # Konvertierung zu Dezimal
-            label="battery_storage",
+            local_name="battery_storage",
         )
 
 

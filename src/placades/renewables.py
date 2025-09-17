@@ -1,9 +1,10 @@
-from oemof.solph import Facade
 from oemof.solph.components import Source
 from oemof.solph.flows import Flow
 
+from oemof.network import SubNetwork
 
-class PV(Facade):
+
+class PV(SubNetwork):
     def __init__(
         self,
         label,
@@ -57,9 +58,8 @@ class PV(Facade):
         self.normalised_output = normalised_output
         self.bus_electricity = bus_electricity
         self.fix = fix
-        super().__init__(label=label, facade_type=type(self))
+        super().__init__(label=label)
 
-    def define_subnetwork(self):
         if self.fix is True:
             self.subnode(
                 Source,
@@ -69,7 +69,7 @@ class PV(Facade):
                         nominal_capacity=self.peak_capacity,
                     )
                 },
-                label="pv_source",
+                local_name="pv_source",
             )
         else:
             self.subnode(
@@ -80,11 +80,11 @@ class PV(Facade):
                         nominal_capacity=self.peak_capacity,
                     )
                 },
-                label="pv_source",
+                local_name="pv_source",
             )
 
 
-class WindTurbine(Facade):
+class WindTurbine(SubNetwork):
     """Windkraftanlage basierend auf Source"""
 
     def __init__(
@@ -137,9 +137,8 @@ class WindTurbine(Facade):
         self.nominal_capacity = installed_capacity
         self.wind_profile = normalised_output
         self.fix = fix
-        super().__init__(label=label, facade_type=type(self))
+        super().__init__(label=label)
 
-    def define_subnetwork(self):
         if self.fix:
             self.subnode(
                 Source,
@@ -149,7 +148,7 @@ class WindTurbine(Facade):
                         nominal_capacity=self.nominal_capacity,
                     )
                 },
-                label="wind_source",
+                local_name="wind_source",
             )
         else:
             self.subnode(
@@ -160,5 +159,5 @@ class WindTurbine(Facade):
                         nominal_capacity=self.nominal_capacity,
                     )
                 },
-                label="wind_source",
+                local_name="wind_source",
             )

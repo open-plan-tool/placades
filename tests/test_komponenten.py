@@ -28,7 +28,7 @@ class TestCHP:
             bus_heat=buses["heat"],
         )
 
-        assert chp.label.label == "test_chp"
+        assert chp.label == "test_chp"
         assert chp.bus_gas == buses["gas"]
         assert chp.bus_electricity == buses["electricity"]
         assert chp.bus_heat == buses["heat"]
@@ -99,7 +99,7 @@ class TestBattery:
             storage_capacity=10,
         )
 
-        assert battery.label.label == "test_battery"
+        assert battery.label == "test_battery"
         assert battery.bus_electricity == electricity_bus
         assert battery.storage_capacity == 10
         assert battery.max_charge_rate == 1.0

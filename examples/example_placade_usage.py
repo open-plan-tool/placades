@@ -27,7 +27,7 @@ es = EnergySystem.from_datapackage(
 energy_system_graph = Path(results_path) / f"{scenario_name}_energy_system.png"
 
 es_graph = ESGraphRenderer(
-    es, legend=True, filepath=energy_system_graph, img_format="png"
+    es, legend=False, filepath=energy_system_graph, img_format="png"
 )
 es_graph.render()
 
@@ -51,4 +51,4 @@ m.solve("cbc")
 # extract parameters and results
 params = parameter_as_dict(es)
 es.results = processing.results(m)
-es.dump(dpath=results_path, filename="oemof_raw")
+es.dump(filename=Path("results") / "oemof_raw", consider_dpath=False)

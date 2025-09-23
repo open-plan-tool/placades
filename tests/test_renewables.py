@@ -52,7 +52,6 @@ class TestPV:
         assert pv.peak_capacity == 100
         assert pv.normalised_output == [0.1, 0.5, 0.8, 0.3]
 
-
     def test_peak_capacity_zero(self):
         """Test initialization with zero peak capacity."""
         el_bus = Bus(label="ZeroBus")
@@ -125,7 +124,6 @@ class TestPV:
         )
         assert pv.peak_capacity == -100
         assert pv.bus_electricity.label == "NegativeBus"
-
 
     def test_bus_object_properties(self, pv_params):
         """Test that the bus object is correctly handled."""

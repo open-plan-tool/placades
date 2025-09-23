@@ -1,7 +1,6 @@
 import pytest
 from oemof.solph import Bus
 
-# Annahme: Das Modul heißt 'energy_components'
 from placades.komponenten import CHP
 from placades.komponenten import Battery
 from placades.komponenten import CarrierBus
@@ -57,7 +56,7 @@ class TestCHP:
 
     def test_chp_efficiency_validation_valid(self, buses):
         """Test gültige Wirkungsgrade"""
-        # Grenzfall: Genau 100%
+        # Grenzfall: Genau 100 %
         chp = CHP(
             label="test_chp",
             bus_gas=buses["gas"],
@@ -69,7 +68,7 @@ class TestCHP:
         assert chp.electrical_efficiency == 0.50
 
     def test_chp_efficiency_validation_invalid(self, buses):
-        """Test ungültige Wirkungsgrade (>100%)"""
+        """Test ungültige Wirkungsgrade (>100 %)"""
         with pytest.raises(
             ValueError, match="Gesamtwirkungsgrad kann nicht > 100% sein"
         ):

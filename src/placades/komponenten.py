@@ -1,9 +1,8 @@
+from oemof.network import SubNetwork
 from oemof.solph import Bus
 from oemof.solph.components import Converter
 from oemof.solph.components import GenericStorage
 from oemof.solph.flows import Flow
-
-from oemof.network import SubNetwork
 
 
 class CHP(SubNetwork):
@@ -27,11 +26,11 @@ class CHP(SubNetwork):
         ----------
         label : str or tuple
             Eindeutige Bezeichnung des BHKW
-        bus_gas : oemof.solph.Bus
+        bus_gas : oemof.solph.Bus or placades.CarrierBus
             Gas-Bus (Input)
-        bus_electricity : oemof.solph.Bus
+        bus_electricity : oemof.solph.Bus or placades.CarrierBus
             Strom-Bus (Output)
-        bus_heat : oemof.solph.Bus
+        bus_heat : oemof.solph.Bus or placades.CarrierBus
             Wärme-Bus (Output)
         electrical_capacity : float, optional
             Elektrische Nennleistung in kW
@@ -117,7 +116,7 @@ class Battery(SubNetwork):
         ----------
         label : str or tuple
             Eindeutige Bezeichnung der Batterie
-        bus_electricity : oemof.solph.Bus
+        bus_electricity : oemof.solph.Bus or placades.CarrierBus
             Strom-Bus für Laden/Entladen
         storage_capacity : float
             Speicherkapazität in kWh
@@ -208,7 +207,8 @@ class CarrierBus(Bus):
         label : str or tuple
             Eindeutige Bezeichnung des Bus
         carrier : str
-            Energieträger/Medium (z.B. 'electricity', 'gas', 'heat', 'hydrogen')
+            Energieträger/Medium (z.B. 'electricity', 'gas', 'heat',
+            'hydrogen')
         **kwargs
             Weitere Parameter für Bus
 

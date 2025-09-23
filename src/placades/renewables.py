@@ -1,7 +1,6 @@
+from oemof.network import SubNetwork
 from oemof.solph.components import Source
 from oemof.solph.flows import Flow
-
-from oemof.network import SubNetwork
 
 
 class PV(SubNetwork):
@@ -60,7 +59,7 @@ class PV(SubNetwork):
         self.fix = fix
         super().__init__(label=label)
 
-        if self.fix is True:
+        if self.fix:
             self.subnode(
                 Source,
                 outputs={

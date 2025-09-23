@@ -1,9 +1,8 @@
-from oemof.network import SubNetwork
-from oemof.solph.components import Source
+from oemof.network import Node
 from oemof.solph.flows import Flow
 
 
-class PV(SubNetwork):
+class PV(Node):
     def __init__(
         self,
         label,
@@ -57,33 +56,28 @@ class PV(SubNetwork):
         self.normalised_output = normalised_output
         self.bus_electricity = bus_electricity
         self.fix = fix
-        super().__init__(label=label)
-
         if self.fix:
-            self.subnode(
-                Source,
-                outputs={
+            outputs = (
+                {
                     self.bus_electricity: Flow(
                         fix=self.normalised_output,
                         nominal_capacity=self.peak_capacity,
                     )
                 },
-                local_name="pv_source",
             )
         else:
-            self.subnode(
-                Source,
-                outputs={
+            outputs = (
+                {
                     self.bus_electricity: Flow(
                         max=self.normalised_output,
                         nominal_capacity=self.peak_capacity,
                     )
                 },
-                local_name="pv_source",
             )
+        super().__init__(label=label, outputs=outputs)
 
 
-class WindTurbine(SubNetwork):
+class WindTurbine(Node):
     """Windkraftanlage basierend auf Source"""
 
     def __init__(
@@ -136,27 +130,22 @@ class WindTurbine(SubNetwork):
         self.nominal_capacity = installed_capacity
         self.wind_profile = normalised_output
         self.fix = fix
-        super().__init__(label=label)
-
         if self.fix:
-            self.subnode(
-                Source,
-                outputs={
+            outputs = (
+                {
                     self.bus_electricity: Flow(
                         fix=self.wind_profile,
                         nominal_capacity=self.nominal_capacity,
                     )
                 },
-                local_name="wind_source",
             )
         else:
-            self.subnode(
-                Source,
-                outputs={
+            outputs = (
+                {
                     self.bus_electricity: Flow(
                         max=self.wind_profile,
                         nominal_capacity=self.nominal_capacity,
                     )
                 },
-                local_name="wind_source",
             )
+        super().__init__(label=label, outputs=outputs)

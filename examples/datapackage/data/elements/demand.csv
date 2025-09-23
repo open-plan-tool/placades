@@ -1,0 +1,3 @@
+label,facade,bus,profile
+heat_demand,Demand,heat,heat_demand_profile
+electricity_demand,Demand,electricity,electricity_demand_profile

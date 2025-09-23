@@ -4,7 +4,7 @@ import datapackage as dp
 from oemof.tabular.datapackage import building
 
 COMPONENT_TEMPLATES_PATH = (
-    "openplan_scenario"  # os.path.abspath(os.path.dirname(__file__))
+    "datapackage"  # os.path.abspath(os.path.dirname(__file__))
 )
 
 dp_json = os.path.join(COMPONENT_TEMPLATES_PATH, "datapackage.json")

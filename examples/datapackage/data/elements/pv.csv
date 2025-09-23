@@ -1,0 +1,2 @@
+label,facade,bus_electricity,peak_capacity,normalised_output,fix
+pv_plant,PV,electricity,10,pv_profile,True

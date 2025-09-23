@@ -2,78 +2,71 @@ from oemof.network import Node
 from oemof.solph.flows import Flow
 
 
-class PV(Node):
-    def __init__(
-        self,
-        label,
-        bus_electricity,
-        peak_capacity,
-        normalised_output,
-        fix=True,
-    ):
-        """
-        Short description
+class Demand(Node):
+    """
+    Short description
 
-        Long description about the facade and how to use it.
+    Long description about the facade and how to use it.
 
-        .. important ::
-            Some important informatio about this facade.
+    .. important ::
+        Some important information about this facade.
 
-        :Structure:
-          *output*
-            1. bus_electricity : electricity
-            2. bus_heat : heat
-          *input*
-            1. bus_gas : gas
-            2. bus_coal : coal
+    :Structure:
+      *output*
+        1. bus_electricity : electricity
+        2. bus_heat : heat
+      *input*
+        1. bus_gas : gas
+        2. bus_coal : coal
 
-        Parameters
-        ----------
-        label : str or tuple
-            Unique identifier of the instance.
-        bus_electricity : oemof.solph.Bus
-            Valid network bus with the carrier: electricity
-        peak_capacity : float
-            Capacity of the PV plant at its peak point.
-        normalised_output : iterable
-            Output time series, normalised to one unit of the peak capacity.
+    Parameters
+    ----------
+    label : str or tuple
+        Unique identifier of the instance.
+    bus : oemof.solph.Bus or placade.CarrierBus
+        Valid network bus with the carrier: electricity
+    profile : iterable
+        Absolute demand time series.
 
-        Examples
-        --------
-        >>> from oemof.solph import Bus
-        >>> ebus = Bus(label="my_electricity_bus")
-        >>> pv = PV(
-        ...     label="my_pv",
-        ...     bus_electricity=ebus,
-        ...     peak_capacity=15,
-        ...     normalised_output=[0.2, 0.4, 0.3]
-        ... )
-        >>> pv.fix
-        True
+    Examples
+    --------
+    >>> from oemof.solph import Bus
+    >>> hbus = Bus(label="my_heat_bus")
+    >>> demand = Demand(
+    ...     label="heat1",
+    ...     bus=hbus,
+    ...     profile=[123, 200, 85]
+    ... )
+    >>> demand.inputs[hbus].fix
+    array([123, 200,  85])
+    >>> isinstance(list(demand.inputs.keys())[0], Bus)
+    True
+    >>> demand.profile
+    [123, 200, 85]
+    >>> demand.label
+    'heat1'
+    """
 
-        """
-        
-        self.peak_capacity = peak_capacity
-        self.normalised_output = normalised_output
-        self.bus_electricity = bus_electricity
-        self.fix = fix
-        super().__init__(label=label)
+    def __init__(self, label, bus, profile):
+        self.profile = profile  # ToDo: Soll das zusätzlich hier hin?
+        super().__init__(
+            label=label,
+            inputs={
+                bus: Flow(
+                    fix=profile,
+                    nominal_capacity=1,
+                )
+            },
+        )
 
-        if self.fix:
-            self.outputs.update({
-                    self.bus_electricity: Flow(
-                        fix=self.normalised_output,
-                        nominal_capacity=self.peak_capacity,
-                    )
-                })
-        else:
-            self.subnode(
-                Source,
-                outputs={
-                    self.bus_electricity: Flow(
-                        max=self.normalised_output,
-                        nominal_capacity=self.peak_capacity,
-                    )
-                },
-                local_name="pv_source",
-            )
+
+class Excess(Node):
+    """
+    Excess Node.
+    """
+
+    def __init__(self, label, bus, cost=0):
+        super().__init__(
+            label=label,
+            inputs={bus: Flow(variable_costs=cost)},
+        )

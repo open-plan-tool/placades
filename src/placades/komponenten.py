@@ -1,9 +1,8 @@
+from oemof.network import SubNetwork
 from oemof.solph import Bus
 from oemof.solph.components import Converter
 from oemof.solph.components import GenericStorage
 from oemof.solph.flows import Flow
-
-from oemof.network import SubNetwork
 
 
 class CHP(SubNetwork):

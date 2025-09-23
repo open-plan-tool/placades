@@ -1,7 +1,6 @@
+from oemof.network import SubNetwork
 from oemof.solph.components import Source
 from oemof.solph.flows import Flow
-
-from oemof.network import SubNetwork
 
 
 class PV(SubNetwork):

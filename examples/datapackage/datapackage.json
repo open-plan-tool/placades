@@ -13,12 +13,12 @@
             "schema": {
                 "fields": [
                     {
-                        "name": "lable",
+                        "name": "name",
                         "type": "string",
                         "format": "default"
                     },
                     {
-                        "name": "facade",
+                        "name": "type",
                         "type": "string",
                         "format": "default"
                     },
@@ -45,12 +45,12 @@
             "schema": {
                 "fields": [
                     {
-                        "name": "label",
+                        "name": "name",
                         "type": "string",
                         "format": "default"
                     },
                     {
-                        "name": "facade",
+                        "name": "type",
                         "type": "string",
                         "format": "default"
                     },
@@ -129,12 +129,12 @@
             "schema": {
                 "fields": [
                     {
-                        "name": "label",
+                        "name": "name",
                         "type": "string",
                         "format": "default"
                     },
                     {
-                        "name": "facade",
+                        "name": "type",
                         "type": "string",
                         "format": "default"
                     },
@@ -180,12 +180,12 @@
             "schema": {
                 "fields": [
                     {
-                        "name": "label",
+                        "name": "name",
                         "type": "string",
                         "format": "default"
                     },
                     {
-                        "name": "facade",
+                        "name": "type",
                         "type": "string",
                         "format": "default"
                     },
@@ -225,12 +225,12 @@
             "schema": {
                 "fields": [
                     {
-                        "name": "label",
+                        "name": "name",
                         "type": "string",
                         "format": "default"
                     },
                     {
-                        "name": "facade",
+                        "name": "type",
                         "type": "string",
                         "format": "default"
                     },

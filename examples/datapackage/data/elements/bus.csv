@@ -1,4 +1,4 @@
-lable,facade,carrier
+name,type,carrier
 electricity,CarrierBus,electricity
 gas,CarrierBus,gas
 heat,CarrierBus,heat

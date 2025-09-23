@@ -7,6 +7,7 @@ from .komponenten import CHP
 from .komponenten import Battery
 from .renewables import PV
 from .renewables import WindTurbine
+from .supply import Source
 
 TYPEMAP = {
     "CHP": CHP,
@@ -16,6 +17,7 @@ TYPEMAP = {
     "WindTurbine": WindTurbine,
     "Demand": Demand,
     "Excess": Excess,
+    "Source": Source,
 }
 
 

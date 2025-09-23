@@ -1,0 +1,79 @@
+from oemof.network import Node
+from oemof.solph.flows import Flow
+
+
+class PV(Node):
+    def __init__(
+        self,
+        label,
+        bus_electricity,
+        peak_capacity,
+        normalised_output,
+        fix=True,
+    ):
+        """
+        Short description
+
+        Long description about the facade and how to use it.
+
+        .. important ::
+            Some important informatio about this facade.
+
+        :Structure:
+          *output*
+            1. bus_electricity : electricity
+            2. bus_heat : heat
+          *input*
+            1. bus_gas : gas
+            2. bus_coal : coal
+
+        Parameters
+        ----------
+        label : str or tuple
+            Unique identifier of the instance.
+        bus_electricity : oemof.solph.Bus
+            Valid network bus with the carrier: electricity
+        peak_capacity : float
+            Capacity of the PV plant at its peak point.
+        normalised_output : iterable
+            Output time series, normalised to one unit of the peak capacity.
+
+        Examples
+        --------
+        >>> from oemof.solph import Bus
+        >>> ebus = Bus(label="my_electricity_bus")
+        >>> pv = PV(
+        ...     label="my_pv",
+        ...     bus_electricity=ebus,
+        ...     peak_capacity=15,
+        ...     normalised_output=[0.2, 0.4, 0.3]
+        ... )
+        >>> pv.fix
+        True
+
+        """
+        
+        self.peak_capacity = peak_capacity
+        self.normalised_output = normalised_output
+        self.bus_electricity = bus_electricity
+        self.fix = fix
+        super().__init__(label=label)
+
+        if self.fix:
+            self.outputs.update({
+                    self.bus_electricity: Flow(
+                        fix=self.normalised_output,
+                        nominal_capacity=self.peak_capacity,
+                    )
+                })
+        else:
+            self.subnode(
+                Source,
+                outputs={
+                    self.bus_electricity: Flow(
+                        max=self.normalised_output,
+                        nominal_capacity=self.peak_capacity,
+                    )
+                },
+                local_name="pv_source",
+            )

@@ -3,7 +3,7 @@ from oemof.solph import Bus
 
 from placades.komponenten import CHP
 from placades.komponenten import Battery
-from placades.komponenten import CarrierBus
+from placades import CarrierBus
 
 
 class TestCHP:

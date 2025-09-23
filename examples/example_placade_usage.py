@@ -1,27 +1,31 @@
-import os
+import logging
+from pathlib import Path
 
 from oemof.solph import EnergySystem
 from oemof.solph import Model
 from oemof.solph import processing
 from oemof.solph.processing import parameter_as_dict
+from oemof.tabular import datapackage  # noqa
 from oemof.visio import ESGraphRenderer
-from placade import TYPEMAP
+
+from placades import TYPEMAP
+
+logger = logging.getLogger(__name__)
 
 results_path = "results"
 scenario_name = "test_placade_example"
-scenario_dir = "openplan_scenario"
+scenario_dir = "datapackage"
 
 # create energy system object from the datapackage
 es = EnergySystem.from_datapackage(
-    os.path.join(scenario_dir, "datapackage.json"),
+    Path(scenario_dir) / "datapackage.json",
     attributemap={},
     typemap=TYPEMAP,
 )
 
 # if ES_GRAPH is True:
-energy_system_graph = os.path.join(
-    results_path, f"{scenario_name}_energy_system.png"
-)
+energy_system_graph = Path(results_path) / f"{scenario_name}_energy_system.png"
+
 es_graph = ESGraphRenderer(
     es, legend=True, filepath=energy_system_graph, img_format="png"
 )

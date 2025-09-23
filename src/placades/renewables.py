@@ -56,8 +56,11 @@ class PV(Node):
         self.normalised_output = normalised_output
         self.bus_electricity = bus_electricity
         self.fix = fix
+
+        super().__init__(label=label)
+
         if self.fix:
-            outputs = (
+            self.outputs.update(
                 {
                     self.bus_electricity: Flow(
                         fix=self.normalised_output,
@@ -66,7 +69,7 @@ class PV(Node):
                 },
             )
         else:
-            outputs = (
+            self.outputs.update(
                 {
                     self.bus_electricity: Flow(
                         max=self.normalised_output,
@@ -74,7 +77,6 @@ class PV(Node):
                     )
                 },
             )
-        super().__init__(label=label, outputs=outputs)
 
 
 class WindTurbine(Node):

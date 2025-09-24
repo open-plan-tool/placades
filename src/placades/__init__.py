@@ -13,7 +13,7 @@ TYPEMAP = {
     "CHP": CHP,
     "Battery": Battery,
     "CarrierBus": CarrierBus,
-    "pv_plant": PV,
+    "PV": PV,
     "WindTurbine": WindTurbine,
     "Demand": Demand,
     "Excess": Excess,

@@ -8,17 +8,16 @@ from placades.facades.komponenten import Battery
 from placades.facades.renewables import PV
 from placades.facades.renewables import WindTurbine
 from placades.facades.supply import Source
+from placades.typemap import TYPEMAP
 
-TYPEMAP = {
-    "CHP": CHP,
-    "Battery": Battery,
-    "CarrierBus": CarrierBus,
-    "PV": PV,
-    "WindTurbine": WindTurbine,
-    "Demand": Demand,
-    "Excess": Excess,
-    "Source": Source,
-}
-
-
-__all__ = ["CHP", "PV", "Battery", "CarrierBus", "WindTurbine"]
+__all__ = [
+    "CHP",
+    "PV",
+    "Battery",
+    "CarrierBus",
+    "WindTurbine",
+    "Demand",
+    "Excess",
+    "Source",
+    "TYPEMAP",
+]

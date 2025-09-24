@@ -57,26 +57,22 @@ class PV(Node):
         self.bus_electricity = bus_electricity
         self.fix = fix
 
-        super().__init__(label=label)
-
         if self.fix:
-            self.outputs.update(
-                {
-                    self.bus_electricity: Flow(
-                        fix=self.normalised_output,
-                        nominal_capacity=self.peak_capacity,
-                    )
-                },
-            )
+            fix = self.normalised_output
+            vmax = None
         else:
-            self.outputs.update(
-                {
-                    self.bus_electricity: Flow(
-                        max=self.normalised_output,
-                        nominal_capacity=self.peak_capacity,
-                    )
-                },
+            fix = None
+            vmax = self.normalised_output
+
+        outputs = {
+            self.bus_electricity: Flow(
+                max=vmax,
+                fix=fix,
+                nominal_capacity=self.peak_capacity,
             )
+        }
+
+        super().__init__(label=label, outputs=outputs)
 
 
 class WindTurbine(Node):
@@ -87,7 +83,7 @@ class WindTurbine(Node):
         label,
         bus_electricity,
         installed_capacity,
-        normalised_output,
+        wind_profile,
         fix=True,
     ):
         """
@@ -101,7 +97,7 @@ class WindTurbine(Node):
             Stromnetz-Bus
         installed_capacity : float
             Nennleistung der WKA in kW
-        normalised_output : iterable
+        wind_profile : iterable
             Normalisierte Windleistung (0-1) als Zeitreihe
         fix : bool
             True = feste Erzeugung, False = flexible Abregelung möglich
@@ -114,7 +110,7 @@ class WindTurbine(Node):
         ...     label="wind_farm_north",
         ...     bus_electricity=ebus,
         ...     installed_capacity=5000,  # 5 MW
-        ...     normalised_output=[0.2, 0.7, 0.9, 0.4, 0.1],   # €/kW/a
+        ...     wind_profile=[0.2, 0.7, 0.9, 0.4, 0.1],   # €/kW/a
         ... )
         >>> wind.fix
         True
@@ -122,32 +118,28 @@ class WindTurbine(Node):
         ...     label="wind_farm_north",
         ...     bus_electricity=ebus,
         ...     installed_capacity=5000,  # 5 MW
-        ...     normalised_output=[0.2, 0.7, 0.9, 0.4, 0.1],   # €/kW/a
+        ...     wind_profile=[0.2, 0.7, 0.9, 0.4, 0.1],   # €/kW/a
         ...     fix=False,
         ... )
         >>> wind2.fix
         False
         """
         self.bus_electricity = bus_electricity
-        self.nominal_capacity = installed_capacity
-        self.wind_profile = normalised_output
+        self.installed_capacity = installed_capacity
+        self.wind_profile = wind_profile
         self.fix = fix
         if self.fix:
-            outputs = (
-                {
-                    self.bus_electricity: Flow(
-                        fix=self.wind_profile,
-                        nominal_capacity=self.nominal_capacity,
-                    )
-                },
-            )
+            fix = self.wind_profile
+            vmax = None
         else:
-            outputs = (
-                {
-                    self.bus_electricity: Flow(
-                        max=self.wind_profile,
-                        nominal_capacity=self.nominal_capacity,
-                    )
-                },
+            fix = None
+            vmax = self.wind_profile
+
+        outputs = {
+            self.bus_electricity: Flow(
+                max=vmax,
+                fix=fix,
+                nominal_capacity=self.installed_capacity,
             )
+        }
         super().__init__(label=label, outputs=outputs)

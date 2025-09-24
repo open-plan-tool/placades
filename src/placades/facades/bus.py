@@ -4,7 +4,7 @@ from oemof.solph import Bus
 class CarrierBus(Bus):
     """Bus mit Medium-Attribut"""
 
-    def __init__(self, label, carrier=None, **kwargs):
+    def __init__(self, label, carrier=None):
         """
         Bus mit Energieträger-Information
 
@@ -25,7 +25,7 @@ class CarrierBus(Bus):
         >>> heat_bus = CarrierBus(label="district_heating", carrier="heat")
         >>> h2_bus = CarrierBus(label="h2_network", carrier="hydrogen")
         """
-        super().__init__(label=label, **kwargs)
+        super().__init__(label=label)
         self.carrier = carrier
 
     def __repr__(self):

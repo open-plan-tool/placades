@@ -1,2 +1,2 @@
 name,type,bus_electricity,peak_capacity,normalised_output,fix
-pv_plant,PV,electricity,10,pv_profile,True
+pv1,pv_plant,electricity,10,pv_profile,True

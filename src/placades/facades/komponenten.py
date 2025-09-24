@@ -1,10 +1,9 @@
-from oemof.network import SubNetwork
 from oemof.solph.components import Converter
 from oemof.solph.components import GenericStorage
 from oemof.solph.flows import Flow
 
 
-class CHP(SubNetwork):
+class CHP(Converter):
     """Blockheizkraftwerk (BHKW) basierend auf Converter"""
 
     def __init__(
@@ -70,27 +69,29 @@ class CHP(SubNetwork):
         # Todo: Worauf beziehen sich die variablen Kosten? Wahrscheinlich auf
         #  Strom, denn auch die Max Leistung wurde für Strom angegeben.
         self.variable_costs = opex
-        super().__init__(label=label)
 
-        self.subnode(
-            Converter,
-            inputs={self.bus_gas: Flow()},
-            outputs={
-                self.bus_electricity: Flow(
-                    nominal_capacity=self.electrical_capacity,
-                    variable_costs=self.variable_costs,
-                ),
-                self.bus_heat: Flow(),
-            },
-            conversion_factors={
-                self.bus_electricity: self.electrical_efficiency,
-                self.bus_heat: self.thermal_efficiency,
-            },
-            local_name="chp_converter",
+        inputs = {self.bus_gas: Flow()}
+        outputs = {
+            self.bus_electricity: Flow(
+                nominal_capacity=self.electrical_capacity,
+                variable_costs=self.variable_costs,
+            ),
+            self.bus_heat: Flow(),
+        }
+        conversion_factors = {
+            self.bus_electricity: self.electrical_efficiency,
+            self.bus_heat: self.thermal_efficiency,
+        }
+
+        super().__init__(
+            label=label,
+            inputs=inputs,
+            outputs=outputs,
+            conversion_factors=conversion_factors,
         )
 
 
-class Battery(SubNetwork):
+class Battery(GenericStorage):
     """Batteriespeicher basierend auf GenericStorage"""
 
     def __init__(
@@ -165,30 +166,35 @@ class Battery(SubNetwork):
         #  Strom, denn auch die Max Leistung wurde für Strom angegeben.
         self.variable_costs = opex
         self.initial_storage_level = initial_storage_level
-        super().__init__(label=label)
 
         # Berechne Leistungen
         max_charge_power = self.storage_capacity * self.max_charge_rate
         max_discharge_power = self.storage_capacity * self.max_discharge_rate
 
-        self.subnode(
-            GenericStorage,
-            inputs={
-                self.bus_electricity: Flow(
-                    nominal_capacity=max_charge_power,
-                    variable_costs=self.variable_costs,
-                )
-            },
-            outputs={
-                self.bus_electricity: Flow(
-                    nominal_capacity=max_discharge_power,
-                )
-            },
-            nominal_capacity=self.storage_capacity,
-            initial_storage_level=self.initial_storage_level,
-            inflow_conversion_factor=self.charge_efficiency,
-            outflow_conversion_factor=self.discharge_efficiency,
-            loss_rate=self.self_discharge_rate,
-            # Konvertierung zu Dezimal
-            local_name="battery_storage",
+        inputs = {
+            self.bus_electricity: Flow(
+                nominal_capacity=max_charge_power,
+                variable_costs=self.variable_costs,
+            )
+        }
+        outputs = {
+            self.bus_electricity: Flow(
+                nominal_capacity=max_discharge_power,
+            )
+        }
+        nominal_capacity = (self.storage_capacity,)
+        initial_storage_level = (self.initial_storage_level,)
+        inflow_conversion_factor = (self.charge_efficiency,)
+        outflow_conversion_factor = (self.discharge_efficiency,)
+        loss_rate = (self.self_discharge_rate,)
+
+        super().__init__(
+            label=label,
+            inputs=inputs,
+            outputs=outputs,
+            nominal_capacity=nominal_capacity,
+            initial_storage_level=initial_storage_level,
+            inflow_conversion_factor=inflow_conversion_factor,
+            outflow_conversion_factor=outflow_conversion_factor,
+            loss_rate=loss_rate,
         )

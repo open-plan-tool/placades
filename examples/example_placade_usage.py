@@ -4,7 +4,7 @@ from pathlib import Path
 from oemof.solph import EnergySystem
 from oemof.solph import Model
 from oemof.solph import processing
-from oemof.solph.processing import parameter_as_dict
+from oemof.solph import Results
 from oemof.tabular import datapackage  # noqa
 from oemof.visio import ESGraphRenderer
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 results_path = "results"
 scenario_name = "test_placade_example"
-scenario_dir = "datapackage"
+scenario_dir = "openPlan_package"
 
 # create energy system object from the datapackage
 es = EnergySystem.from_datapackage(
@@ -23,18 +23,21 @@ es = EnergySystem.from_datapackage(
     typemap=TYPEMAP,
 )
 
-# if ES_GRAPH is True:
-energy_system_graph = Path(results_path) / f"{scenario_name}_energy_system.png"
 
-es_graph = ESGraphRenderer(
-    es, legend=False, filepath=energy_system_graph, img_format="png"
-)
-es_graph.render()
+# if ES_GRAPH is True:
+# energy_system_graph = Path(results_path) / f"{scenario_name}_energy_system.png"
+#
+# es_graph = ESGraphRenderer(
+#     es, legend=False, filepath=energy_system_graph, img_format="png"
+# )
+# es_graph.render()
 
 logger.info("Energy system created from datapackage")
 
 # create model from energy system (this is just oemof.solph)
 m = Model(es)
+
+
 logger.info("Model created from energy system")
 
 # # add constraints from datapackage to the model
@@ -49,6 +52,7 @@ logger.info("Model created from energy system")
 m.solve("cbc")
 
 # extract parameters and results
-params = parameter_as_dict(es)
-es.results = processing.results(m)
+es.results = Results(m)
+print(es.results.flow.sum())
+
 es.dump(filename=Path("results") / "oemof_raw", consider_dpath=False)

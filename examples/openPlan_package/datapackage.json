@@ -337,17 +337,17 @@
                     },
                     {
                         "name": "heat_demand_profile",
-                        "type": "integer",
+                        "type": "number",
                         "format": "default"
                     },
                     {
                         "name": "electricity_demand_profile",
-                        "type": "integer",
+                        "type": "number",
                         "format": "default"
                     },
                     {
                         "name": "pv_profile",
-                        "type": "string",
+                        "type": "number",
                         "format": "default"
                     }
                 ],

@@ -6,6 +6,7 @@ from placades.facades.demand import Excess
 from placades.facades.komponenten import CHP
 from placades.facades.komponenten import Battery
 from placades.facades.renewables import PV
+from placades.facades.renewables import PvPlant
 from placades.facades.renewables import WindTurbine
 from placades.facades.supply import Source
 from placades.typemap import TYPEMAP
@@ -13,6 +14,7 @@ from placades.typemap import TYPEMAP
 __all__ = [
     "CHP",
     "PV",
+    "PvPlant",
     "Battery",
     "CarrierBus",
     "WindTurbine",

@@ -1,5 +1,5 @@
 from placades import CHP
-from placades import PV
+from placades import PvPlant
 from placades import Battery
 from placades import CarrierBus
 from placades import Demand
@@ -12,7 +12,7 @@ TYPEMAP = {
     "CHP": CHP,
     "Battery": Battery,
     "CarrierBus": CarrierBus,
-    "pv_plant": PV,
+    "pv_plant": PvPlant,
     "WindTurbine": WindTurbine,
     "Demand": Demand,
     "Excess": Excess,

@@ -1,2 +1,2 @@
-name,type,bus_electricity,peak_capacity,normalised_output,fix
-pv1,pv_plant,electricity,10,pv_profile,True
+name,type,bus_electricity,installed_capacity,pv_profile,fix
+pv1,pv_plant,electricity,10,pv_profile1,True

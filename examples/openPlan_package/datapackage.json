@@ -240,12 +240,12 @@
                         "format": "default"
                     },
                     {
-                        "name": "peak_capacity",
-                        "type": "integer",
+                        "name": "installed_capacity",
+                        "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "normalised_output",
+                        "name": "pv_profile",
                         "type": "string",
                         "format": "default"
                     },
@@ -346,7 +346,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "pv_profile",
+                        "name": "pv_profile1",
                         "type": "number",
                         "format": "default"
                     }

@@ -96,14 +96,14 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "bus_gas",
+                        "fields": "bus_electricity",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"
                         }
                     },
                     {
-                        "fields": "bus_electricity",
+                        "fields": "bus_gas",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"

@@ -292,7 +292,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "project",
+                        "name": "project_data",
                         "type": "string",
                         "format": "default"
                     }
@@ -316,7 +316,7 @@
                         }
                     },
                     {
-                        "fields": "project",
+                        "fields": "project_data",
                         "reference": {
                             "resource": "project",
                             "fields": "name"
@@ -352,11 +352,6 @@
                     {
                         "name": "cost",
                         "type": "number",
-                        "format": "default"
-                    },
-                    {
-                        "name": "project",
-                        "type": "string",
                         "format": "default"
                     }
                 ],

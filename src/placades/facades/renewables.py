@@ -89,6 +89,7 @@ class PvPlant(Node):
         """
 
         nv = create_invest_if_wanted(
+            optimise_cap=optimize_cap,
             capex_var=capex_var,
             lifetime=lifetime,
             project=project_data,

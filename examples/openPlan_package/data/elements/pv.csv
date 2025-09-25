@@ -1,2 +1,2 @@
-name,type,bus_electricity,installed_capacity,pv_profile,fix
-pv1,pv_plant,electricity,10,pv_profile1,True
+name,type,bus_electricity,installed_capacity,normalised_outpu,project
+pv1,pv_plant,electricity,10,pv_profile,berlin

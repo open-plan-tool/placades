@@ -1,5 +1,11 @@
 from oemof.network import Node
 from oemof.solph.flows import Flow
+from placades.facades.unsorted import PvPlant
+from placades.investment import create_invest_if_wanted
+
+# capacity_cost = {"capex": 35, "lifetime": 20}
+# label = "pv"
+# pv1 = PvPlant(label, **capacity_cost)
 
 
 class PvPlant(Node):
@@ -7,7 +13,7 @@ class PvPlant(Node):
         self,
         label,
         bus_electricity,
-        pv_profile,
+        normalised_outpu,
         age_installed=0,
         installed_capacity=0,
         capex_fix=1000,
@@ -18,6 +24,8 @@ class PvPlant(Node):
         optimize_cap=False,
         maximum_capacity=None,
         renewable_asset=True,
+        fix=True,
+        project_data=None,
     ):
         """
         Photovoltaic power plant for solar electricity generation.
@@ -79,6 +87,14 @@ class PvPlant(Node):
         ... )
 
         """
+
+        nv = create_invest_if_wanted(
+            capex_var=capex_var,
+            lifetime=lifetime,
+            project=project_data,
+            existing_capacity=installed_capacity,
+        )
+
         self.name = label
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
@@ -90,12 +106,12 @@ class PvPlant(Node):
         self.optimize_cap = optimize_cap
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = renewable_asset
-        self.input_timeseries = pv_profile
+        self.normalised_outpu = normalised_outpu
 
         outputs = {
             bus_electricity: Flow(
-                fix=pv_profile,
-                nominal_capacity=installed_capacity,
+                fix=normalised_outpu,
+                nominal_capacity=nv,
             )
         }
 

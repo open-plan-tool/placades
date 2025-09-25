@@ -216,6 +216,43 @@
             }
         },
         {
+            "path": "data/elements/project.csv",
+            "profile": "tabular-data-resource",
+            "name": "project",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "discount_factor",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "tax",
+                        "type": "number",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": []
+            }
+        },
+        {
             "path": "data/elements/pv.csv",
             "profile": "tabular-data-resource",
             "name": "pv",
@@ -245,13 +282,13 @@
                         "format": "default"
                     },
                     {
-                        "name": "pv_profile",
+                        "name": "normalised_outpu",
                         "type": "string",
                         "format": "default"
                     },
                     {
-                        "name": "fix",
-                        "type": "boolean",
+                        "name": "project",
+                        "type": "string",
                         "format": "default"
                     }
                 ],
@@ -268,9 +305,16 @@
                         }
                     },
                     {
-                        "fields": "normalised_output",
+                        "fields": "normalised_outpu",
                         "reference": {
                             "resource": "profiles"
+                        }
+                    },
+                    {
+                        "fields": "project",
+                        "reference": {
+                            "resource": "project",
+                            "fields": "lifetime"
                         }
                     }
                 ]
@@ -303,6 +347,11 @@
                     {
                         "name": "cost",
                         "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "project",
+                        "type": "string",
                         "format": "default"
                     }
                 ],
@@ -346,7 +395,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "pv_profile1",
+                        "name": "pv_profile",
                         "type": "number",
                         "format": "default"
                     }

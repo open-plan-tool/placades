@@ -96,14 +96,14 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "bus_gas",
+                        "fields": "bus_electricity",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"
                         }
                     },
                     {
-                        "fields": "bus_electricity",
+                        "fields": "bus_gas",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"
@@ -216,7 +216,7 @@
             }
         },
         {
-            "path": "data/projects/project.csv",
+            "path": "data/elements/project.csv",
             "profile": "tabular-data-resource",
             "name": "project",
             "format": "csv",
@@ -292,7 +292,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "project",
+                        "name": "project_data",
                         "type": "string",
                         "format": "default"
                     }
@@ -316,7 +316,7 @@
                         }
                     },
                     {
-                        "fields": "project",
+                        "fields": "project_data",
                         "reference": {
                             "resource": "project",
                             "fields": "name"
@@ -352,11 +352,6 @@
                     {
                         "name": "cost",
                         "type": "number",
-                        "format": "default"
-                    },
-                    {
-                        "name": "project",
-                        "type": "string",
                         "format": "default"
                     }
                 ],

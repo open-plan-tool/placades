@@ -1,2 +1,2 @@
-name,type,bus_electricity,installed_capacity,normalised_outpu,project
+name,type,bus_electricity,installed_capacity,normalised_outpu,project_data
 pv1,pv_plant,electricity,10,pv_profile,berlin

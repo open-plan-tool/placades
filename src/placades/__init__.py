@@ -23,4 +23,5 @@ __all__ = [
     "Excess",
     "Source",
     "TYPEMAP",
+    "ProjectData"
 ]

@@ -287,13 +287,38 @@
                         "format": "default"
                     },
                     {
-                        "name": "normalised_outpu",
+                        "name": "pv_profile",
                         "type": "string",
                         "format": "default"
                     },
                     {
                         "name": "project_data",
                         "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_fix",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_var",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "age_installed",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "expandable",
+                        "type": "boolean",
                         "format": "default"
                     }
                 ],
@@ -310,16 +335,16 @@
                         }
                     },
                     {
-                        "fields": "normalised_outpu",
-                        "reference": {
-                            "resource": "profiles"
-                        }
-                    },
-                    {
                         "fields": "project_data",
                         "reference": {
                             "resource": "project",
                             "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "pv_profile",
+                        "reference": {
+                            "resource": "profiles"
                         }
                     }
                 ]
@@ -352,6 +377,11 @@
                     {
                         "name": "cost",
                         "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "project",
+                        "type": "string",
                         "format": "default"
                     }
                 ],
@@ -386,17 +416,17 @@
                     },
                     {
                         "name": "heat_demand_profile",
-                        "type": "integer",
+                        "type": "number",
                         "format": "default"
                     },
                     {
                         "name": "electricity_demand_profile",
-                        "type": "integer",
+                        "type": "number",
                         "format": "default"
                     },
                     {
                         "name": "pv_profile",
-                        "type": "integer",
+                        "type": "number",
                         "format": "default"
                     }
                 ],

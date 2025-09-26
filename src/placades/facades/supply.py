@@ -26,7 +26,7 @@ class Source(Node):
 
     """
 
-    def __init__(self, label, bus, cost):
+    def __init__(self, label, bus, cost, project):
         super().__init__(
             label=label,
             outputs={

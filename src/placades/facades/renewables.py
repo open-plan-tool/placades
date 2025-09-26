@@ -1,6 +1,5 @@
 from oemof.network import Node
 from oemof.solph.flows import Flow
-from placades.facades.unsorted import PvPlant
 from placades.investment import create_invest_if_wanted
 
 # capacity_cost = {"capex": 35, "lifetime": 20}
@@ -13,19 +12,19 @@ class PvPlant(Node):
         self,
         label,
         bus_electricity,
-        normalised_outpu,
+        pv_profile,
         age_installed=0,
         installed_capacity=0,
-        capex_fix=1000,
-        capex_var=1000,
-        opex_fix=10,
-        opex_var=0.01,
+        capex_fix=None,
+        capex_var=None,
+        opex_fix=None,
+        opex_var=None,
         lifetime=20,
-        optimize_cap=False,
+        expandable=False,
         maximum_capacity=None,
         renewable_asset=True,
-        fix=True,
         project_data=None,
+        fix=True,
     ):
         """
         Photovoltaic power plant for solar electricity generation.
@@ -64,7 +63,7 @@ class PvPlant(Node):
         lifetime : int, default=20
             Number of operational years of the asset until it has to
             be replaced.
-        optimize_cap : bool, default=False
+        expandable : bool, default=False
             Choose if capacity optimization should be performed for
             this asset.
         maximum_capacity : float or None, default=None
@@ -89,13 +88,15 @@ class PvPlant(Node):
         """
 
         nv = create_invest_if_wanted(
-            optimise_cap=optimize_cap,
+            optimise_cap=expandable,
             capex_var=capex_var,
+            capex_fix=capex_fix,
             lifetime=lifetime,
-            project=project_data,
+            age_installed=age_installed,
             existing_capacity=installed_capacity,
             project_data=project_data,
         )
+        print(repr(nv.ep_costs))
 
         self.name = label
         self.age_installed = age_installed
@@ -105,14 +106,23 @@ class PvPlant(Node):
         self.opex_fix = opex_fix
         self.opex_var = opex_var
         self.lifetime = lifetime
-        self.optimize_cap = optimize_cap
+        self.optimize_cap = expandable
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = renewable_asset
-        self.normalised_outpu = normalised_outpu
+        self.normalised_outpu = pv_profile
+        self.fix = fix
+
+        if fix:
+            fix = self.normalised_outpu
+            vmax = None
+        else:
+            fix = None
+            vmax = self.normalised_outpu
 
         outputs = {
             bus_electricity: Flow(
-                fix=normalised_outpu,
+                fix=fix,
+                max=vmax,
                 nominal_capacity=nv,
             )
         }

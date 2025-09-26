@@ -13,19 +13,38 @@ class ProjectData:
         self.lifetime = lifetime
         self.discount_factor = discount_factor
 
-    def calculate_epc(self, capex_var, capex_fix, lifetime, method="mvs"):
+    def calculate_epc(
+        self, capex_var, capex_fix, lifetime, age_installed, method="mvs"
+    ):
         if method == "mvs":
-            return calculate_annuity_mvs()
+            return calculate_annuity_mvs(
+                capex_var=capex_var,
+                capex_fix=capex_fix,
+                lifetime=lifetime,
+                age_installed=age_installed,
+                tax=self.tax,
+                lifetime_project=self.lifetime,
+                discount_factor=self.discount_factor,
+            )
         elif method == "oemof":
-            if annuity is None:
-                msg = (
-                    "To use the annuity method of oemof the package "
-                    "oemof-tools is needed.\nUse `pip install oemof-tools` "
-                    "to install it."
-                )
-                raise ModuleNotFoundError(msg)
+            check_missing_module(annuity, "oemof", "oemof-tools")
 
+            # ToDo: (RLI) Check if parameter assignment is correct.
             return annuity(
-                capex_var, self.lifetime, self.discount_factor, u=lifetime
+                capex=capex_var,
+                n=self.lifetime,
+                wacc=self.discount_factor,
+                u=lifetime,
             )
         return None
+
+
+def check_missing_module(module, name, package):
+    if module is None:
+        msg = (
+            f"To use the annuity method of {name} the package "
+            f"{package} is needed.\nUse `pip install {package}` "
+            "to install it."
+        )
+        raise ModuleNotFoundError(msg)
+

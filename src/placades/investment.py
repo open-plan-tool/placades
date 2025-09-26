@@ -11,5 +11,14 @@ def create_invest_if_wanted(
         return existing_capacity
 
 
-def calculate_annuity_mvs():
+def calculate_annuity_mvs(
+    capex_var,
+    capex_fix,
+    lifetime,
+    age_installed,
+    tax,
+    lifetime_project,
+    discount_factor,
+):
+    # ToDo: (RLI) Add MVS method for the annuity/epc.
     return 5

@@ -94,6 +94,7 @@ class PvPlant(Node):
             lifetime=lifetime,
             project=project_data,
             existing_capacity=installed_capacity,
+            project_data=project_data,
         )
 
         self.name = label

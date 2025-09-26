@@ -115,7 +115,6 @@ def create_invest_if_wanted(
         epc = project_data.calculate_epc(
             capex_var, capex_fix, lifetime, age_installed, method="oemof"
         )
-        print(epc)
         return Investment(ep_costs=epc)
     else:
         return existing_capacity

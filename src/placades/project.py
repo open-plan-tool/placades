@@ -13,13 +13,10 @@ class ProjectData:
         self.lifetime = lifetime
         self.discount_factor = discount_factor
 
-    def calculate_epc(
-        self, capex_var, capex_fix, lifetime, age_installed, method="mvs"
-    ):
+    def calculate_epc(self, capex_var, lifetime, age_installed, method="mvs"):
         if method == "mvs":
             return calculate_annuity_mvs(
                 capex_var=capex_var,
-                capex_fix=capex_fix,
                 lifetime=lifetime,
                 age_installed=age_installed,
                 tax=self.tax,
@@ -29,7 +26,6 @@ class ProjectData:
         elif method == "oemof":
             check_missing_module(annuity, "oemof", "oemof-tools")
 
-            # ToDo: (RLI) Check if parameter assignment is correct.
             return annuity(
                 capex=capex_var,
                 n=self.lifetime,
@@ -47,4 +43,3 @@ def check_missing_module(module, name, package):
             "to install it."
         )
         raise ModuleNotFoundError(msg)
-

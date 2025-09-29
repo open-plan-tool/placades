@@ -96,7 +96,6 @@ class PvPlant(Node):
             existing_capacity=installed_capacity,
             project_data=project_data,
         )
-        print(repr(nv.ep_costs))
 
         self.name = label
         self.age_installed = age_installed

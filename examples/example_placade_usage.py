@@ -3,8 +3,8 @@ from pathlib import Path
 
 from oemof.solph import EnergySystem
 from oemof.solph import Model
-from oemof.solph import processing
 from oemof.solph import Results
+from oemof.network import graph
 from oemof.tabular import datapackage  # noqa
 from oemof.visio import ESGraphRenderer
 
@@ -12,9 +12,12 @@ from placades import TYPEMAP
 
 logger = logging.getLogger(__name__)
 
-results_path = "results"
+results_path = Path(Path.home(), "results")
 scenario_name = "test_placade_example"
 scenario_dir = "openPlan_package"
+plot = "graph"  # "graph", "visio", None
+
+Path.mkdir(results_path, parents=True, exist_ok=True)
 
 # create energy system object from the datapackage
 es = EnergySystem.from_datapackage(
@@ -23,14 +26,19 @@ es = EnergySystem.from_datapackage(
     typemap=TYPEMAP,
 )
 
+if plot == "graph":
+    graph.create_nx_graph(
+        es, filename=str(Path(results_path, "test_graph.graphml"))
+    )
+elif plot == "visio":
+    energy_system_graph = Path(
+        results_path, f"{scenario_name}_energy_system.png"
+    )
 
-# if ES_GRAPH is True:
-# energy_system_graph = Path(results_path) / f"{scenario_name}_energy_system.png"
-#
-# es_graph = ESGraphRenderer(
-#     es, legend=False, filepath=energy_system_graph, img_format="png"
-# )
-# es_graph.render()
+    es_graph = ESGraphRenderer(
+        es, legend=False, filepath=str(energy_system_graph), img_format="png"
+    )
+    es_graph.render()
 
 logger.info("Energy system created from datapackage")
 

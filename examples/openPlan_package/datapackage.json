@@ -216,7 +216,7 @@
             }
         },
         {
-            "path": "data/elements/project.csv",
+            "path": "data/project.csv",
             "profile": "tabular-data-resource",
             "name": "project",
             "format": "csv",

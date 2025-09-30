@@ -31,7 +31,7 @@ es = EnergySystem.from_datapackage(
 
 if plot == "graph":
     graph.create_nx_graph(
-        es, filename=str(Path(results_path, "test_graph.graphml"))
+        es, filename=Path(results_path, "test_graph.graphml")
     )
 elif plot == "visio":
     energy_system_graph = Path(
@@ -66,4 +66,4 @@ m.solve("cbc")
 es.results = Results(m)
 print(es.results.flow.sum())
 
-es.dump(filename=Path("results") / "oemof_raw", consider_dpath=False)
+es.dump(filename=Path(results_path, "oemof_raw"), consider_dpath=False)

@@ -1,15 +1,18 @@
 import logging
+import warnings
 from pathlib import Path
 
+from oemof.network import graph
 from oemof.solph import EnergySystem
 from oemof.solph import Model
 from oemof.solph import Results
-from oemof.network import graph
 from oemof.tabular import datapackage  # noqa
+from oemof.tools.debugging import ExperimentalFeatureWarning
 from oemof.visio import ESGraphRenderer
 
 from placades import TYPEMAP
 
+warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 logger = logging.getLogger(__name__)
 
 results_path = Path(Path.home(), "results")

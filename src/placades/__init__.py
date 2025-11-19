@@ -5,9 +5,8 @@ from placades.facades.demand import Demand
 from placades.facades.demand import Excess
 from placades.facades.komponenten import CHP
 from placades.facades.komponenten import Battery
-from placades.facades.production.renewables import PV
-from placades.facades.production.renewables import PvPlant
-from placades.facades.production.renewables import WindTurbine
+from placades.facades.production import PvPlant
+from placades.facades.production import WindTurbine
 from placades.facades.supply import Source
 from placades.project import ProjectData
 from placades.typemap import TYPEMAP

@@ -107,13 +107,12 @@ def create_invest_if_wanted(
     existing_capacity,
     project_data,
     capex_var,
-    capex_fix,
     lifetime,
     age_installed,
 ):
     if optimise_cap is True:
         epc = project_data.calculate_epc(
-            capex_var, capex_fix, lifetime, age_installed, method="oemof"
+            capex_var, lifetime, age_installed, method="oemof"
         )
         return Investment(ep_costs=epc)
     else:
@@ -122,7 +121,6 @@ def create_invest_if_wanted(
 
 def calculate_annuity_mvs(
     capex_var,
-    capex_fix,
     lifetime,
     age_installed,  # was used in a second call of get_replacement_costs
     tax,

@@ -8,7 +8,7 @@ from placades.facades.komponenten import Battery
 from placades.facades.production import PvPlant
 from placades.facades.production import WindTurbine
 from placades.facades.supply import Source
-from placades.project import ProjectData
+from placades.project import Project
 from placades.typemap import TYPEMAP
 
 __all__ = [

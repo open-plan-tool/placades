@@ -6,7 +6,7 @@ from placades import Demand
 from placades import Excess
 from placades import Source
 from placades import WindTurbine
-from placades import ProjectData
+from placades import Project
 
 
 TYPEMAP = {
@@ -18,5 +18,5 @@ TYPEMAP = {
     "Demand": Demand,
     "Excess": Excess,
     "Source": Source,
-    "project": ProjectData
+    "project": Project
 }

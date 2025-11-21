@@ -6,7 +6,7 @@ except ModuleNotFoundError:
 from placades.investment import calculate_annuity_mvs
 
 
-class ProjectData:
+class Project:
     def __init__(self, name, lifetime, tax, discount_factor):
         self.name = name
         self.tax = tax
@@ -14,12 +14,11 @@ class ProjectData:
         self.discount_factor = discount_factor
 
     def calculate_epc(
-        self, capex_var, capex_fix, lifetime, age_installed, method="mvs"
+        self, capex_var, lifetime, age_installed, method="mvs"
     ):
         if method == "mvs":
             return calculate_annuity_mvs(
                 capex_var=capex_var,
-                capex_fix=capex_fix,
                 lifetime=lifetime,
                 age_installed=age_installed,
                 tax=self.tax,

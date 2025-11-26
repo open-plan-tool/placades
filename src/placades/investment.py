@@ -102,18 +102,19 @@ def get_replacement_costs(
     return replacement_costs
 
 
-def create_invest_if_wanted(
+def _create_invest_if_wanted(
     optimise_cap,
     existing_capacity,
     project_data,
     capex_var,
+    opex_fix,
     lifetime,
     age_installed,
 ):
     if optimise_cap is True:
         epc = project_data.calculate_epc(
             capex_var, lifetime, age_installed, method="oemof"
-        )
+        ) + opex_fix
         return Investment(ep_costs=epc)
     else:
         return existing_capacity

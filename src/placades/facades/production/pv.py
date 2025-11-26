@@ -3,7 +3,7 @@ import pvlib
 from oemof.network import Source
 from oemof.solph import Flow
 
-from placades.investment import create_invest_if_wanted
+from placades.investment import _create_invest_if_wanted
 
 
 class PvPlant(Source):
@@ -13,15 +13,13 @@ class PvPlant(Source):
         bus_out_electricity,
         pv_production_timeseries,
         age_installed=0,
-        installed_capacity=0,  #
-        # capex_fix=None, should be removed if we don't have nonlinear objects
+        installed_capacity=0,
         capex_specific=None,
-        # opex_fix=None, should be removed if we don't have nonlinear objects
         opex_specific=None,
         dispatch_costs=0,
         lifetime=25,
-        expandable=True,
-        maximum_capacity=999999999,
+        expandable=False,
+        maximum_capacity=None,
         project_data=None,
         fix=False,
     ):
@@ -86,12 +84,10 @@ class PvPlant(Source):
 
         """
 
-
-        nv = create_invest_if_wanted(
+        nv = _create_invest_if_wanted(
             optimise_cap=expandable,
             capex_var=capex_specific,
-            # opex_specific=opex_specific,
-            # opex_fix=opex_fix,
+            opex_fix=opex_specific,
             lifetime=lifetime,
             age_installed=age_installed,
             existing_capacity=installed_capacity,
@@ -111,15 +107,14 @@ class PvPlant(Source):
                 fix=fix,
                 max=vmax,
                 nominal_capacity=nv,
+                variable_costs=dispatch_costs,
             )
         }
 
         self.name = label
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        # self.capex_fix = capex_fix
         self.capex_specific = capex_specific
-        # self.opex_fix = opex_fix
         self.opex_specific = opex_specific
         self.dispatch_costs = dispatch_costs
         self.lifetime = lifetime
@@ -130,7 +125,6 @@ class PvPlant(Source):
         self.fix = fix
 
         super().__init__(label=label, outputs=outputs)
-
 
 
 def create_pv_production_timeseries(
@@ -145,7 +139,7 @@ def create_pv_production_timeseries(
     gcr=0.8,
     mounting_type="fix tilt",
 ):
-    '''
+    """
     This is an internal function that can be called within the component.
     The component has an expandable menu that can be called over:
     "Generate PV-timeseries":
@@ -153,7 +147,7 @@ def create_pv_production_timeseries(
     mounting_type,system_efficiency
     Under these inputs another button saying: "Generate-timeseries now" does
     start this function
-    '''
+    """
 
     # create site location and times characteristics
     lat = lat  # project input

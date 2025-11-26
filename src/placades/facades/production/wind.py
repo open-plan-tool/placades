@@ -1,7 +1,7 @@
 from oemof.network import Source
 from oemof.solph import Flow
 
-from placades.investment import create_invest_if_wanted
+from placades.investment import _create_invest_if_wanted
 
 
 class WindTurbine(Source):
@@ -80,9 +80,10 @@ class WindTurbine(Source):
         self.normalised_output = wind_profile
         self.fix = fix
 
-        nv = create_invest_if_wanted(
+        nv = _create_invest_if_wanted(
             optimise_cap=expandable,
             capex_var=capex_specific,
+            opex_fix=opex_fix,
             lifetime=lifetime,
             age_installed=age_installed,
             existing_capacity=installed_capacity,

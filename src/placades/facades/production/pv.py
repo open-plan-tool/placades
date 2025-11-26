@@ -45,15 +45,9 @@ class PvPlant(Source):
             Number of years the asset has already been in operation.
         installed_capacity : float, default=0
             Already existing installed capacity.
-        capex_fix : float, default=1000
-            Specific investment costs of the asset related to the
-            installed capacity (CAPEX).
         capex_specific : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
-        opex_fix : float, default=10
-            Specific operational and maintenance costs of the asset
-            related to the installed capacity (OPEX_fix).
         opex_specific : float, default=0.01
             Costs associated with a flow through/from the asset
             (OPEX_var or fuel costs).
@@ -66,11 +60,6 @@ class PvPlant(Source):
         maximum_capacity : float or None, default=None
             Maximum total capacity of an asset that can be installed
             at the project site.
-        renewable_asset : bool, default=True
-            Choose if this asset should be considered as renewable.
-        input_timeseries : str or None, default=None
-            Name of the csv file containing the input generation or
-            demand timeseries.
 
         Examples
         --------
@@ -183,8 +172,7 @@ def create_pv_production_timeseries(
         mounting_system = pvlib.pvsystem.FixedMount(
             surface_tilt=tilt, surface_azimuth=azimuth
         )
-
-    if mounting_type == "tracker":
+    elif mounting_type == "tracker":
         mounting_system = pvlib.pvsystem.SingleAxisTrackerMount(
             axis_tilt=axis_tilt,
             axis_azimuth=azimuth,
@@ -192,6 +180,8 @@ def create_pv_production_timeseries(
             backtrack=True,
             gcr=gcr,
         )
+    else:
+        raise NotImplementedError(f"Type {mounting_type} does not exist.")
 
     # Calculate orientation of tracker
     orientation = mounting_system.get_orientation(

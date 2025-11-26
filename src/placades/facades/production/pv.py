@@ -44,7 +44,7 @@ class PvPlant(Source):
         label : str
             Name of the asset.
         age_installed : int, default=0
-            Number of years the asset has already been in operation.
+            |age_installed|
         installed_capacity : float, default=0
             Already existing installed capacity.
         capex_specific : float, default=1000
@@ -52,8 +52,7 @@ class PvPlant(Source):
         opex_specific : float, default=0.01
             |opex_fix|
         lifetime : int, default=25
-            Number of operational years of the asset until it has to
-            be replaced.
+            |lifetime|
         expandable : bool, default=True
             Choose if capacity optimization should be performed for
             this asset.

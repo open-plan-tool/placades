@@ -64,7 +64,7 @@ def get_replacement_costs(
 
     present_value_of_capital_expenditures = pd.DataFrame(
         [0 for _i in range(project_lifetime + 1)],
-        index=[j for j in range(project_lifetime + 1)],
+        index=list(range(project_lifetime + 1)),
     )
 
     for _count_of_replacements in range(1, number_of_investments):
@@ -95,25 +95,28 @@ def get_replacement_costs(
             / (1 + discount_factor) ** project_lifetime
         )
         replacement_costs -= value_at_project_end
-        present_value_of_capital_expenditures.loc[project_lifetime] = (
-            -value_at_project_end
-        )
+        present_value_of_capital_expenditures.loc[
+            project_lifetime
+        ] = -value_at_project_end
 
     return replacement_costs
 
 
-def create_invest_if_wanted(
+def _create_invest_if_wanted(
     optimise_cap,
     existing_capacity,
     project_data,
     capex_var,
-    capex_fix,
+    opex_fix,
     lifetime,
     age_installed,
 ):
     if optimise_cap is True:
-        epc = project_data.calculate_epc(
-            capex_var, capex_fix, lifetime, age_installed, method="oemof"
+        epc = (
+            project_data.calculate_epc(
+                capex_var, lifetime, age_installed, method="oemof"
+            )
+            + opex_fix
         )
         return Investment(ep_costs=epc)
     else:
@@ -122,7 +125,6 @@ def create_invest_if_wanted(
 
 def calculate_annuity_mvs(
     capex_var,
-    capex_fix,
     lifetime,
     age_installed,  # was used in a second call of get_replacement_costs
     tax,

@@ -48,15 +48,6 @@ class CHP(Converter):
         >>> electricity_bus = Bus(label="my_electricity_bus")
         >>> heat_bus = Bus(label="my_heat_bus")
         >>> gas_bus = Bus(label="my_gas_bus")
-        >>> chp = CHP(
-        ...     label="chp_plant",
-        ...     bus_gas=gas_bus,
-        ...     bus_electricity=electricity_bus,
-        ...     bus_heat=heat_bus,
-        ...     electrical_capacity=1000,  # 1 MW elektrisch
-        ...     electrical_efficiency=0.4,
-        ...     thermal_efficiency=0.5,
-        ... )
         """
         if electrical_efficiency + thermal_efficiency > 1.0:
             raise ValueError("Gesamtwirkungsgrad kann nicht > 100% sein")
@@ -143,15 +134,6 @@ class Battery(GenericStorage):
         --------
         >>> from oemof.solph import Bus
         >>> electricity_bus = Bus(label="my_electricity_bus")
-        >>> battery = Battery(
-        ...     label="home_battery",
-        ...     bus_electricity=electricity_bus,
-        ...     storage_capacity=10,  # 10 kWh
-        ...     max_charge_rate=0.5,  # 0.5C = 2h Vollladung
-        ...     max_discharge_rate=1.0,  # 1C = 1h Entladung
-        ...     capex_capacity=400,  # €/kWh
-        ...     capex_power=200      # €/kW
-        ... )
         """
         self.bus_electricity = bus_electricity
         self.storage_capacity = storage_capacity

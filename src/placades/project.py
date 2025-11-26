@@ -1,3 +1,5 @@
+from placades.type_checks import check_parameter
+
 try:
     from oemof.tools.economics import annuity
 except ModuleNotFoundError:
@@ -6,20 +8,35 @@ except ModuleNotFoundError:
 from placades.investment import calculate_annuity_mvs
 
 
-class ProjectData:
-    def __init__(self, name, lifetime, tax, discount_factor):
+class Project:
+    def __init__(
+        self,
+        name,
+        lifetime,
+        tax,
+        discount_factor,
+        shortage_cost=999,
+        excess_cost=99,
+    ):
         self.name = name
         self.tax = tax
         self.lifetime = lifetime
         self.discount_factor = discount_factor
+        self.shortage_cost = shortage_cost
+        self.excess_cost = excess_cost
 
-    def calculate_epc(
-        self, capex_var, capex_fix, lifetime, age_installed, method="mvs"
-    ):
+    def calculate_epc(self, capex_var, lifetime, age_installed, method="mvs"):
         if method == "mvs":
+            check_parameter(
+                capex_var,
+                self.lifetime,
+                self.discount_factor,
+                lifetime,
+                self.tax,
+                age_installed,
+            )
             return calculate_annuity_mvs(
                 capex_var=capex_var,
-                capex_fix=capex_fix,
                 lifetime=lifetime,
                 age_installed=age_installed,
                 tax=self.tax,
@@ -28,7 +45,9 @@ class ProjectData:
             )
         elif method == "oemof":
             check_missing_module(annuity, "oemof", "oemof-tools")
-
+            check_parameter(
+                capex_var, self.lifetime, self.discount_factor, lifetime
+            )
             return annuity(
                 capex=capex_var,
                 n=self.lifetime,

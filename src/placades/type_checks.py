@@ -10,7 +10,7 @@ def float_check(n):
         n = float(n)
     except Exception:
         msg = f"The input {n} cannot be converted to float."
-        raise ValueError(msg)
+        raise ValueError(msg) from None
     return n
 
 

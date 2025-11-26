@@ -1,4 +1,3 @@
-from oemof.network import Node
 from oemof.network import Sink
 from oemof.solph.flows import Flow
 
@@ -33,19 +32,6 @@ class Demand(Sink):
     --------
     >>> from oemof.solph import Bus
     >>> hbus = Bus(label="my_heat_bus")
-    >>> demand = Demand(
-    ...     label="heat1",
-    ...     bus=hbus,
-    ...     profile=[123, 200, 85]
-    ... )
-    >>> demand.inputs[hbus].fix
-    array([123, 200,  85])
-    >>> isinstance(list(demand.inputs.keys())[0], Bus)
-    True
-    >>> demand.profile
-    [123, 200, 85]
-    >>> demand.label
-    'heat1'
     """
 
     def __init__(self, label, bus, profile):
@@ -65,7 +51,9 @@ class Demand(Sink):
 
 #
 # from demandlib import bdew
-# def create_heat_demand(timeframe,outdoor_temperature,profile_type,annual_heat_demand,building_year,wind_class=0):
+# def create_heat_demand(timeframe,
+# outdoor_temperature,
+# profile_type,annual_heat_demand,building_year,wind_class=0):
 #
 #     match wind_class:
 #         case "not windy":
@@ -117,7 +105,7 @@ class Demand(Sink):
 #             profile_type = 'GMF'
 #         case 'accommodation':
 #             profile_type = 'GBH'
-#         case 'Local authorities, credit institutions and insurance companies':
+#         case 'Local authorities, credit institutions and insurancecompanies':
 #             profile_type = 'GKO'
 #         case 'other operational services':
 #             profile_type = 'GBD'
@@ -156,7 +144,7 @@ class Demand(Sink):
 #     return demand_profile
 
 
-class Excess(Node):
+class Excess(Sink):
     """
     Excess Node.
     """

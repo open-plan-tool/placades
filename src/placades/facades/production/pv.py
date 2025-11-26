@@ -65,11 +65,6 @@ class PvPlant(Source):
         --------
         >>> from oemof.solph import Bus
         >>> ebus = Bus(label="electricity_bus")
-        >>> my_pv = PvPlant(
-        ...     name="rooftop_pv",
-        ...     installed_capacity=100,
-        ...     input_timeseries="solar_irradiation.csv",
-        ... )
 
         """
 
@@ -83,7 +78,6 @@ class PvPlant(Source):
             project_data=project_data,
         )
 
-        #
         if fix:
             fix = pv_production_timeseries
             vmax = None

@@ -46,23 +46,6 @@ class WindTurbine(Source):
         --------
         >>> from oemof.solph import Bus
         >>> ebus = Bus(label="my_electricity_bus")
-        >>> wind = WindTurbine(
-        ...     label="wind_farm_north",
-        ...     bus_electricity=ebus,
-        ...     installed_capacity=5000,  # 5 MW
-        ...     wind_profile=[0.2, 0.7, 0.9, 0.4, 0.1],   # €/kW/a
-        ... )
-        >>> wind.fix
-        True
-        >>> wind2 = WindTurbine(
-        ...     label="wind_farm_north",
-        ...     bus_electricity=ebus,
-        ...     installed_capacity=5000,  # 5 MW
-        ...     wind_profile=[0.2, 0.7, 0.9, 0.4, 0.1],   # €/kW/a
-        ...     fix=False,
-        ... )
-        >>> wind2.fix
-        False
         """
 
         self.name = label

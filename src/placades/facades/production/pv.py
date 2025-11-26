@@ -86,15 +86,6 @@ class PvPlant(Source):
 
         """
 
-        """
-        PV-timeseries
-
-        Creates a timeseries for the AC-power output of a 1 kWp PV-power plant
-        The model is chosen to be simple and fast so the user does not need to
-        wait
-        Irradiance on plane is calculated for specified location, weather data
-        and PV-Module orientation and multiplied with system efficieny
-        """
 
         nv = create_invest_if_wanted(
             optimise_cap=expandable,
@@ -141,6 +132,7 @@ class PvPlant(Source):
         super().__init__(label=label, outputs=outputs)
 
 
+
 def create_pv_production_timeseries(
     lat,
     lon,
@@ -153,14 +145,15 @@ def create_pv_production_timeseries(
     gcr=0.8,
     mounting_type="fix tilt",
 ):
-
-    # This is an internal function that can be called within the component.
-    # The component has an expandable menu that can be called over:
-    # "Generate PV-timeseries":
-    # Here additional inputparameters are visible: tilt,azimuth,gcr,
-    # mounting_type,system_efficiency
-    # Under these inputs another button saying: "Generate-timeseries now" does
-    # start this function
+    '''
+    This is an internal function that can be called within the component.
+    The component has an expandable menu that can be called over:
+    "Generate PV-timeseries":
+    Here additional inputparameters are visible: tilt,azimuth,gcr,
+    mounting_type,system_efficiency
+    Under these inputs another button saying: "Generate-timeseries now" does
+    start this function
+    '''
 
     # create site location and times characteristics
     lat = lat  # project input

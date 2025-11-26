@@ -37,6 +37,8 @@ class PvPlant(Source):
           *output*
             1. to_bus : Electricity
 
+        .. include:: docstring_parameter_description.rst
+
         Parameters
         ----------
         label : str
@@ -46,11 +48,9 @@ class PvPlant(Source):
         installed_capacity : float, default=0
             Already existing installed capacity.
         capex_specific : float, default=1000
-            Specific investment costs of the asset related to the
-            installed capacity (CAPEX).
+            |capex_fix|
         opex_specific : float, default=0.01
-            Costs associated with a flow through/from the asset
-            (OPEX_var or fuel costs).
+            |opex_fix|
         lifetime : int, default=25
             Number of operational years of the asset until it has to
             be replaced.

@@ -95,9 +95,9 @@ def get_replacement_costs(
             / (1 + discount_factor) ** project_lifetime
         )
         replacement_costs -= value_at_project_end
-        present_value_of_capital_expenditures.loc[project_lifetime] = (
-            -value_at_project_end
-        )
+        present_value_of_capital_expenditures.loc[
+            project_lifetime
+        ] = -value_at_project_end
 
     return replacement_costs
 
@@ -112,9 +112,12 @@ def _create_invest_if_wanted(
     age_installed,
 ):
     if optimise_cap is True:
-        epc = project_data.calculate_epc(
-            capex_var, lifetime, age_installed, method="oemof"
-        ) + opex_fix
+        epc = (
+            project_data.calculate_epc(
+                capex_var, lifetime, age_installed, method="oemof"
+            )
+            + opex_fix
+        )
         return Investment(ep_costs=epc)
     else:
         return existing_capacity

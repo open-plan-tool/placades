@@ -1,6 +1,6 @@
 from oemof.network import Node
-from oemof.solph.flows import Flow
 from oemof.network import Sink
+from oemof.solph.flows import Flow
 
 
 class Demand(Sink):
@@ -60,7 +60,8 @@ class Demand(Sink):
             },
         )
 
-        #add a description on how the GUI looks?
+        # add a description on how the GUI looks?
+
 
 #
 # from demandlib import bdew

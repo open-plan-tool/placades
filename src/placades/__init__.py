@@ -13,13 +13,13 @@ from placades.typemap import TYPEMAP
 
 __all__ = [
     "CHP",
-    "PvPlant",
+    "TYPEMAP",
     "Battery",
     "CarrierBus",
-    "WindTurbine",
     "Demand",
     "Excess",
+    "Project",
+    "PvPlant",
     "Source",
-    "TYPEMAP",
-    "Project"
+    "WindTurbine",
 ]

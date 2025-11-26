@@ -10,7 +10,7 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - |github-actions| |codecov|
+      - |github-actions|
     * - package
       - |version| |wheel| |supported-versions| |supported-implementations| |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/placades/badge/?style=flat
@@ -19,10 +19,6 @@ Overview
 
 .. |github-actions| image:: https://github.com/open-plan-tool/placades/actions/workflows/github-actions.yml/badge.svg
     :alt: GitHub Actions Build Status
-    :target: https://github.com/open-plan-tool/placades/actions
-
-.. |codecov| image:: https://raw.githubusercontent.com/open-plan-tool/placades/coverage-badge/coverage.svg
-    :alt: Coverage Status
     :target: https://github.com/open-plan-tool/placades/actions
 
 .. |version| image:: https://img.shields.io/pypi/v/placades.svg

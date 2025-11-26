@@ -1,9 +1,9 @@
 import pytest
 from oemof.solph import Bus
 
+from placades import CarrierBus
 from placades.facades.komponenten import CHP
 from placades.facades.komponenten import Battery
-from placades import CarrierBus
 
 
 class TestCHP:

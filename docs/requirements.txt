@@ -1,2 +1,6 @@
 sphinx>=1.3
 furo
+oemof-solph
+oemof-network
+pvlib
+.

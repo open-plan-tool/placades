@@ -8,7 +8,7 @@ def above_five_check(n):
 def float_check(n):
     try:
         n = float(n)
-    except Exception as e:
+    except Exception:
         msg = f"The input {n} cannot be converted to float."
         raise ValueError(msg)
     return n

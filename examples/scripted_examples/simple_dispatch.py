@@ -63,12 +63,13 @@ def main():
         )
     )
 
-    energy_system.add(PvPlant(
+    energy_system.add(
+        PvPlant(
             "pv",
             bus_elec,
             installed_capacity=50,
             pv_production_timeseries=data["pv"],
-            expandable=False
+            expandable=False,
         )
     )
 

@@ -1,4 +1,6 @@
-# class Dso(Node):
+# from oemof.network import Node
+#
+# class Dso(Node):    #todo : How to actually implement a subnetwork?
 #     def __init__(
 #         self,
 #         name,

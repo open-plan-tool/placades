@@ -66,7 +66,7 @@ class WindTurbine(Source):
         nv = _create_invest_if_wanted(
             optimise_cap=expandable,
             capex_var=capex_specific,
-            opex_fix=opex_fix,
+            opex_fix=opex_specific,
             lifetime=lifetime,
             age_installed=age_installed,
             existing_capacity=installed_capacity,

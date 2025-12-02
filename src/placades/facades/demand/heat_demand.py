@@ -3,6 +3,7 @@ from oemof.solph.flows import Flow
 
 
 class Demand(Sink):
+
     """
     Short description
 
@@ -34,8 +35,13 @@ class Demand(Sink):
     >>> hbus = Bus(label="my_heat_bus")
     """
 
+
+
+        # add a description on how the GUI looks?
+
     def __init__(self, label, bus, profile):
-        self.profile = profile  # ToDo: Soll das zusätzlich hier hin? -> yes
+        self.profile = profile
+        self.name = label
         super().__init__(
             label=label,
             inputs={
@@ -45,11 +51,6 @@ class Demand(Sink):
                 )
             },
         )
-
-        # add a description on how the GUI looks?
-
-
-
 
 
 class Excess(Sink):

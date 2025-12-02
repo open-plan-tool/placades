@@ -20,7 +20,7 @@ from placades import WindTurbine
 
 def main():
     # Read data file
-    project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
+    project = Project(name="test", lifetime=20, tax=0, discount_factor=0.01)
     define_logging()
     filename = Path(Path(__file__).parent, "input_data.csv")
     data = pd.read_csv(filename)
@@ -57,9 +57,16 @@ def main():
             label="wind",
             bus_out_electricity=bus_elec,
             wind_profile=data["wind"],
-            installed_capacity=66.3,
+            installed_capacity=0,
             project_data=project,
-            expandable=False,
+            expandable=True,
+            age_installed=0,
+            capex_specific=1000,
+            opex_specific=10,
+            dispatch_costs=0,
+            lifetime=25,
+            maximum_capacity=999,
+            fix=False,
         )
     )
 
@@ -67,9 +74,17 @@ def main():
         PvPlant(
             "pv",
             bus_elec,
-            installed_capacity=50,
+            installed_capacity=0,
             pv_production_timeseries=data["pv"],
-            expandable=False,
+            expandable=True,
+            age_installed=0,
+            capex_specific=1000,
+            opex_specific=10,
+            dispatch_costs=0,
+            lifetime=25,
+            maximum_capacity=999,
+            project_data=project,
+            fix=False,
         )
     )
 

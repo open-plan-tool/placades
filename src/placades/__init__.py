@@ -1,8 +1,8 @@
 __version__ = "0.0.0"
 
 from placades.facades.buses.carrier import CarrierBus
-from placades.facades.demand.demand import Demand
-from placades.facades.demand.demand import Excess
+from placades.facades.demand.heat_demand import Demand
+from placades.facades.demand.heat_demand import Excess
 from placades.facades.komponenten import CHP
 from placades.facades.komponenten import Battery
 from placades.facades.production.pv import PvPlant

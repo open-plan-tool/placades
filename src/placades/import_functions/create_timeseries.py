@@ -23,7 +23,7 @@ def apply_curtailability_if_wanted(timeseries, curtailable):
         vmax = timeseries
     else:
         fix = timeseries
-        vmax = None
+        vmax = 1
     return fix, vmax
 
 

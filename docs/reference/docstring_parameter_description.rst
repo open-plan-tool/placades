@@ -16,8 +16,18 @@
 
 .. |expandable| replace:: Choose if the capacity of the asset should be optimzed/extended
 
+.. |installed_capacity|:: Already installed capacity.
+
 .. |maximum_capacity| replace:: Maximum total capacity of the asset that can be installed
 
-.. |fix| replace:: Determines if the asset can be curtailed or whether it must feed its maximum power
+.. |curtailable| replace:: Determines if the asset can be curtailed or whether it must feed its maximum power
 
 .. |project_data| replace:: The framework of the project in which the asset is ought to be optimized
+
+.. |timeseries| replace:: A list of values that resembles the input/output at each timestep. Length should match the
+    number of timesteps.
+
+.. |normed_production_timeseries| replace:: A list of values that resembles the output at each timestep. The
+    timeseries should be normed in reference to the characteristic quantity of the optimization. The Length should
+    match the number of timesteps.
+

@@ -75,7 +75,7 @@ def main():
             "pv",
             bus_elec,
             installed_capacity=0,
-            pv_production_timeseries=data["pv"],
+            normed_production_timeseries=data["pv"],
             expandable=True,
             age_installed=0,
             capex_specific=1000,

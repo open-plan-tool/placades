@@ -1,7 +1,32 @@
 from demandlib import bdew
 import datetime
 import pvlib
-import pandas as  pd
+import pandas as pd
+
+
+def apply_curtailability_if_wanted(
+    timeseries,
+    curtailable):
+    """
+    This function is called to define if a source is curtailable.
+
+    .. include:: docstring_parameter_description.rst
+    Arguments:
+    timeseries : timeseries
+        |timeseries|
+    curtailable:    bool
+        |curtailable|
+
+    """
+
+    if curtailable:
+        fix = None
+        vmax = timeseries
+    else:
+        fix = timeseries
+        vmax = None
+    return fix, vmax
+
 
 def create_pv_production_timeseries(
     lat,
@@ -98,19 +123,23 @@ def create_pv_production_timeseries(
     return ac
 
 
-
-def create_heat_demand(timeframe,
-outdoor_temperature,
-profile_type,annual_heat_demand,building_year,wind_class=0):
+def create_heat_demand(
+    timeframe,
+    outdoor_temperature,
+    profile_type,
+    annual_heat_demand,
+    building_year,
+    wind_class=0,
+):
 
     match wind_class:
         case "not windy":
-            wind_class=0
+            wind_class = 0
         case "windy":
-            wind_class=1
+            wind_class = 1
 
     building_class = 0
-    if profile_type != 'residential':
+    if profile_type != "residential":
         building_class = 0
     else:
         match building_year:
@@ -137,38 +166,37 @@ profile_type,annual_heat_demand,building_year,wind_class=0):
             case y if y >= 2011:
                 building_class = 11
 
-
     match profile_type:
-        case 'single-family house':
-            profile_type = 'EFH'
-        case 'apartment building':
-            profile_type = 'MFH'
-        case 'Commerce/Services general':
-            profile_type = 'GHD'
-        case 'restaurants':
-            profile_type = 'GGA'
-        case 'retail and wholesale':
-            profile_type = 'GBH'
-        case 'metal and automotive':
-            profile_type = 'GMK'
-        case 'household-like business enterprises':
-            profile_type = 'GMF'
-        case 'accommodation':
-            profile_type = 'GBH'
-        case 'Local authorities, credit institutions and insurancecompanies':
-            profile_type = 'GKO'
-        case 'other operational services':
-            profile_type = 'GBD'
-        case 'laundries, dry cleaning':
-            profile_type = 'GWA'
-        case 'horticulture':
-            profile_type = 'GGB'
-        case 'bakery':
-            profile_type = 'GBA'
-        case 'paper and printing':
-            profile_type = 'GPD'
+        case "single-family house":
+            profile_type = "EFH"
+        case "apartment building":
+            profile_type = "MFH"
+        case "Commerce/Services general":
+            profile_type = "GHD"
+        case "restaurants":
+            profile_type = "GGA"
+        case "retail and wholesale":
+            profile_type = "GBH"
+        case "metal and automotive":
+            profile_type = "GMK"
+        case "household-like business enterprises":
+            profile_type = "GMF"
+        case "accommodation":
+            profile_type = "GBH"
+        case "Local authorities, credit institutions and insurancecompanies":
+            profile_type = "GKO"
+        case "other operational services":
+            profile_type = "GBD"
+        case "laundries, dry cleaning":
+            profile_type = "GWA"
+        case "horticulture":
+            profile_type = "GGB"
+        case "bakery":
+            profile_type = "GBA"
+        case "paper and printing":
+            profile_type = "GPD"
 
-    holidays = { #ToDo: Create table based on location of project
+    holidays = {  # ToDo: Create table based on location of project
         datetime.date(2010, 5, 24): "Whit Monday",
         datetime.date(2010, 4, 5): "Easter Monday",
         datetime.date(2010, 5, 13): "Ascension Thursday",

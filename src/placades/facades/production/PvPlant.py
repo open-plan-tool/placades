@@ -2,6 +2,7 @@ from oemof.network import Source
 from oemof.solph import Flow
 
 from placades.investment import _create_invest_if_wanted
+from placades.import_functions import create_timeseries
 
 
 class PvPlant(Source):
@@ -9,7 +10,7 @@ class PvPlant(Source):
         self,
         label,  # automatic/default?
         bus_out_electricity,
-        pv_production_timeseries,
+        normed_production_timeseries,
         age_installed=0,
         installed_capacity=0,
         capex_specific=None,
@@ -19,7 +20,7 @@ class PvPlant(Source):
         expandable=False,
         maximum_capacity=None,
         project_data=None,
-        fix=False,
+        curtailable=False,
     ):
         """
         Photovoltaic power plant for solar electricity generation.
@@ -44,10 +45,13 @@ class PvPlant(Source):
         ----------
         label : str
             |name|
+        normed_production_timeseries: str
+            |normed_production_timeseries|
         age_installed : int, default=0
             |age_installed|
         installed_capacity : float, default=0
-            Already existing installed capacity.
+            |installed_capacity|
+            #todo: how do we want to handle installed capacities and their replacement? espically when extension is enabled
         capex_specific : float, default=1000
             |capex_fix|
         opex_specific : float, default=0.01
@@ -58,13 +62,12 @@ class PvPlant(Source):
             |expandable|
         maximum_capacity : float or None, default=None
             |maximum_capacity|
-        fix : bool, default=False
-            |fix|
+        curtailable : bool, default=False
+            |curtailable|
         dispatch_costs: float, default=0
             |dispatch_costs|
         project_data: (str, int, float, float), default=None
             |project_data|
-
 
 
         Examples
@@ -75,7 +78,7 @@ class PvPlant(Source):
         >>> my_pv = PvPlant(
         >>>     label="my_py_plant",
         >>>     bus_out_electricity=ebus,
-        >>>     pv_production_timeseries="PV.csv",
+        >>>     normed_production_timeseries="PV.csv",
         >>>     age_installed=0, #a
         >>>     installed_capacity=0, #a
         >>>     capex_specific=1000, #€/kWp
@@ -84,8 +87,8 @@ class PvPlant(Source):
         >>>     lifetime=25, #a
         >>>     expandable=True,
         >>>     maximum_capacity=1000, #kWp
-        >>>     project_data=(name="Project_X", lifetime=20, tax=0, discount_factor=0.01), #Projectdata
-        >>>     fix=False)
+        >>>     project_data=(name = "Project_X", lifetime=20, tax=0, discount_factor=0.01), #Projectdata
+        >>>     curtailable=True)
 
         """
 
@@ -98,12 +101,8 @@ class PvPlant(Source):
             existing_capacity=installed_capacity,
             project_data=project_data,
         )
-        if fix:
-            fix = pv_production_timeseries
-            vmax = None
-        else:
-            fix = None
-            vmax = pv_production_timeseries
+
+        fix,vmax = create_timeseries.apply_curtailability_if_wanted(normed_production_timeseries, curtailable)
 
         outputs = {
             bus_out_electricity: Flow(
@@ -124,10 +123,7 @@ class PvPlant(Source):
         self.optimize_cap = expandable
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = True
-        self.normalised_output = pv_production_timeseries
+        self.normalised_output = normed_production_timeseries
         self.fix = fix
 
         super().__init__(label=label, outputs=outputs)
-
-
-

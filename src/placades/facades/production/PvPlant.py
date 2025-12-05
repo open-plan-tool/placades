@@ -1,5 +1,5 @@
-from oemof.solph.components import Source
 from oemof.solph import Flow
+from oemof.solph.components import Source
 
 from placades.import_functions import create_timeseries
 from placades.investment import _create_invest_if_wanted

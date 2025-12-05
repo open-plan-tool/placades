@@ -130,5 +130,5 @@ class Boiler(Converter):
             label=label,
             outputs=outputs,
             inputs=inputs,
-            conversion_factors={output_bus: 0.3},
+            conversion_factors={output_bus: efficiency},
         )

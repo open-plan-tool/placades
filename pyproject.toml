@@ -39,7 +39,7 @@ classifiers = [
 keywords = [
     # eg: "keyword1", "keyword2", "keyword3",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "oemof-network",
     "oemof-solph",

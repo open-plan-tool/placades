@@ -6,14 +6,15 @@ from placades import Excess
 from placades import Project
 from placades import PvPlant
 from placades import Source
-from placades import WindTurbine
+
+# from placades import WindTurbine
 
 TYPEMAP = {
     "CHP": CHP,
     "Battery": Battery,
     "CarrierBus": CarrierBus,
     "pv_plant": PvPlant,
-    "WindTurbine": WindTurbine,
+    # "WindTurbine": WindTurbine,
     "Demand": Demand,
     "Excess": Excess,
     "Source": Source,

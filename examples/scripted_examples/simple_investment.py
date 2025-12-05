@@ -92,7 +92,7 @@ def main():
 
     # demands (electricity/heat)
     energy_system.add(
-        Demand(label="demand_el", bus=bus_elec, profile=data["demand_el"] * 10)
+        Demand(name="demand_el", bus=bus_elec, profile=data["demand_el"] * 10)
     )
 
     # energy_system.add(

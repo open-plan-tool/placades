@@ -1,4 +1,4 @@
-from oemof.network import Sink
+from oemof.solph.components import Sink
 from oemof.solph.flows import Flow
 
 
@@ -15,7 +15,7 @@ class GasDemand(Sink):
 
     Parameters
     ----------
-    label : str
+    name : str
         Name of the asset.
     input_timeseries : str or None, default=None
         Name of the csv file containing the input generation or
@@ -27,19 +27,20 @@ class GasDemand(Sink):
     >>> gas_bus = Bus(label="gas_bus")
     >>> my_gas_demand = GasDemand(
     ...     name="industrial_gas_demand",
+    ...     bus=gas_bus,
     ...     input_timeseries="gas_demand.csv",
     ... )
 
     """
 
-    def __init__(self, label, bus, profile):
-        self.profile = profile
-        self.name = label
+    def __init__(self, name, bus, input_timeseries):
+        self.profile = input_timeseries
+        self.name = name
         super().__init__(
-            label=label,
+            label=name,
             inputs={
                 bus: Flow(
-                    fix=profile,
+                    fix=input_timeseries,
                     nominal_capacity=1,
                 )
             },

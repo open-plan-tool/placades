@@ -1,4 +1,4 @@
-from oemof.network import Sink
+from oemof.solph.components import Sink
 from oemof.solph.flows import Flow
 
 
@@ -27,19 +27,20 @@ class H2Demand(Sink):
     >>> h2_bus = Bus(label="hydrogen_bus")
     >>> my_h2_demand = H2Demand(
     ...     name="fuel_cell_demand",
+    ...     bus=h2_bus,
     ...     input_timeseries="hydrogen_demand.csv",
     ... )
 
     """
 
-    def __init__(self, label, bus, profile):
-        self.profile = profile
-        self.name = label
+    def __init__(self, name, bus, input_timeseries):
+        self.profile = input_timeseries
+        self.name = name
         super().__init__(
-            label=label,
+            label=name,
             inputs={
                 bus: Flow(
-                    fix=profile,
+                    fix=input_timeseries,
                     nominal_capacity=1,
                 )
             },

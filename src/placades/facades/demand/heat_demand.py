@@ -1,4 +1,4 @@
-from oemof.network import Sink
+from oemof.solph.components import Sink
 from oemof.solph.flows import Flow
 
 
@@ -21,7 +21,7 @@ class Demand(Sink):
 
     Parameters
     ----------
-    label : str or tuple
+    name : str or tuple
         Unique identifier of the instance.
     bus : oemof.solph.Bus or placade.CarrierBus
         Valid network bus with the carrier: electricity
@@ -36,11 +36,11 @@ class Demand(Sink):
 
     # add a description on how the GUI looks?
 
-    def __init__(self, label, bus, profile):
+    def __init__(self, name, bus, profile):
         self.profile = profile
-        self.name = label
+        self.name = name
         super().__init__(
-            label=label,
+            label=name,
             inputs={
                 bus: Flow(
                     fix=profile,

@@ -1,4 +1,4 @@
-from oemof.network import Sink
+from oemof.solph.components import Sink
 from oemof.solph.flows import Flow
 
 
@@ -27,20 +27,21 @@ class Demand(Sink):
     >>> ebus = Bus(label="electricity_bus")
     >>> my_demand = Demand(
     ...     name="office_demand",
+    ...     bus=ebus,
     ...     input_timeseries="electricity_demand.csv",
     ... )
 
     """
 
-    def __init__(self, label, bus, profile):
-        self.profile = profile
-        self.name = label
+    def __init__(self, name, bus, input_timeseries):
+        self.profile = input_timeseries
+        self.name = name
 
         super().__init__(
-            label=label,
+            label=name,
             inputs={
                 bus: Flow(
-                    fix=profile,
+                    fix=input_timeseries,
                     nominal_capacity=1,
                 )
             },

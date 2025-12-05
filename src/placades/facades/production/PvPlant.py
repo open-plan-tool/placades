@@ -1,4 +1,4 @@
-from oemof.network import Source
+from oemof.solph.components import Source
 from oemof.solph import Flow
 
 from placades.import_functions import create_timeseries
@@ -37,7 +37,8 @@ class PvPlant(Source):
             1. to_bus : Electricity
 
         :Optimization:
-          The characteristic quantity of the optimization is the *nominal power-output* of the PV-plant given in kWp
+          The characteristic quantity of the optimization is the *nominal
+          power-output* of the PV-plant given in kWp
 
         .. include:: docstring_parameter_description.rst
 
@@ -45,7 +46,7 @@ class PvPlant(Source):
         ----------
         label : str
             |name|
-        normed_production_timeseries: str
+        normed_production_timeseries: array-like
             |normed_production_timeseries|
         age_installed : int, default=0
             |age_installed|
@@ -66,29 +67,32 @@ class PvPlant(Source):
             |curtailable|
         dispatch_costs: float, default=0
             |dispatch_costs|
-        project_data: (str, int, float, float), default=None
+        project_data: Project, default=None
             |project_data|
 
 
         Examples
         --------
+        >>> from placades import Project
         >>> from oemof.solph import Bus
-        >>> from oemof.network import Source
         >>> ebus = Bus(label="electricity_bus")
         >>> my_pv = PvPlant(
-        >>>     label="my_py_plant",
-        >>>     bus_out_electricity=ebus,
-        >>>     normed_production_timeseries="PV.csv",
-        >>>     age_installed=0, #a
-        >>>     installed_capacity=0, #a
-        >>>     capex_specific=1000, #€/kWp
-        >>>     opex_specific=10, # €/kWp/a
-        >>>     dispatch_costs=0, # €/kWh
-        >>>     lifetime=25, #a
-        >>>     expandable=True,
-        >>>     maximum_capacity=1000, #kWp
-        >>>     project_data=(name = "Project_X", lifetime=20, tax=0, discount_factor=0.01), #Projectdata
-        >>>     curtailable=True)
+        ...     label="my_py_plant",
+        ...     bus_out_electricity=ebus,
+        ...     normed_production_timeseries=[1,2,3],
+        ...     age_installed=0, #a
+        ...     installed_capacity=0, #a
+        ...     capex_specific=1000, #€/kWp
+        ...     opex_specific=10, # €/kWp/a
+        ...     dispatch_costs=0, # €/kWh
+        ...     lifetime=25, #a
+        ...     expandable=True,
+        ...     maximum_capacity=1000, #kWp
+        ...     project_data=Project(
+        ...         name="Project_X", lifetime=20, tax=0,
+        ...         discount_factor=0.01),
+        ...     curtailable=True
+        ...  )
 
         """
 

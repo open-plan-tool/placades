@@ -74,6 +74,8 @@ class Boiler(Converter):
         ...     installed_capacity=100,
         ...     efficiency=0.9,
         ... )
+        >>> my_gas_boiler.efficiency
+        0.9
 
         """
         self.name = name

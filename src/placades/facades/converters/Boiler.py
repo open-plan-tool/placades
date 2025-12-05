@@ -1,20 +1,26 @@
+from oemof.solph import Flow
 from oemof.solph.components import Converter
+
+from placades.investment import _create_invest_if_wanted
 
 
 class Boiler(Converter):
     def __init__(
         self,
-        name,
+        label,
+        input_bus,
+        output_bus,
         age_installed=0,
         installed_capacity=0,
-        capex_fix=1000,
-        capex_var=1000,
-        opex_fix=10,
-        opex_var=0.01,
+        capex_specific=1000,
+        opex_specific=1000,
         lifetime=20,
         optimize_cap=False,
         maximum_capacity=None,
         efficiency=0.8,
+        dispatch_costs=0,
+        expandable=True,
+        project_data=None,
     ):
         """
         Boiler for heat generation.
@@ -66,27 +72,63 @@ class Boiler(Converter):
 
         Examples
         --------
+
+        >>> from placades import Project
         >>> from oemof.solph import Bus
         >>> gas_bus = Bus(label="gas_bus")
         >>> heat_bus = Bus(label="heat_bus")
         >>> my_gas_boiler = Boiler(
-        ...     name="central_gas_boiler",
-        ...     installed_capacity=100,
-        ...     efficiency=0.9,
-        ... )
-        >>> my_gas_boiler.efficiency
-        0.9
+        ...     label="central_gas_boiler",
+        ...     input_bus=gas_bus,
+        ...     output_bus=heat_bus,
+        ...     age_installed=0,
+        ...     installed_capacity=0,
+        ...     capex_specific=1000,
+        ...     opex_specific=1000,
+        ...     lifetime=20,
+        ...     optimize_cap=False,
+        ...     maximum_capacity=None,
+        ...     efficiency=0.8,
+        ...     dispatch_costs=0,
+        ...     expandable=True,
+        ...     project_data=Project(
+        ...         name="Project_X", lifetime=20, tax=0,
+        ...         discount_factor=0.01),
+        ...     )
 
         """
-        self.name = name
+        nv = _create_invest_if_wanted(
+            optimise_cap=expandable,
+            capex_var=capex_specific,
+            opex_fix=opex_specific,
+            lifetime=lifetime,
+            age_installed=age_installed,
+            existing_capacity=installed_capacity,
+            project_data=project_data,
+        )
+
+        inputs = {input_bus: Flow()}
+
+        outputs = {
+            output_bus: Flow(
+                nominal_capacity=nv,
+                variable_costs=dispatch_costs,
+            )
+        }
+
+        self.name = label
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_fix = capex_fix
-        self.capex_var = capex_var
-        self.opex_fix = opex_fix
-        self.opex_var = opex_var
+        self.capex_fix = capex_specific
+        self.capex_var = opex_specific
+        self.dispatch_costs = dispatch_costs
         self.lifetime = lifetime
         self.optimize_cap = optimize_cap
         self.maximum_capacity = maximum_capacity
         self.efficiency = efficiency
-        super().__init__()
+        super().__init__(
+            label=label,
+            outputs=outputs,
+            inputs=inputs,
+            conversion_factors={output_bus: 0.3},
+        )

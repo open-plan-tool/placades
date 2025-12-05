@@ -30,4 +30,3 @@
 .. |normed_production_timeseries| replace:: A list of values that resembles the output at each timestep. The
     timeseries should be normed in reference to the characteristic quantity of the optimization. The Length should
     match the number of timesteps.
-

@@ -1,7 +1,7 @@
 from oemof.solph import Bus
 
 
-class CarrierBus(Bus): #todo add shortage source and excess sink with costs
+class CarrierBus(Bus):  # todo add shortage source and excess sink with costs
     """Bus mit Medium-Attribut"""
 
     def __init__(self, label, carrier=None):

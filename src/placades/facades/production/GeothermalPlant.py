@@ -1,5 +1,5 @@
 from oemof.network import Source
-from oemof.solph import Flow
+
 
 class GeothermalPlant(Source):
     def __init__(
@@ -90,5 +90,3 @@ class GeothermalPlant(Source):
         self.renewable_asset = renewable_asset
         self.input_timeseries = input_timeseries
         super().__init__()
-
-

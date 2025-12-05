@@ -1,5 +1,4 @@
 from oemof.solph.components import Converter
-from oemof.solph import Flow
 
 
 class Boiler(Converter):

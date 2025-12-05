@@ -1,5 +1,5 @@
 from oemof.solph.components import GenericStorage
-from oemof.solph import Flow
+
 
 class FuelStorage(GenericStorage):
     def __init__(

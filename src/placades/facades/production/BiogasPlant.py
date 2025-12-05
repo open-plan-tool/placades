@@ -1,5 +1,5 @@
 from oemof.network import Source
-from oemof.solph import Flow
+
 
 class BiogasPlant(Source):
     def __init__(

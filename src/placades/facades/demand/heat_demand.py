@@ -3,7 +3,6 @@ from oemof.solph.flows import Flow
 
 
 class Demand(Sink):
-
     """
     Short description
 
@@ -35,9 +34,7 @@ class Demand(Sink):
     >>> hbus = Bus(label="my_heat_bus")
     """
 
-
-
-        # add a description on how the GUI looks?
+    # add a description on how the GUI looks?
 
     def __init__(self, label, bus, profile):
         self.profile = profile

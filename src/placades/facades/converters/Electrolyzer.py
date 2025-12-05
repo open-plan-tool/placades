@@ -1,5 +1,5 @@
 from oemof.solph.components import Converter
-from oemof.solph import Flow
+
 
 class Electrolyzer(Converter):
     def __init__(

@@ -1,8 +1,8 @@
 from oemof.network import Source
 from oemof.solph import Flow
 
-from placades.investment import _create_invest_if_wanted
 from placades.import_functions import create_timeseries
+from placades.investment import _create_invest_if_wanted
 
 
 class PvPlant(Source):
@@ -102,7 +102,9 @@ class PvPlant(Source):
             project_data=project_data,
         )
 
-        fix,vmax = create_timeseries.apply_curtailability_if_wanted(normed_production_timeseries, curtailable)
+        fix, vmax = create_timeseries.apply_curtailability_if_wanted(
+            normed_production_timeseries, curtailable
+        )
 
         outputs = {
             bus_out_electricity: Flow(

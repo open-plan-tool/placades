@@ -1,12 +1,11 @@
-from demandlib import bdew
 import datetime
-import pvlib
+
 import pandas as pd
+import pvlib
+from demandlib import bdew
 
 
-def apply_curtailability_if_wanted(
-    timeseries,
-    curtailable):
+def apply_curtailability_if_wanted(timeseries, curtailable):
     """
     This function is called to define if a source is curtailable.
 
@@ -131,7 +130,6 @@ def create_heat_demand(
     building_year,
     wind_class=0,
 ):
-
     match wind_class:
         case "not windy":
             wind_class = 0

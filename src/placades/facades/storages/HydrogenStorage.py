@@ -1,5 +1,4 @@
 from oemof.solph.components import GenericStorage
-from oemof.solph import Flow
 
 
 class HydrogenStorage(GenericStorage):

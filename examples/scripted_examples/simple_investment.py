@@ -20,7 +20,9 @@ from placades import WindTurbine
 
 def main():
     # Read data file
-    project = Project(name="test", lifetime=20, tax=0, discount_factor=0.01) #todo: Fix: discount factor=0 leads to error
+    project = Project(
+        name="test", lifetime=20, tax=0, discount_factor=0.01
+    )  # todo: Fix: discount factor=0 leads to error
     define_logging()
     filename = Path(Path(__file__).parent, "input_data.csv")
     data = pd.read_csv(filename)

@@ -3,4 +3,5 @@ furo
 oemof-solph
 oemof-network
 pvlib
+demandlib
 .

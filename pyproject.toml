@@ -46,7 +46,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pvlib"]
+dev = ["pytest", "pvlib", "demandlib"]
 dummy = ["oemof"]
 
 [project.urls]

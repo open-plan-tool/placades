@@ -1,5 +1,5 @@
-from oemof.solph import Flow
-from oemof.solph.components import Converter
+from placades import Flow
+from placades import Converter
 
 from placades.investment import _create_invest_if_wanted
 
@@ -15,7 +15,6 @@ class Boiler(Converter):
         capex_specific=1000,
         opex_specific=1000,
         lifetime=20,
-        optimize_cap=False,
         maximum_capacity=None,
         efficiency=0.8,
         dispatch_costs=0,
@@ -74,7 +73,7 @@ class Boiler(Converter):
         --------
 
         >>> from placades import Project
-        >>> from oemof.solph import Bus
+        >>> from placades import Bus
         >>> gas_bus = Bus(label="gas_bus")
         >>> heat_bus = Bus(label="heat_bus")
         >>> my_gas_boiler = Boiler(
@@ -86,7 +85,6 @@ class Boiler(Converter):
         ...     capex_specific=1000,
         ...     opex_specific=1000,
         ...     lifetime=20,
-        ...     optimize_cap=False,
         ...     maximum_capacity=None,
         ...     efficiency=0.8,
         ...     dispatch_costs=0,
@@ -123,7 +121,6 @@ class Boiler(Converter):
         self.capex_var = opex_specific
         self.dispatch_costs = dispatch_costs
         self.lifetime = lifetime
-        self.optimize_cap = optimize_cap
         self.maximum_capacity = maximum_capacity
         self.efficiency = efficiency
         super().__init__(

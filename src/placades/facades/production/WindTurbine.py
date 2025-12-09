@@ -1,5 +1,5 @@
-from oemof.network import Source
-from oemof.solph import Flow
+from placades import Source
+from placades import Flow
 
 from placades.investment import _create_invest_if_wanted
 

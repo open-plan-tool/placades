@@ -1,5 +1,5 @@
-from oemof.solph.components import Sink
-from oemof.solph.flows import Flow
+from placades import Sink
+from placades import Flow
 
 
 class GasDemand(Sink):
@@ -23,7 +23,7 @@ class GasDemand(Sink):
 
     Examples
     --------
-    >>> from oemof.solph import Bus
+    >>> from placades import Bus
     >>> gas_bus = Bus(label="gas_bus")
     >>> my_gas_demand = GasDemand(
     ...     name="industrial_gas_demand",

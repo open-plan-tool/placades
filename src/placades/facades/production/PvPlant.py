@@ -1,5 +1,5 @@
-from oemof.solph import Flow
-from oemof.solph.components import Source
+from placades import Flow
+from placades import Source
 
 from placades.import_functions import create_timeseries
 from placades.investment import _create_invest_if_wanted
@@ -8,8 +8,8 @@ from placades.investment import _create_invest_if_wanted
 class PvPlant(Source):
     def __init__(
         self,
-        label,  # automatic/default?
-        bus_out_electricity,
+        label,
+        bus_out,
         normed_production_timeseries,
         age_installed=0,
         installed_capacity=0,
@@ -19,8 +19,8 @@ class PvPlant(Source):
         lifetime=25,
         expandable=False,
         maximum_capacity=None,
+        curtailable=True,
         project_data=None,
-        curtailable=False,
     ):
         """
         Photovoltaic power plant for solar electricity generation.
@@ -46,17 +46,20 @@ class PvPlant(Source):
         ----------
         label : str
             |name|
+        bus_out : bus object
+            |bus_out|
         normed_production_timeseries: array-like
             |normed_production_timeseries|
         age_installed : int, default=0
             |age_installed|
         installed_capacity : float, default=0
             |installed_capacity|
-            #todo: how do we want to handle installed capacities and their replacement? espically when extension is enabled
         capex_specific : float, default=1000
             |capex_fix|
         opex_specific : float, default=0.01
             |opex_fix|
+        dispatch_costs: float, default=0
+            |dispatch_costs|
         lifetime : int, default=25
             |lifetime|
         expandable : bool, default=True
@@ -65,9 +68,7 @@ class PvPlant(Source):
             |maximum_capacity|
         curtailable : bool, default=False
             |curtailable|
-        dispatch_costs: float, default=0
-            |dispatch_costs|
-        project_data: Project, default=None
+        project_data: Project object, default=None
             |project_data|
 
 
@@ -75,11 +76,11 @@ class PvPlant(Source):
         --------
         >>> from placades import Project
         >>> from oemof.solph import Bus
-        >>> ebus = Bus(label="electricity_bus")
+        >>> el_bus = Bus(label="electricity_bus")
         >>> my_pv = PvPlant(
         ...     label="my_py_plant",
-        ...     bus_out_electricity=ebus,
-        ...     normed_production_timeseries=[1,2,3],
+        ...     bus_out=el_bus,
+        ...     normed_production_timeseries=[1,0.5,0.9],
         ...     age_installed=0, #a
         ...     installed_capacity=0, #a
         ...     capex_specific=1000, #€/kWp
@@ -88,10 +89,10 @@ class PvPlant(Source):
         ...     lifetime=25, #a
         ...     expandable=True,
         ...     maximum_capacity=1000, #kWp
+        ...     curtailable=True,
         ...     project_data=Project(
         ...         name="Project_X", lifetime=20, tax=0,
         ...         discount_factor=0.01),
-        ...     curtailable=True
         ...  )
 
         """
@@ -111,7 +112,7 @@ class PvPlant(Source):
         )
 
         outputs = {
-            bus_out_electricity: Flow(
+            bus_out: Flow(
                 fix=fix,
                 max=vmax,
                 nominal_capacity=nv,

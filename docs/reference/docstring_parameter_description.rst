@@ -1,3 +1,7 @@
+.. |bus_out| replace:: Connected Bus component for the output flow.
+
+.. |bus_in| replace:: Connected Bus component for the input flow.
+
 .. |name| replace:: Name of the asset
 
 .. |opex_fix| replace:: Specific operational and maintenance costs of the

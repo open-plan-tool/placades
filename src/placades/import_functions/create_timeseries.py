@@ -47,6 +47,35 @@ def create_pv_production_timeseries(
     mounting_type,system_efficiency
     Under these inputs another button saying: "Generate-timeseries now" does
     start this function
+
+    latitude: numeric
+        latitude of the PV-plant (decimal degrees)
+    longitude: numeric
+        longitude of the PV-plant (decimal degrees)
+    tilt: numeric
+        Tilt angle in degrees (90° is vertical)
+    system_efficiency: numeric
+        Performace Ratio of the system (usually around 0,8)
+    azimuth: numeric
+        Azimuth angle of the module orientation in degrees (North is 0°)
+        Azimut angle of the rotation-axis for tracking systems
+    gcr: numeric
+        Ground Coverage Ratio (Ratio of the module-area to the ground-area of
+        the modulefield)
+    mounting_type: string
+        "fix tilt" for static systems or "tracker" for 1-axis tracking systems
+
+
+    Example
+
+    >>> production_timeseries=create_pv_production_timeseries(
+    ...     lat=50.587031,
+    ...     lon=50.587031,
+    ...     tilt=15,
+    ...     system_eff=0.85,
+    ...     azimuth=180,
+    ...     gcr=0.8,
+    ...     mounting_type="fix tilt")
     """
 
     # create site location and times characteristics
@@ -127,9 +156,45 @@ def create_heat_demand(
     outdoor_temperature,
     profile_type,
     annual_heat_demand,
-    building_year,
-    wind_class=0,
+    building_year=None,
+    wind_class="not windy",
 ):
+    """
+    timeframe:
+        timeframe of the timeperiod
+    outdoor_temperature: numeric (scalar or iterable)
+        Outside Air-temperature in °C
+    profile_type: str
+        "single-family house"
+        "apartment building"
+        "Commerce/Services general"
+        "restaurants"
+        "retail and wholesale"
+        "metal and automotive"
+        "accommodation"
+        "Local authorities, credit institutions and insurancecompanies"
+        "other operational services"
+        "laundries, dry cleaning"
+        "horticulture"
+        "bakery"
+        "paper and printing"
+    annual_heat_demand: numeric
+        total heat demand in the chosen timeperiod
+    building_year: int
+        only needed for non-residential buildings
+    wind_class: str
+        "not windy" or "windy"
+
+    >>> from demandlib import bdew
+    >>> heat_demand = create_heat_demand(
+    ...     timeframe=pd.date_range("2024-01-01 00:00", periods=3, freq="h"),
+    ...     outdoor_temperature=[2,3,1],
+    ...     profile_type="single-family house",
+    ...     annual_heat_demand=231,
+    ...     building_year=1992,
+    ...     wind_class="not windy",)
+    """
+
     match wind_class:
         case "not windy":
             wind_class = 0
@@ -138,7 +203,7 @@ def create_heat_demand(
 
     building_class = 0
     if profile_type != "residential":
-        building_class = 0
+        building_class = 1
     else:
         match building_year:
             case y if y <= 1918:
@@ -207,9 +272,9 @@ def create_heat_demand(
     }
 
     demand_profile = bdew.HeatBuilding(
-        timeframe.index,
+        timeframe,
         holidays=holidays,
-        temperature=outdoor_temperature,
+        temperature=pd.Series(outdoor_temperature),
         shlp_type=profile_type,
         building_class=building_class,
         wind_class=wind_class,

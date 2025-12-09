@@ -8,8 +8,8 @@ from placades.investment import _create_invest_if_wanted
 class PvPlant(Source):
     def __init__(
         self,
-        label,  # automatic/default?
-        bus_out_electricity,
+        label,
+        bus_out,
         normed_production_timeseries,
         age_installed=0,
         installed_capacity=0,
@@ -19,8 +19,8 @@ class PvPlant(Source):
         lifetime=25,
         expandable=False,
         maximum_capacity=None,
+        curtailable=True,
         project_data=None,
-        curtailable=False,
     ):
         """
         Photovoltaic power plant for solar electricity generation.
@@ -46,17 +46,20 @@ class PvPlant(Source):
         ----------
         label : str
             |name|
+        bus_out : bus object
+            |bus_out|
         normed_production_timeseries: array-like
             |normed_production_timeseries|
         age_installed : int, default=0
             |age_installed|
         installed_capacity : float, default=0
             |installed_capacity|
-            #todo: how do we want to handle installed capacities and their replacement? espically when extension is enabled
         capex_specific : float, default=1000
             |capex_fix|
         opex_specific : float, default=0.01
             |opex_fix|
+        dispatch_costs: float, default=0
+            |dispatch_costs|
         lifetime : int, default=25
             |lifetime|
         expandable : bool, default=True
@@ -65,20 +68,19 @@ class PvPlant(Source):
             |maximum_capacity|
         curtailable : bool, default=False
             |curtailable|
-        dispatch_costs: float, default=0
-            |dispatch_costs|
-        project_data: Project, default=None
+        project_data: Project object, default=None
             |project_data|
+
 
 
         Examples
         --------
         >>> from placades import Project
         >>> from oemof.solph import Bus
-        >>> ebus = Bus(label="electricity_bus")
+        >>> el_bus = Bus(label="electricity_bus")
         >>> my_pv = PvPlant(
         ...     label="my_py_plant",
-        ...     bus_out_electricity=ebus,
+        ...     bus_out=el_bus,
         ...     normed_production_timeseries=[1,2,3],
         ...     age_installed=0, #a
         ...     installed_capacity=0, #a
@@ -88,10 +90,8 @@ class PvPlant(Source):
         ...     lifetime=25, #a
         ...     expandable=True,
         ...     maximum_capacity=1000, #kWp
-        ...     project_data=Project(
-        ...         name="Project_X", lifetime=20, tax=0,
-        ...         discount_factor=0.01),
-        ...     curtailable=True
+        ...     curtailable=True,
+        ...     project_data=Project(name="Project_X", lifetime=20, tax=0,discount_factor=0.01),
         ...  )
 
         """
@@ -110,14 +110,6 @@ class PvPlant(Source):
             normed_production_timeseries, curtailable
         )
 
-        outputs = {
-            bus_out_electricity: Flow(
-                fix=fix,
-                max=vmax,
-                nominal_capacity=nv,
-                variable_costs=dispatch_costs,
-            )
-        }
 
         self.name = label
         self.age_installed = age_installed
@@ -129,7 +121,16 @@ class PvPlant(Source):
         self.optimize_cap = expandable
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = True
-        self.normalised_output = normed_production_timeseries
+        self.bus_out = bus_out
         self.fix = fix
 
-        super().__init__(label=label, outputs=outputs)
+        outputs = {
+            self.bus_out: Flow(
+                max=vmax,
+                fix=fix,
+                nominal_capacity=nv,
+                variable_costs=dispatch_costs,
+            )
+        }
+
+        super().__init__(label=label, outputs = outputs)

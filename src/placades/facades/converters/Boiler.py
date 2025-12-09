@@ -15,7 +15,6 @@ class Boiler(Converter):
         capex_specific=1000,
         opex_specific=1000,
         lifetime=20,
-        optimize_cap=False,
         maximum_capacity=None,
         efficiency=0.8,
         dispatch_costs=0,
@@ -86,7 +85,6 @@ class Boiler(Converter):
         ...     capex_specific=1000,
         ...     opex_specific=1000,
         ...     lifetime=20,
-        ...     optimize_cap=False,
         ...     maximum_capacity=None,
         ...     efficiency=0.8,
         ...     dispatch_costs=0,
@@ -123,7 +121,6 @@ class Boiler(Converter):
         self.capex_var = opex_specific
         self.dispatch_costs = dispatch_costs
         self.lifetime = lifetime
-        self.optimize_cap = optimize_cap
         self.maximum_capacity = maximum_capacity
         self.efficiency = efficiency
         super().__init__(

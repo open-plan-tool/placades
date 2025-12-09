@@ -1,4 +1,4 @@
-from oemof.network import Source
+from oemof.solph.components import Source
 from oemof.solph import Flow
 
 from placades.investment import _create_invest_if_wanted
@@ -9,7 +9,7 @@ class WindTurbine(Source):
 
     def __init__(
         self,
-        label,  # automatische Benennung aber wie? Warum automatisch????
+        label,
         bus_out_electricity,
         wind_profile,
         age_installed=0,

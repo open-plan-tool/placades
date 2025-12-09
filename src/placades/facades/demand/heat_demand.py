@@ -1,5 +1,5 @@
 from oemof.solph.components import Sink
-from oemof.solph.flows import Flow
+from oemof.solph import Flow
 
 
 class Demand(Sink):

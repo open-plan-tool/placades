@@ -63,7 +63,7 @@ def get_replacement_costs(
         )
 
     present_value_of_capital_expenditures = pd.DataFrame(
-        [0 for _i in range(project_lifetime + 1)],
+        [0.0 for _i in range(project_lifetime + 1)],
         index=list(range(project_lifetime + 1)),
     )
 

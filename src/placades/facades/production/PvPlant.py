@@ -91,7 +91,12 @@ class PvPlant(Source):
         ...     expandable=True,
         ...     maximum_capacity=1000, #kWp
         ...     curtailable=True,
-        ...     project_data=Project(name="Project_X", lifetime=20, tax=0,discount_factor=0.01),
+        ...     project_data=Project(
+        ...         name="Project_X",
+        ...         lifetime=20,
+        ...         tax=0,
+        ...         discount_factor=0.01
+        ...     ),
         ...  )
 
         """

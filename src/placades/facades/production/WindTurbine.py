@@ -9,7 +9,7 @@ class WindTurbine(Source):
 
     def __init__(
         self,
-        label,  # automatische Benennung aber wie? Warum automatisch????
+        label,
         bus_out_electricity,
         wind_profile,
         age_installed=0,
@@ -44,7 +44,7 @@ class WindTurbine(Source):
 
         Examples
         --------
-        >>> from oemof.solph import Bus
+        >>> from placades import Bus
         >>> ebus = Bus(label="my_electricity_bus")
         """
 

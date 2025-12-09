@@ -72,10 +72,11 @@ class PvPlant(Source):
             |project_data|
 
 
+
         Examples
         --------
         >>> from placades import Project
-        >>> from oemof.solph import Bus
+        >>> from placades import Bus
         >>> el_bus = Bus(label="electricity_bus")
         >>> my_pv = PvPlant(
         ...     label="my_py_plant",
@@ -130,7 +131,7 @@ class PvPlant(Source):
         self.optimize_cap = expandable
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = True
-        self.normalised_output = normed_production_timeseries
+        self.output_timeseries = normed_production_timeseries
         self.fix = fix
 
-        super().__init__(label=label, outputs=outputs)
+        super().__init__(label=label, outputs = outputs)

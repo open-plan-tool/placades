@@ -1,3 +1,5 @@
+from oemof.solph.components import Source
+
 from placades import CHP
 from placades import Battery
 from placades import CarrierBus
@@ -5,7 +7,6 @@ from placades import Demand
 from placades import Excess
 from placades import Project
 from placades import PvPlant
-from oemof.solph.components import Source
 from placades import WindTurbine
 
 # Imported the list from assettypes_list.csv von https://github.com/open-plan-tool/gui/tree/main/app/static
@@ -19,7 +20,6 @@ TYPEMAP = {
     "project": Project,
     "pv_plant": PvPlant,
     "wind_plant": WindTurbine,
-
     "dso": None,
     "gas_dso": None,
     "h2_dso": None,

@@ -32,14 +32,18 @@ class WeatherData:
         """serialize to dictionary"""
         return {k: getattr(self, k) for k in self.__dict__}
 
+
 def import_TRJ(path):
     wd = WeatherData()
 
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         for line in f:
-
             # skip blank or comment/header lines
-            if line.strip() == "" or line.lstrip().startswith("*") or line.lstrip().startswith("RW"):
+            if (
+                line.strip() == ""
+                or line.lstrip().startswith("*")
+                or line.lstrip().startswith("RW")
+            ):
                 continue
 
             parts = line.split()

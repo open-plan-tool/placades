@@ -111,7 +111,7 @@ class FuelCell(Converter):
             )
         }
 
-        #self.label = label
+        # self.label = label
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
         self.capex_specific = capex_specific

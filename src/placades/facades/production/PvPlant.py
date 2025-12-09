@@ -110,7 +110,6 @@ class PvPlant(Source):
             normed_production_timeseries, curtailable
         )
 
-
         self.name = label
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
@@ -133,4 +132,4 @@ class PvPlant(Source):
             )
         }
 
-        super().__init__(label=label, outputs = outputs)
+        super().__init__(label=label, outputs=outputs)

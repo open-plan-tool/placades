@@ -1,11 +1,5 @@
 __version__ = "0.0.0"
 
-from oemof.solph import Bus
-from oemof.solph import Flow
-from oemof.solph.components import Converter
-from oemof.solph.components import Sink
-from oemof.solph.components import Source
-
 from placades.facades.buses.carrier import CarrierBus
 from placades.facades.demand.heat_demand import Demand
 from placades.facades.demand.heat_demand import Excess
@@ -21,15 +15,11 @@ __all__ = [
     "CHP",
     "TYPEMAP",
     "Battery",
-    "Bus",
     "CarrierBus",
-    "Converter",
     "Demand",
     "Excess",
-    "Flow",
     "Project",
     "PvPlant",
-    "Sink",
     "Source",
     "WindTurbine",
 ]

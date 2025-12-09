@@ -33,10 +33,10 @@ class WeatherData:
         return {k: getattr(self, k) for k in self.__dict__}
 
 
-def import_TRJ(path):
+def import_trj(path):
     wd = WeatherData()
 
-    with open(path, encoding="utf-8") as f:
+    with path.open("wb", encoding="utf-8") as f:
         for line in f:
             # skip blank or comment/header lines
             if (

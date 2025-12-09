@@ -1,5 +1,5 @@
-from placades import Flow
-from placades import Source
+from oemof.solph import Flow
+from oemof.solph.components import Source
 
 from placades.import_functions import create_timeseries
 from placades.investment import _create_invest_if_wanted
@@ -76,12 +76,12 @@ class PvPlant(Source):
         Examples
         --------
         >>> from placades import Project
-        >>> from placades import Bus
+        >>> from oemof.solph import Bus
         >>> el_bus = Bus(label="electricity_bus")
         >>> my_pv = PvPlant(
         ...     label="my_py_plant",
         ...     bus_out=el_bus,
-        ...     normed_production_timeseries=[1,0.5,0.9],
+        ...     normed_production_timeseries=[1,2,3],
         ...     age_installed=0, #a
         ...     installed_capacity=0, #a
         ...     capex_specific=1000, #€/kWp
@@ -91,9 +91,7 @@ class PvPlant(Source):
         ...     expandable=True,
         ...     maximum_capacity=1000, #kWp
         ...     curtailable=True,
-        ...     project_data=Project(
-        ...         name="Project_X", lifetime=20, tax=0,
-        ...         discount_factor=0.01),
+        ...     project_data=Project(name="Project_X", lifetime=20, tax=0,discount_factor=0.01),
         ...  )
 
         """
@@ -112,14 +110,6 @@ class PvPlant(Source):
             normed_production_timeseries, curtailable
         )
 
-        outputs = {
-            bus_out: Flow(
-                fix=fix,
-                max=vmax,
-                nominal_capacity=nv,
-                variable_costs=dispatch_costs,
-            )
-        }
 
         self.name = label
         self.age_installed = age_installed
@@ -131,7 +121,16 @@ class PvPlant(Source):
         self.optimize_cap = expandable
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = True
-        self.output_timeseries = normed_production_timeseries
+        self.bus_out = bus_out
         self.fix = fix
+
+        outputs = {
+            self.bus_out: Flow(
+                max=vmax,
+                fix=fix,
+                nominal_capacity=nv,
+                variable_costs=dispatch_costs,
+            )
+        }
 
         super().__init__(label=label, outputs = outputs)

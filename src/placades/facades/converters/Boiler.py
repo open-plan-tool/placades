@@ -1,5 +1,5 @@
-from placades import Flow
-from placades import Converter
+from oemof.solph import Flow
+from oemof.solph.components import Converter
 
 from placades.investment import _create_invest_if_wanted
 
@@ -73,7 +73,7 @@ class Boiler(Converter):
         --------
 
         >>> from placades import Project
-        >>> from placades import Bus
+        >>> from oemof.solph import Bus
         >>> gas_bus = Bus(label="gas_bus")
         >>> heat_bus = Bus(label="heat_bus")
         >>> my_gas_boiler = Boiler(

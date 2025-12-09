@@ -1,5 +1,5 @@
-from placades import Source
-from placades import Flow
+from oemof.solph.components import Source
+from oemof.solph import Flow
 
 from placades.investment import _create_invest_if_wanted
 
@@ -44,7 +44,7 @@ class WindTurbine(Source):
 
         Examples
         --------
-        >>> from placades import Bus
+        >>> from oemof.solph import Bus
         >>> ebus = Bus(label="my_electricity_bus")
         """
 

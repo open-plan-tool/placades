@@ -1,4 +1,4 @@
-from placades import Bus
+from oemof.solph import Bus
 
 
 class CarrierBus(Bus):  # todo add shortage source and excess sink with costs

@@ -1,5 +1,5 @@
-from placades import Flow
-from placades import Converter
+from oemof.solph import Flow
+from oemof.solph.components import Converter
 
 from placades.investment import _create_invest_if_wanted
 
@@ -69,7 +69,7 @@ class FuelCell(Converter):
         Examples
         --------
         >>> from placades import Project
-        >>> from placades import Bus
+        >>> from oemof.solph import Bus
         >>> h2_bus = Bus(label="hydrogen_bus")
         >>> el_bus = Bus(label="electricity_bus")
         >>> my_fuel_cell = FuelCell(

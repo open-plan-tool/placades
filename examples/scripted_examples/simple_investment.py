@@ -20,11 +20,12 @@ from placades import WindTurbine
 
 def main():
     # Read data file
-    project = Project(
-        name="test", lifetime=20, tax=0, discount_factor=0.00
-    )  # todo: Fix: discount factor=0 leads to error --> it seems that oemof.tools.economics import annuity can´t handle a discount factor=0
+    project = Project(name="test", lifetime=20, tax=0, discount_factor=0.00)
+    # todo: Fix: discount factor=0 leads to error -->
+    #  it seems that oemof.tools.economics import annuity can´t handle a
+    #  discount factor=0
     define_logging()
-    filename = Path(Path(__file__).parent, "input_data.csv")
+    filename = Path(Path(__file__).parent, "data/input_data.csv")
     data = pd.read_csv(filename)
 
     solver = "cbc"
@@ -86,7 +87,6 @@ def main():
             lifetime=25,
             maximum_capacity=999,
             project_data=project,
-            fix=False,
         )
     )
 

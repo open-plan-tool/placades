@@ -114,7 +114,7 @@ def _create_invest_if_wanted(
     if optimise_cap is True:
         epc = (
             project_data.calculate_epc(
-                capex_var, lifetime, age_installed, method="oemof"
+                capex_var, lifetime, age_installed, method="mvs"
             )
             + opex_fix
         )

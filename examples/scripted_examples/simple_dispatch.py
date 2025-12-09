@@ -22,7 +22,7 @@ def main():
     # Read data file
     project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
     define_logging()
-    filename = Path(Path(__file__).parent, "input_data.csv")
+    filename = Path(Path(__file__).parent, "data/input_data.csv")
     data = pd.read_csv(filename)
 
     solver = "cbc"

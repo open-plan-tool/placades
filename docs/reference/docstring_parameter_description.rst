@@ -1,41 +1,108 @@
-.. |bus_out| replace:: Connected Bus component for the output flow.
+.. |age_installed| replace:: Number of years the asset has already been
+    in operation. If the project lasts longer than its remaining lifetime, the
+    replacement costs of the asset will be taken into account in a (Natural
+    number).
 
-.. |bus_in| replace:: Connected Bus component for the input flow.
+.. |crate| replace:: Maximum permissible power at which the storage can be
+    charged or discharged relative to the nominal capacity of the storage. The
+    C rate indicates the reciprocal of the time for which a battery of the
+    specified capacity can be charged or discharged with the maximum charge or
+    discharge current. A C-rate of 1 implies that the battery can be fully
+    charged or discharged completely in a single timestep. A C-rate of 0.5
+    implies that the battery needs at least 2 timesteps to be fully charged or
+    discharged [-] (Real number between 0 and 1).
 
-.. |name| replace:: Name of the asset
+.. |capex_fix| replace:: Planning and development costs. This could be
+    planning and development costs which do not depend on the (optimized)
+    capacities of the assets in € (Positive real number).
 
-.. |opex_fix| replace:: Specific operational and maintenance costs of the
-    asset related to the installed capacity (OPEX_fix).
+.. |opex_var| replace:: Costs associated with a flow through/from the asset
+    (OPEX_var or fuel costs). This could be fuel costs for fuel sources like
+    biogas or oil or operational costs for thermal power plants which only
+    occur when operating the plant in €/kWh.
 
-.. |capex_fix| replace:: Specific investment costs of the asset related to the
-    installed capacity (CAPEX).
+.. |efficiency| replace:: Ratio of energy output to energy input. The battery
+    efficiency is the ratio of the energy taken out from the battery to the
+    energy put into the battery [-] (Positive real number).
 
-.. |dispatch_costs| replace:: Costs of the asset for each unit of energy.
+.. |energy_prics| replace:: Price of the energy carrier sourced from the
+    utility grid. Can be also a timeseries in €/kWh.
 
-.. |age_installed| replace:: Number of years the asset has already been in
-    operation.
+.. |feedin_cap| replace:: Maximum flow for feeding electricity into the grid
+    at any given timestep in kW (Acceptable values are either a positive real
+    number or None).
+
+.. |feedin_tariff| replace:: Price received for feeding electricity into the
+    grid. Can be also a timeseries in €/kWh.
+
+.. |fixed_thermal_losses_absolute| replace:: Thermal losses of the storage
+    independent of the state of charge and independent of nominal storage
+    capacity between two consecutive timesteps [-] (Between 0 and 1).
+
+.. |fixed_thermal_losses_relative| replace:: Thermal losses of storage
+    independent of state of charge between two consecutive timesteps relative
+    to nominal storage capacity [-] (Between 0 and 1).
+
+.. |installed_capacity| replace:: Already existing installed capacity. If the
+    project lasts longer than its remaining lifetime, the replacement costs of
+    the asset will be taken into account in :unit:.
+
+.. |name| replace:: Name of the asset. [-] (Input the names in a computer
+    friendly format, preferably with underscores instead of spaces, and
+    avoiding special characters).
 
 .. |lifetime| replace:: Number of operational years of the asset until it has
-    to be replaced.
+    to be replaced in a (Natural number).
 
-.. |expandable| replace:: Choose if the capacity of the asset should be
-    optimzed/extended
+.. |maximum_capacity| replace:: Maximum total capacity of an asset that can be
+    installed at the project site. This includes the already existing
+    installed and additional capacity possible. An example would be that a
+    roof can only carry 50 kW PV (maximum capacity), whereas the installed
+    capacity is already 10 kW. The optimization would only be allowed to add
+    40 kW PV at maximum in :unit: (Acceptable values are either a positive
+    real number or None.).
 
-.. |installed_capacity| replace:: Already installed capacity.
+.. |optimize_cap| replace:: Choose if capacity optimization should be
+    performed for this asset. [-] (Acceptable values are either Yes or
+    No.).
 
-.. |maximum_capacity| replace:: Maximum total capacity of the asset that can
-    be installed
+.. |peak_demand_pricing| replace:: Grid fee to be paid based on the peak
+    demand of a given period in €/kW.
 
-.. |curtailable| replace:: Determines if the asset can be curtailed or whether
-    it must feed its maximum power
+.. |peak_demand_period| replace:: Number of reference periods in one year for
+    peak demand pricing in times per year (Only one of the following are
+    acceptable values: 1 (yearly), 2, 3 ,4, 6, 12 (monthly)).
 
-.. |project_data| replace:: The framework of the project in which the asset is
-    ought to be optimized
+.. |renewable_asset| replace:: Choose if this asset should be considered as
+    renewable. This parameter is necessary to consider the renewable share
+    constraint correctly. [-] (Acceptable values are either Yes or No.).
 
-.. |timeseries| replace:: A list of values that resembles the input/output at
-    each timestep. Length should match the number of timesteps.
+.. |sco_max| replace:: The maximum permissible level of charge of the storage
+    as a factor of the nominal capacity. When the battery is filled to its
+    nominal capacity the state of charge is represented by the value 1 [-]
+    (Real number between 0 and 1).
 
-.. |normed_production_timeseries| replace:: A list of values that resembles
-    the output at each timestep. The timeseries should be normed in reference
-    to the characteristic quantity of the optimization. The Length should
-    match the number of timesteps.
+.. |soc_min| replace:: The minimum permissible level of charge of the storage
+    as a factor of the nominal capacity. When the battery is fully discharged
+    the state of charge is represented by the value 0 [-] (Real number
+    between 0 and 1).
+
+.. |capex_var| replace:: Specific investment costs of the asset related to the
+    installed capacity (CAPEX) in €/:unit:.
+
+.. |opex_fix| replace:: Specific operational and maintenance costs of the
+    asset related to the installed capacity (OPEX_fix) in €/(:unit:*a)
+   .
+
+.. |asset_type| replace:: Type of the component. [-] (*demand*).
+
+.. |beta| replace:: Power loss index for CHPs, usually known as beta
+    coefficient [-] (Between 0 and 1).
+
+.. |input_timeseries| replace:: Timeseries. Timeseries in :unit:.
+
+.. |thermal_loss_rate| replace:: Definition of thermal loss rate. Long
+    Definition [-] (numeric).
+
+.. |special COPCalculator| replace:: Definition. Long Definition [-]
+    (numeric).

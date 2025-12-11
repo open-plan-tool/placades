@@ -77,7 +77,7 @@ class SolarThermalPlant(Source):
         ...         tax=0,
         ...         discount_factor=0.01
         ...     )
-        >>> heat_bus = CarrierBus(label="my_heat_bus")
+        >>> heat_bus = CarrierBus(name="my_heat_bus")
         >>> my_st = SolarThermalPlant(
         ...     bus_out_heat=heat_bus,
         ...     name="my_st_plant",

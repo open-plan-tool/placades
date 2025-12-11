@@ -25,7 +25,7 @@ class Demand(Sink):
     Examples
     --------
     >>> from placades import CarrierBus as Bus
-    >>> ebus = Bus(label="electricity_bus")
+    >>> ebus = Bus(name="electricity_bus")
     >>> my_demand = Demand(
     ...     name="office_demand",
     ...     bus_in_electricity=ebus,

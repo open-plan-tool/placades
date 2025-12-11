@@ -82,7 +82,7 @@ class PvPlant(Source):
         ...         tax=0,
         ...         discount_factor=0.01
         ...     )
-        >>> el_bus = CarrierBus(label="my_electricity_bus")
+        >>> el_bus = CarrierBus(name="my_electricity_bus")
         >>> my_pv = PvPlant(
         ...     bus_out_electricity=el_bus,
         ...     name="my_pv_plant",

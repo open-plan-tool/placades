@@ -5,7 +5,7 @@ from placades.investment import _create_invest_if_wanted
 
 
 class WindTurbine(Source):
-     def __init__(
+    def __init__(
         self,
         project_data,
         bus_out_electricity,
@@ -87,14 +87,14 @@ class WindTurbine(Source):
         ...     bus_out_electricity=el_bus,
         ...     name="my_wind_plant",
         ...     age_installed=0, # a
-        ...     installed_capacity=0, # a
+        ...     installed_capacity=0, # kW
         ...     capex_fix=0, # €
         ...     capex_var=1000, # €/kW
         ...     opex_fix=10, # €/kW/a
         ...     opex_var=0, # €/kWh
         ...     lifetime=25, # a
         ...     optimize_cap=True,
-        ...     maximum_capacity=1000, # kWp
+        ...     maximum_capacity=1000, # kW
         ...     renewable_asset=True,
         ...     input_timeseries=[1,2,3],
         ...     project_data=my_project,

@@ -124,5 +124,3 @@
 
 .. |<Parameter>| replace:: <Description> [<Unit>]
     (<Restriction>).
-
-

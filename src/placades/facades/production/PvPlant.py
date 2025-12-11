@@ -88,10 +88,10 @@ class PvPlant(Source):
         ...     bus_out_electricity=el_bus,
         ...     name="my_pv_plant",
         ...     age_installed=0, # a
-        ...     installed_capacity=0, # a
+        ...     installed_capacity=0, # kW
         ...     capex_fix=0, # €
-        ...     capex_var=1000, # €/kW
-        ...     opex_fix=10, # €/kW/a
+        ...     capex_var=1000, # €/kWp
+        ...     opex_fix=10, # €/kWp/a
         ...     opex_var=0, # €/kWh
         ...     lifetime=25, # a
         ...     optimize_cap=True,

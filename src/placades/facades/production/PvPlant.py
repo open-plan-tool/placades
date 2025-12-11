@@ -40,8 +40,6 @@ class PvPlant(Source):
           The characteristic quantity of the optimization is the *nominal
           power-output* of the PV-plant given in kWp
 
-        .. include:: docstring_parameter_description.rst
-
         Parameters
         ----------
         label : str

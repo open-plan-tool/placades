@@ -5,6 +5,8 @@ placades
 
     from placades import *
 
+.. include:: docstring_parameter_description.rst
+
 .. automodule:: placades
     :members:
     :undoc-members:

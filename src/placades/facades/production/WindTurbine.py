@@ -40,8 +40,6 @@ class WindTurbine(Source):
           The characteristic quantity of the optimization is the *nominal
           power-output* of the wind turbine given in kW
 
-        .. include:: docstring_parameter_description.rst
-
         Parameters
         ----------
         project_data: Project object

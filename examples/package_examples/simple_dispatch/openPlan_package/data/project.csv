@@ -1,0 +1,2 @@
+name,type,lifetime,discount_factor,tax
+berlin,project,30,0.1,0.15

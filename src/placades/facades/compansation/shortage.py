@@ -1,8 +1,8 @@
-from oemof.network import Node
+from oemof.solph.components import Source
 from oemof.solph.flows import Flow
 
 
-class Source(Node):
+class Shortage(Source):
     """
     Short description
 
@@ -14,23 +14,23 @@ class Source(Node):
 
     Parameters
     ----------
-    label : str or tuple
-        Unique identifier of the instance.
-    bus : oemof.solph.Bus or placade.CarrierBus
-        Valid network bus with the carrier: electricity
-    profile : iterable
-        Absolute demand time series.
+    name : str
+        |name|
+    bus_out : oemof.solph.Bus or placade.CarrierBus
+        |bus_in|
+    cost : float or array-like
+        |cost|
 
     Examples
     --------
 
     """
 
-    def __init__(self, label, bus, cost, project):
+    def __init__(self, name, bus_out, cost):
         super().__init__(
-            label=label,
+            label=name,
             outputs={
-                bus: Flow(
+                bus_out: Flow(
                     variable_costs=cost,
                 )
             },

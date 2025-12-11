@@ -19,7 +19,7 @@ class Demand(Sink):
         |name|
     bus_in_electricity : placades.CarrierBus
         |bus_in_electricity|
-    input_timeseries : str or None
+    input_timeseries : array-like
         |input_timeseries|
 
     Examples

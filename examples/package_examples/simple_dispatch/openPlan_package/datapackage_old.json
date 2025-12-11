@@ -1,0 +1,330 @@
+{
+    "profile": "tabular-data-package",
+    "name": "openPlan_package",
+    "oemof_tabular_version": "0.0.6dev",
+    "resources": [
+        {
+            "path": "data/elements/bus.csv",
+            "profile": "tabular-data-resource",
+            "name": "bus",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "carrier",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": []
+            }
+        },
+        {
+            "path": "data/elements/demand.csv",
+            "profile": "tabular-data-resource",
+            "name": "demand",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_in_electricity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "input_timeseries",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_in_electricity",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "input_timeseries",
+                        "reference": {
+                            "resource": "timeseries"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/elements/dso.csv",
+            "profile": "tabular-data-resource",
+            "name": "dso",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_electricity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "energy_price",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "feedin_tariff",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "peak_demand_pricing",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "peak_demand_pricing_period",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "renewable_share",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "feedin_cap",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_electricity",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/elements/re.csv",
+            "profile": "tabular-data-resource",
+            "name": "re",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_electricity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "installed_capacity",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "pv_profile",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "project_data",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_fix",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_var",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "age_installed",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "expandable",
+                        "type": "boolean",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_electricity",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "project_data",
+                        "reference": {
+                            "resource": "project",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "pv_profile",
+                        "reference": {
+                            "resource": "profiles"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/project.csv",
+            "profile": "tabular-data-resource",
+            "name": "project",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "discount_factor",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "tax",
+                        "type": "number",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": []
+            }
+        },
+        {
+            "path": "data/sequences/timeseries.csv",
+            "profile": "tabular-data-resource",
+            "name": "timeseries",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "timeindex",
+                        "type": "datetime",
+                        "format": "default"
+                    },
+                    {
+                        "name": "heat_demand_profile",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "electricity_demand_profile",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "pv_profile",
+                        "type": "number",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        }
+    ]
+}

@@ -2,17 +2,18 @@ import logging
 from pathlib import Path
 
 import pandas as pd
+from oemof.network.network.nodes import QualifiedLabel
 from oemof.solph import EnergySystem
-from oemof.solph import Flow
 from oemof.solph import Model
 from oemof.solph import Results
 from oemof.solph import create_time_index
-from oemof.solph.components import Source
 from oemof.tools.logger import define_logging
 
 from placades import CarrierBus
+from placades import DSO
 from placades import Demand
 from placades import Excess
+from placades import Shortage
 from placades import Project
 from placades import PvPlant
 from placades import WindTurbine
@@ -38,44 +39,48 @@ def main():
     # carrier
     bus_gas = CarrierBus(label="gas")
     bus_elec = CarrierBus(label="electricity")
-    # bus_heat = CarrierBus(label="heat")
 
     energy_system.add(bus_gas, bus_elec)
 
-    # an excess and a shortage variable can help to avoid infeasible problems
-    energy_system.add(Excess(label="excess_el", bus=bus_elec))
-
     energy_system.add(
-        Source(
-            label="shortage_el", outputs={bus_elec: Flow(variable_costs=9999)}
+        DSO(
+            name="My_DSO",
+            bus_electricity=bus_elec,
+            energy_price=0.1,
+            feedin_tariff=0.04,
         )
     )
 
     # sources
     energy_system.add(
         WindTurbine(
-            label="wind",
+            name="wind",
             bus_out_electricity=bus_elec,
-            wind_profile=data["wind"],
+            input_timeseries=data["wind"],
             installed_capacity=66.3,
             project_data=project,
-            expandable=False,
+            optimize_cap=False,
         )
     )
 
     energy_system.add(
         PvPlant(
-            "pv",
-            bus_elec,
+            name="pv",
+            bus_out_electricity=bus_elec,
+            project_data=project,
             installed_capacity=50,
-            normed_production_timeseries=data["pv"],
-            expandable=False,
+            input_timeseries=data["pv"],
+            optimize_cap=False,
         )
     )
 
     # demands (electricity/heat)
     energy_system.add(
-        Demand(name="demand_el", bus=bus_elec, profile=data["demand_el"] * 10)
+        Demand(
+            name="demand_el",
+            bus_in_electricity=bus_elec,
+            input_timeseries=data["demand_el"] * 10,
+        )
     )
 
     # energy_system.add(
@@ -96,7 +101,26 @@ def main():
         solver=solver, solve_kwargs={"tee": True, "keepfiles": False}
     )
     results = Results(optimization_model)
-    print(results.to_df("flow").sum())
+    rdf = results.to_df("flow")
+
+    for n, m in [(0, 1), (1, 0)]:
+        rdf.rename(
+            columns={
+                c[n]: c[n].label[-1]
+                for c in rdf.columns
+                if isinstance(c[n].label, tuple)
+                and not isinstance(c[m].label, tuple)
+            },
+            level=n,
+            inplace=True,
+        )
+    elec_in = rdf[[c for c in rdf.columns if c[0] == "electricity"]]
+    elec_out = rdf[[c for c in rdf.columns if c[1] == "electricity"]]
+    print(elec_in.sum())
+    print(elec_out.sum())
+    print("*****************")
+    print("Input:", round(elec_in.sum().sum()))
+    print("Output:", round(elec_out.sum().sum()))
 
 
 if __name__ == "__main__":

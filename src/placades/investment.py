@@ -118,7 +118,7 @@ def _create_invest_if_wanted(
             )
             + opex_fix
         )
-        return Investment(ep_costs=epc)
+        return Investment(ep_costs=epc, existing=existing_capacity)
     else:
         return existing_capacity
 

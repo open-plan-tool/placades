@@ -100,8 +100,29 @@
 
 .. |input_timeseries| replace:: Timeseries. Timeseries in :unit:.
 
-.. |thermal_loss_rate| replace:: Definition of thermal loss rate. Long
-    Definition [-] (numeric).
+.. |thermal_loss_rate| replace:: Definition of thermal loss rate. [-] (numeric).
 
-.. |special COPCalculator| replace:: Definition. Long Definition [-]
-    (numeric).
+.. |bus_in_electricity| replace:: Connected Bus component for the electricity input flow. [object].
+
+.. |bus_out_electricity| replace:: Connected Bus component for the electricity output flow. [object].
+
+.. |bus_in_heat| replace:: Connected Bus component for the heat input flow. [object].
+
+.. |bus_out_heat| replace:: Connected Bus component for the heat output flow. [object].
+
+.. |bus_in_fuel| replace:: Connected Bus component for the fuel input flow. [object].
+
+.. |bus_out_fuel| replace:: Connected Bus component for the fuel output flow. [object].
+
+.. |bus_in_hydrogen| replace:: Connected Bus component for the hydrogen input flow. [object].
+
+.. |bus_out_hydrogen| replace:: Connected Bus component for the hydrogen output flow. [object].
+
+.. |project_data| replace:: The framework of the project in which the asset is ought to be optimized.
+
+
+
+.. |<Parameter>| replace:: <Description> [<Unit>]
+    (<Restriction>).
+
+

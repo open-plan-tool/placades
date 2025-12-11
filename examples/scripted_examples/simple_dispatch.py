@@ -34,8 +34,8 @@ def main():
     # ######################### create energysystem components ################
 
     # carrier
-    bus_gas = CarrierBus(label="gas")
-    bus_elec = CarrierBus(label="electricity")
+    bus_gas = CarrierBus(name="gas")
+    bus_elec = CarrierBus(name="electricity")
 
     energy_system.add(bus_gas, bus_elec)
 

@@ -15,7 +15,7 @@ from placades import TYPEMAP
 warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 logger = logging.getLogger(__name__)
 
-results_path = Path(Path.home(), "results")
+results_path = Path(Path.home(), "placades", "results")
 scenario_name = "test_placade_example"
 scenario_dir = "openPlan_package"
 plot = "graph"  # "graph", "visio", None

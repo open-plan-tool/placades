@@ -1,13 +1,13 @@
 from oemof.solph.components import Source
 
 from placades import CHP
+from placades import DSO
 from placades import Battery
 from placades import CarrierBus
 from placades import Demand
 from placades import Project
 from placades import PvPlant
 from placades import WindTurbine
-from placades import DSO
 
 TYPEMAP = {
     "CHP": CHP,

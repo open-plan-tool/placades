@@ -1,5 +1,5 @@
-from oemof.solph.components import Sink
 from oemof.solph import Flow
+from oemof.solph.components import Sink
 
 
 class Excess(Sink):

@@ -4,7 +4,6 @@ from oemof.solph.components import Source
 from placades.investment import _create_invest_if_wanted
 
 
-
 class SolarThermalPlant(Source):
     def __init__(
         self,
@@ -23,7 +22,6 @@ class SolarThermalPlant(Source):
         maximum_capacity=None,
         renewable_asset=True,
     ):
-
         """
         Solar thermal plant for renewable heat generation.
 
@@ -131,4 +129,3 @@ class SolarThermalPlant(Source):
         }
 
         super().__init__(label=name, outputs=outputs)
-

@@ -22,7 +22,6 @@ class PvPlant(Source):
         maximum_capacity=None,
         renewable_asset=True,
     ):
-
         """
         Photovoltaic power plant for solar electricity generation.
 

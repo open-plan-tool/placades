@@ -1,8 +1,9 @@
 from oemof.network import Node
+from oemof.solph import Bus
+from oemof.solph import Flow
 from oemof.solph.components import Converter
 from oemof.solph.components import Sink
 from oemof.solph.components import Source
-from oemof.solph import Bus, Flow
 
 
 class DSO(Node):
@@ -95,9 +96,7 @@ class DSO(Node):
             Converter,
             inputs={internal_bus: Flow()},
             outputs={
-                self.bus_electricity: Flow(
-                    variable_costs=self.energy_price
-                )
+                self.bus_electricity: Flow(variable_costs=self.energy_price)
             },
             local_name="consumption_converter",
         )

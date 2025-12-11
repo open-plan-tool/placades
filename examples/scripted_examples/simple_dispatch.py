@@ -2,18 +2,15 @@ import logging
 from pathlib import Path
 
 import pandas as pd
-from oemof.network.network.nodes import QualifiedLabel
 from oemof.solph import EnergySystem
 from oemof.solph import Model
 from oemof.solph import Results
 from oemof.solph import create_time_index
 from oemof.tools.logger import define_logging
 
-from placades import CarrierBus
 from placades import DSO
+from placades import CarrierBus
 from placades import Demand
-from placades import Excess
-from placades import Shortage
 from placades import Project
 from placades import PvPlant
 from placades import WindTurbine

@@ -91,7 +91,7 @@
     installed capacity (CAPEX) in €/:unit:.
 
 .. |opex_fix| replace:: Specific operational and maintenance costs of the
-    asset related to the installed capacity (OPEX_fix) in €/(:unit:\*a)
+    asset related to the installed capacity (OPEX_fix) in €/(:unit: • a)
 
 .. |asset_type| replace:: Type of the component. [-] ().
 

@@ -100,8 +100,8 @@ class WindTurbine(Source):
         ...     project_data=my_project,
         ...  )
 
-
         """
+
         nv = _create_invest_if_wanted(
             optimise_cap=optimize_cap,
             capex_var=capex_var,
@@ -126,11 +126,11 @@ class WindTurbine(Source):
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = renewable_asset
 
-
         outputs = {
             self.bus_out_electricity: Flow(
                 fix=input_timeseries,
                 nominal_capacity=nv,
             )
         }
+
         super().__init__(label=name, outputs=outputs)

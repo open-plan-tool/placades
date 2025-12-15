@@ -54,7 +54,7 @@ def main():
             name="wind",
             bus_out_electricity=bus_elec,
             input_timeseries=data["wind"],
-            installed_capacity=66.3,
+            installed_capacity=6.63,
             project_data=project,
             optimize_cap=False,
         )
@@ -65,7 +65,7 @@ def main():
             name="pv",
             bus_out_electricity=bus_elec,
             project_data=project,
-            installed_capacity=50,
+            installed_capacity=5.0,
             input_timeseries=data["pv"],
             optimize_cap=False,
         )
@@ -76,7 +76,7 @@ def main():
         Demand(
             name="demand_el",
             bus_in_electricity=bus_elec,
-            input_timeseries=data["demand_el"] * 10,
+            input_timeseries=data["demand_el"],
         )
     )
 

@@ -1,3 +1,0 @@
-name,type,bus_electricity,installed_capacity,pv_profile,project_data,capex_fix,capex_var,lifetime,age_installed,expandable
-pv1,pv_plant,electricity,10,pv_profile,berlin,20,50,20,0,True
-wind1,wind_turbine,electricity,10,pv_profile,berlin,20,50,20,0,True

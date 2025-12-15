@@ -1,2 +1,2 @@
-name,type,lifetime,discount_factor,tax
-berlin,project,30,0.1,0.15
+tax,name,type,discount_factor,lifetime,shortage_cost,excess_cost
+0.0,Placades,project,0.05,20,999,99

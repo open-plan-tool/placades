@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_fix,capex_var,opex_fix,opex_var,lifetime,optimize_cap,maximum_capacity,renewable_asset,input_timeseries,to_bus
+wind_plant,Placades,wind_plant-0,0.0,6.63,0.0,1000.0,10.0,0.01,20,False,,True,wind_profile.csv,bus-0

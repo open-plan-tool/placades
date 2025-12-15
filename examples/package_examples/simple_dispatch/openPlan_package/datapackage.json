@@ -1,6 +1,6 @@
 {
     "profile": "tabular-data-package",
-    "name": "openPlan_package",
+    "name": "scenario_87",
     "oemof_tabular_version": "0.0.6dev",
     "resources": [
         {
@@ -26,6 +26,21 @@
                         "name": "carrier",
                         "type": "string",
                         "format": "default"
+                    },
+                    {
+                        "name": "balanced",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "excess",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "excess_costs",
+                        "type": "number",
+                        "format": "default"
                     }
                 ],
                 "missingValues": [
@@ -45,22 +60,22 @@
             "schema": {
                 "fields": [
                     {
-                        "name": "name",
-                        "type": "string",
-                        "format": "default"
-                    },
-                    {
                         "name": "type",
                         "type": "string",
                         "format": "default"
                     },
                     {
-                        "name": "bus_in_electricity",
+                        "name": "name",
                         "type": "string",
                         "format": "default"
                     },
                     {
                         "name": "input_timeseries",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "from_bus",
                         "type": "string",
                         "format": "default"
                     }
@@ -71,7 +86,7 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "bus_in_electricity",
+                        "fields": "from_bus",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"
@@ -80,7 +95,7 @@
                     {
                         "fields": "input_timeseries",
                         "reference": {
-                            "resource": "timeseries"
+                            "resource": "profiles"
                         }
                     }
                 ]
@@ -96,17 +111,12 @@
             "schema": {
                 "fields": [
                     {
-                        "name": "name",
-                        "type": "string",
-                        "format": "default"
-                    },
-                    {
                         "name": "type",
                         "type": "string",
                         "format": "default"
                     },
                     {
-                        "name": "bus_electricity",
+                        "name": "name",
                         "type": "string",
                         "format": "default"
                     },
@@ -122,21 +132,26 @@
                     },
                     {
                         "name": "peak_demand_pricing",
-                        "type": "string",
+                        "type": "number",
                         "format": "default"
                     },
                     {
                         "name": "peak_demand_pricing_period",
-                        "type": "string",
+                        "type": "integer",
                         "format": "default"
                     },
                     {
                         "name": "renewable_share",
-                        "type": "string",
+                        "type": "number",
                         "format": "default"
                     },
                     {
                         "name": "feedin_cap",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "to_bus",
                         "type": "string",
                         "format": "default"
                     }
@@ -147,7 +162,7 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "bus_electricity",
+                        "fields": "to_bus",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"
@@ -157,36 +172,16 @@
             }
         },
         {
-            "path": "data/elements/re.csv",
+            "path": "data/elements/pv_plant.csv",
             "profile": "tabular-data-resource",
-            "name": "re",
+            "name": "pv_plant",
             "format": "csv",
             "mediatype": "text/csv",
             "encoding": "utf-8",
             "schema": {
                 "fields": [
                     {
-                        "name": "name",
-                        "type": "string",
-                        "format": "default"
-                    },
-                    {
                         "name": "type",
-                        "type": "string",
-                        "format": "default"
-                    },
-                    {
-                        "name": "bus_electricity",
-                        "type": "string",
-                        "format": "default"
-                    },
-                    {
-                        "name": "installed_capacity",
-                        "type": "number",
-                        "format": "default"
-                    },
-                    {
-                        "name": "pv_profile",
                         "type": "string",
                         "format": "default"
                     },
@@ -196,13 +191,38 @@
                         "format": "default"
                     },
                     {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "age_installed",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "installed_capacity",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
                         "name": "capex_fix",
-                        "type": "integer",
+                        "type": "number",
                         "format": "default"
                     },
                     {
                         "name": "capex_var",
-                        "type": "integer",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_var",
+                        "type": "number",
                         "format": "default"
                     },
                     {
@@ -211,13 +231,28 @@
                         "format": "default"
                     },
                     {
-                        "name": "age_installed",
-                        "type": "integer",
+                        "name": "optimize_cap",
+                        "type": "boolean",
                         "format": "default"
                     },
                     {
-                        "name": "expandable",
+                        "name": "maximum_capacity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "renewable_asset",
                         "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "input_timeseries",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "electricity_bus",
+                        "type": "string",
                         "format": "default"
                     }
                 ],
@@ -227,10 +262,122 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "bus_electricity",
+                        "fields": "electricity_bus",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "input_timeseries",
+                        "reference": {
+                            "resource": "profiles"
+                        }
+                    },
+                    {
+                        "fields": "project_data",
+                        "reference": {
+                            "resource": "project",
+                            "fields": "name"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/elements/wind_plant.csv",
+            "profile": "tabular-data-resource",
+            "name": "wind_plant",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "project_data",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "age_installed",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "installed_capacity",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_var",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_var",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "optimize_cap",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum_capacity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "renewable_asset",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "input_timeseries",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "to_bus",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "input_timeseries",
+                        "reference": {
+                            "resource": "profiles"
                         }
                     },
                     {
@@ -241,9 +388,10 @@
                         }
                     },
                     {
-                        "fields": "pv_profile",
+                        "fields": "to_bus",
                         "reference": {
-                            "resource": "profiles"
+                            "resource": "bus",
+                            "fields": "name"
                         }
                     }
                 ]
@@ -259,6 +407,11 @@
             "schema": {
                 "fields": [
                     {
+                        "name": "tax",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
                         "name": "name",
                         "type": "string",
                         "format": "default"
@@ -269,32 +422,35 @@
                         "format": "default"
                     },
                     {
-                        "name": "lifetime",
-                        "type": "integer",
-                        "format": "default"
-                    },
-                    {
                         "name": "discount_factor",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "tax",
-                        "type": "number",
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "shortage_cost",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "excess_cost",
+                        "type": "integer",
                         "format": "default"
                     }
                 ],
                 "missingValues": [
                     ""
-                ],
-                "primaryKey": "name",
-                "foreignKeys": []
+                ]
             }
         },
         {
-            "path": "data/sequences/timeseries.csv",
+            "path": "data/sequences/profiles.csv",
             "profile": "tabular-data-resource",
-            "name": "timeseries",
+            "name": "profiles",
             "format": "csv",
             "mediatype": "text/csv",
             "encoding": "utf-8",
@@ -302,21 +458,21 @@
                 "fields": [
                     {
                         "name": "timeindex",
-                        "type": "datetime",
+                        "type": "string",
                         "format": "default"
                     },
                     {
-                        "name": "heat_demand_profile",
+                        "name": "electricity_demand.csv",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "electricity_demand_profile",
+                        "name": "pv_profile.csv",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "pv_profile",
+                        "name": "wind_profile.csv",
                         "type": "number",
                         "format": "default"
                     }

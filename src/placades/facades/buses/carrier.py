@@ -4,7 +4,7 @@ from oemof.solph import Bus
 class CarrierBus(Bus):  # todo add shortage source and excess sink with costs
     """Bus mit Medium-Attribut"""
 
-    def __init__(self, name, carrier=None):
+    def __init__(self, label, carrier=None, **kwargs):
         """
         Bus mit Energieträger-Information
 
@@ -25,6 +25,7 @@ class CarrierBus(Bus):  # todo add shortage source and excess sink with costs
         >>> heat_bus = CarrierBus(name="district_heating", carrier="heat")
         >>> h2_bus = CarrierBus(name="h2_network", carrier="hydrogen")
         """
+        name = label
         super().__init__(label=name)
         self.carrier = carrier
         self.name = name

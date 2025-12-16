@@ -9,8 +9,8 @@ from oemof.solph.components import Source
 class DSO(Node):
     def __init__(
         self,
-        label,
-        to_bus,
+        name,
+        bus_electricity,
         energy_price=0.3,
         feedin_tariff=0.1,
         peak_demand_pricing=0,
@@ -64,9 +64,8 @@ class DSO(Node):
         ... )
 
         """
-        name = label
         self.name = name
-        self.bus_electricity = to_bus
+        self.bus_electricity = bus_electricity
         self.energy_price = energy_price
         self.feedin_tariff = feedin_tariff
         self.peak_demand_pricing = peak_demand_pricing

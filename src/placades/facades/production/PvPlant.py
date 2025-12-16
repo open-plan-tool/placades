@@ -8,9 +8,9 @@ class PvPlant(Source):
     def __init__(
         self,
         project_data,
-        electricity_bus,
+        bus_out_electricity,
         input_timeseries,
-        label,
+        name,
         age_installed=0,
         installed_capacity=0,
         capex_fix=0,
@@ -102,8 +102,6 @@ class PvPlant(Source):
 
         """
 
-        name = label
-        bus_out_electricity = electricity_bus
         nv = _create_invest_if_wanted(
             optimise_cap=optimize_cap,
             capex_var=capex_var,

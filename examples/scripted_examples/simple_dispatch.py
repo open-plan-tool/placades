@@ -42,7 +42,7 @@ def main():
     energy_system.add(
         DSO(
             name="My_DSO",
-            bus_electricity=bus_elec,
+            to_bus=bus_elec,
             energy_price=0.1,
             feedin_tariff=0.04,
         )
@@ -52,7 +52,7 @@ def main():
     energy_system.add(
         WindTurbine(
             name="wind",
-            bus_out_electricity=bus_elec,
+            to_bus=bus_elec,
             input_timeseries=data["wind"],
             installed_capacity=6.63,
             project_data=project,
@@ -63,7 +63,7 @@ def main():
     energy_system.add(
         PvPlant(
             name="pv",
-            bus_out_electricity=bus_elec,
+            to_bus=bus_elec,
             project_data=project,
             installed_capacity=5.0,
             input_timeseries=data["pv"],
@@ -75,7 +75,7 @@ def main():
     energy_system.add(
         Demand(
             name="demand_el",
-            bus_in_electricity=bus_elec,
+            from_bus=bus_elec,
             input_timeseries=data["demand_el"],
         )
     )

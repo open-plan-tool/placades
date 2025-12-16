@@ -251,7 +251,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "electricity_bus",
+                        "name": "to_bus",
                         "type": "string",
                         "format": "default"
                     }
@@ -262,7 +262,7 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "electricity_bus",
+                        "fields": "to_bus",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"

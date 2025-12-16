@@ -8,7 +8,7 @@ class PvPlant(Source):
     def __init__(
         self,
         project_data,
-        bus_out_electricity,
+        to_bus,
         input_timeseries,
         name,
         age_installed=0,
@@ -112,7 +112,7 @@ class PvPlant(Source):
             project_data=project_data,
         )
 
-        self.bus_out_electricity = bus_out_electricity
+        self.bus_out_electricity = to_bus
         self.input_timeseries = input_timeseries
         self.name = name
         self.age_installed = age_installed

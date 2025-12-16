@@ -10,7 +10,7 @@ class DSO(Node):
     def __init__(
         self,
         name,
-        bus_electricity,
+        to_bus,
         energy_price=0.3,
         feedin_tariff=0.1,
         peak_demand_pricing=0,
@@ -65,7 +65,7 @@ class DSO(Node):
 
         """
         self.name = name
-        self.bus_electricity = bus_electricity
+        self.bus_electricity = to_bus
         self.energy_price = energy_price
         self.feedin_tariff = feedin_tariff
         self.peak_demand_pricing = peak_demand_pricing

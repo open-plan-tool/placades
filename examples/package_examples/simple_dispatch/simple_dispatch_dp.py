@@ -60,7 +60,7 @@ logger.info("Model created from energy system")
 
 
 # select solver 'gurobi', 'cplex', 'glpk' etc
-m.solve("cbc")
+m.solve(solver="cbc", solve_kwargs={"tee": True, "keepfiles": False})
 
 results = Results(m)
 rdf = results.to_df("flow")
@@ -76,8 +76,12 @@ for n, m in [(0, 1), (1, 0)]:
         level=n,
         inplace=True,
     )
-elec_in = rdf[[c for c in rdf.columns if c[0] == "electricity"]]
-elec_out = rdf[[c for c in rdf.columns if c[1] == "electricity"]]
+elec_in = rdf[
+    [c for c in rdf.columns if getattr(c[0], "label", None) == "bus-0"]
+]
+elec_out = rdf[
+    [c for c in rdf.columns if getattr(c[1], "label", None) == "bus-0"]
+]
 print(elec_in.sum())
 print(elec_out.sum())
 print("*****************")

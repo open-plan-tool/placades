@@ -1,0 +1,2 @@
+type,name,input_timeseries,from_bus
+demand,demand_el,electricity_demand.csv,electricity

@@ -1,2 +1,0 @@
-name,type,carrier,balanced,excess,excess_costs
-bus-0,CarrierBus,Electricity,True,False,0.0

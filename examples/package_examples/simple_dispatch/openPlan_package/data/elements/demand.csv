@@ -1,2 +1,0 @@
-type,name,input_timeseries,from_bus
-demand,demand-0,electricity_demand.csv,bus-0

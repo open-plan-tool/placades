@@ -16,14 +16,13 @@ from placades import PvPlant
 from placades import WindTurbine
 
 
-def main():
+def create_energy_system_sc():
     # Read data file
     project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
-    define_logging()
-    filename = Path(Path(__file__).parent, "data/input_data.csv")
+    filename = Path(
+        Path(__file__).parent, "../scripted_examples/data/input_data.csv"
+    )
     data = pd.read_csv(filename)
-
-    solver = "cbc"
 
     # ####################### initialize the energy system ####################
     datetimeindex = create_time_index(2024, number=len(data))
@@ -34,10 +33,9 @@ def main():
     # ######################### create energysystem components ################
 
     # carrier
-    bus_gas = CarrierBus(name="gas")
     bus_elec = CarrierBus(name="electricity")
 
-    energy_system.add(bus_gas, bus_elec)
+    energy_system.add(bus_elec)
 
     energy_system.add(
         DSO(
@@ -87,7 +85,14 @@ def main():
     #         storage_capacity=500,
     #     )
     # )
+    return energy_system
+
+
+def main():
+    solver = "cbc"
+
     # ################################ optimization ###########################
+    energy_system = create_energy_system_sc()
     # create optimization model based on energy_system
     logging.info("Create model")
     optimization_model = Model(energysystem=energy_system)

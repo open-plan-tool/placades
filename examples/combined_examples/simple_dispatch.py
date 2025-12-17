@@ -25,7 +25,8 @@ def main(kind, debug=False):
 
     # solve problem
     logging.info("Solve model")
-    if debug is True:
+
+    if debug:
         skwargs = {"tee": True, "keepfiles": False}
     else:
         skwargs = {}

@@ -77,6 +77,10 @@
     renewable. This parameter is necessary to consider the renewable share
     constraint correctly. [-] (Acceptable values are either Yes or No.).
 
+.. |renewable_share| replace:: Share of renewables in the generation mix of
+    the energy supplied by the DSO utility. [Factor] (Real number between 0
+    and 1).
+
 .. |sco_max| replace:: The maximum permissible level of charge of the storage
     as a factor of the nominal capacity. When the battery is filled to its
     nominal capacity the state of charge is represented by the value 1 [-]

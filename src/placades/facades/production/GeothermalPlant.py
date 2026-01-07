@@ -1,92 +1,132 @@
-# from oemof.network import Source
-#
-#
-# class GeothermalPlant(Source):
-#     def __init__(
-#         self,
-#         name,
-#         age_installed=0,
-#         installed_capacity=0,
-#         capex_fix=1000,
-#         capex_var=1000,
-#         opex_fix=10,
-#         opex_var=0.01,
-#         lifetime=20,
-#         optimize_cap=False,
-#         maximum_capacity=None,
-#         renewable_asset=True,
-#         input_timeseries=None,
-#     ):
-#         """
-#         Geothermal plant for renewable heat generation.
-#
-#         This class represents a geothermal plant that extracts thermal
-#         energy from the Earth's subsurface for heat generation.
-#
-#         .. important ::
-#             This is a renewable energy source that provides consistent
-#             baseload heat generation.
-#
-#         :Structure:
-#           *output*
-#             1. to_bus : Heat
-#
-#         Parameters
-#         ----------
-#         name : str
-#             Name of the asset.
-#         age_installed : int, default=0
-#             Number of years the asset has already been in operation.
-#         installed_capacity : float, default=0
-#             Already existing installed capacity.
-#         capex_fix : float, default=1000
-#             Specific investment costs of the asset related to the
-#             installed capacity (CAPEX).
-#         capex_var : float, default=1000
-#             Specific investment costs of the asset related to the
-#             installed capacity (CAPEX).
-#         opex_fix : float, default=10
-#             Specific operational and maintenance costs of the asset
-#             related to the installed capacity (OPEX_fix).
-#         opex_var : float, default=0.01
-#             Costs associated with a flow through/from the asset
-#             (OPEX_var or fuel costs).
-#         lifetime : int, default=20
-#             Number of operational years of the asset until it has to
-#             be replaced.
-#         optimize_cap : bool, default=False
-#             Choose if capacity optimization should be performed for
-#             this asset.
-#         maximum_capacity : float or None, default=None
-#             Maximum total capacity of an asset that can be installed
-#             at the project site.
-#         renewable_asset : bool, default=True
-#             Choose if this asset should be considered as renewable.
-#         input_timeseries : str or None, default=None
-#             Name of the csv file containing the input generation or
-#             demand timeseries.
-#
-#         Examples
-#         --------
-#         >>> from oemof.solph import Bus
-#         >>> heat_bus = Bus(label="heat_bus")
-#         >>> my_geothermal = GeothermalConversion(
-#         ...     name="deep_geothermal_plant",
-#         ...     installed_capacity=1000,
-#         ...     input_timeseries="geothermal_heat.csv",
-#         ... )
-#
-#         """
-#         self.name = name
-#         self.age_installed = age_installed
-#         self.installed_capacity = installed_capacity
-#         self.capex_fix = capex_fix
-#         self.capex_var = capex_var
-#         self.opex_fix = opex_fix
-#         self.opex_var = opex_var
-#         self.lifetime = lifetime
-#         self.optimize_cap = optimize_cap
-#         self.maximum_capacity = maximum_capacity
-#         self.renewable_asset = renewable_asset
-#         self.input_timeseries = input_timeseries
-#         super().__init__()
+from oemof.solph import Flow
+from oemof.solph.components import Source
+
+from placades.investment import _create_invest_if_wanted
+
+
+class GeothermalPlant(Source):
+    def __init__(
+        self,
+        project_data,
+        to_bus,
+        input_timeseries,
+        name,
+        age_installed=0,
+        installed_capacity=0,
+        capex_fix=0,
+        capex_var=1000,
+        opex_fix=10,
+        opex_var=0,
+        lifetime=20,
+        optimize_cap=False,
+        maximum_capacity=None,
+        renewable_asset=True,
+    ):
+        """
+        Geothermal plant for renewable heat generation.
+
+        This class represents a geothermal plant that extracts thermal
+        energy from the Earth's subsurface for heat generation.
+
+        .. important ::
+            This is a renewable energy source that provides consistent
+            baseload heat generation.
+
+        :Structure:
+          *output*
+            1. to_bus : Heat
+
+        Parameters
+        ----------
+        project_data: Project object
+            |project_data|
+        bus_out_heat : bus object
+            |bus_out_heat|
+        input_timeseries : array-like
+            |input_timeseries|
+        name : str
+            |name|
+        age_installed : int, default=0
+            |age_installed|
+        installed_capacity : float, default=0
+            |installed_capacity|
+        capex_fix : float, default=0
+            |capex_fix|
+        capex_var : float, default=1000
+            |capex_var|
+        opex_fix : float, default=10
+            |opex_fix|
+        opex_var : float, default=0
+            |opex_var|
+        lifetime : int, default=20
+            |lifetime|
+        optimize_cap : bool, default=False
+            |optimize_cap|
+        maximum_capacity : float or None, default=None
+            |maximum_capacity|
+        renewable_asset : bool, default=True
+            |renewable_asset|
+
+
+        Examples
+        --------
+        >>> from placades import Project
+        >>> from placades import CarrierBus
+        >>> my_project = Project(
+        ...         name="my_project",
+        ...         lifetime=20,
+        ...         tax=0,
+        ...         discount_factor=0.01
+        ...     )
+        >>> heat_bus = CarrierBus(name="my_heat_bus")
+        >>> my_geothermal = GeothermalPlant(
+        ...     bus_out_heat=heat_bus,
+        ...     name="my_geothermal_plant",
+        ...     age_installed=0, # a
+        ...     installed_capacity=0, # kW
+        ...     capex_fix=0, # €
+        ...     capex_var=1000, # €/kW
+        ...     opex_fix=10, # €/kW/a
+        ...     opex_var=0, # €/kWh
+        ...     lifetime=25, # a
+        ...     optimize_cap=True,
+        ...     maximum_capacity=1000, # kW
+        ...     renewable_asset=True,
+        ...     input_timeseries=[1,2,3],
+        ...     project_data=my_project,
+        ...  )
+
+        """
+
+        nv = _create_invest_if_wanted(
+            optimise_cap=optimize_cap,
+            capex_var=capex_var,
+            opex_fix=opex_fix,
+            lifetime=lifetime,
+            age_installed=age_installed,
+            existing_capacity=installed_capacity,
+            project_data=project_data,
+        )
+
+        self.bus_out_heat = to_bus
+        self.input_timeseries = input_timeseries
+        self.name = name
+        self.age_installed = age_installed
+        self.installed_capacity = installed_capacity
+        self.capex_fix = capex_fix
+        self.capex_var = capex_var
+        self.opex_fix = opex_fix
+        self.opex_var = opex_var
+        self.lifetime = lifetime
+        self.optimize_cap = optimize_cap
+        self.maximum_capacity = maximum_capacity
+        self.renewable_asset = renewable_asset
+
+        outputs = {
+            self.bus_out_heat: Flow(
+                fix=input_timeseries,
+                nominal_capacity=nv,
+            )
+        }
+
+        super().__init__(label=name, outputs=outputs)

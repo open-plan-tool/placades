@@ -19,7 +19,7 @@ class Excess(Sink):
     bus_in : oemof.solph.Bus or placade.CarrierBus
         |bus_in|
     cost : float or array-like
-        |cost|
+        |energy_prics|
 
     Examples
     --------

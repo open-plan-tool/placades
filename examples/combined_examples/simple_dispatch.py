@@ -3,7 +3,6 @@ import logging
 from oemof.solph import Model
 from oemof.solph import Results
 from oemof.tools.logger import define_logging
-
 from simple_dispatch_dp import create_energy_system_dp
 from simple_dispatch_scripted import create_energy_system_sc
 
@@ -30,9 +29,7 @@ def main(kind, debug=False):
         skwargs = {"tee": True, "keepfiles": False}
     else:
         skwargs = {}
-    optimization_model.solve(
-        solver=solver, solve_kwargs=skwargs
-    )
+    optimization_model.solve(solver=solver, solve_kwargs=skwargs)
     results = Results(optimization_model)
     rdf = results.to_df("flow")
 

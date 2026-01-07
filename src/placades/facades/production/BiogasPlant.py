@@ -8,7 +8,7 @@ class BiogasPlant(Source):
     def __init__(
         self,
         project_data,
-        to_bus,
+        bus_out_fuel,
         input_timeseries,
         name,
         age_installed=0,
@@ -111,7 +111,7 @@ class BiogasPlant(Source):
             project_data=project_data,
         )
 
-        self.bus_out_fuel = to_bus
+        self.bus_out_fuel = bus_out_fuel
         self.input_timeseries = input_timeseries
         self.name = name
         self.age_installed = age_installed

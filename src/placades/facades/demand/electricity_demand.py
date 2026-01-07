@@ -33,14 +33,14 @@ class Demand(Sink):
     ... )
     """
 
-    def __init__(self, name, from_bus, input_timeseries):
+    def __init__(self, name, bus_in_electricity, input_timeseries):
         self.profile = input_timeseries
         self.name = name
 
         super().__init__(
             label=name,
             inputs={
-                from_bus: Flow(
+                bus_in_electricity: Flow(
                     fix=input_timeseries,
                     nominal_capacity=1,
                 )

@@ -8,7 +8,7 @@ class SolarThermalPlant(Source):
     def __init__(
         self,
         project_data,
-        to_bus,
+        bus_out_heat,
         input_timeseries,
         name,
         age_installed=0,
@@ -107,7 +107,7 @@ class SolarThermalPlant(Source):
             project_data=project_data,
         )
 
-        self.bus_out_heat = to_bus
+        self.bus_out_heat = bus_out_heat
         self.input_timeseries = input_timeseries
         self.name = name
         self.age_installed = age_installed

@@ -11,7 +11,6 @@ from placades import Project
 from placades import PvPlant
 from placades import WindTurbine
 
-
 DATA_PATH = Path("data")
 
 DATA_FILES = {

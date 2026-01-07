@@ -10,7 +10,7 @@ class DSO(Node):
     def __init__(
         self,
         name,
-        to_bus,
+        bus,
         energy_price=0.3,
         feedin_tariff=0.1,
         peak_demand_pricing=0,
@@ -40,13 +40,13 @@ class DSO(Node):
         name : str
             |name|
         energy_price : float, default=0.3
-            |energy_price|
+            |energy_prics|
         feedin_tariff : float, default=0.1
             |feedin_tariff|
         peak_demand_pricing : float, default=0
             |peak_demand_pricing|
         peak_demand_pricing_period : int, default=1
-            |peak_demand_pricing_period|
+            |peak_demand_period|
         renewable_share : float, default=0.44
             |renewable_share|
         feedin_cap : float or None, default=None
@@ -58,14 +58,14 @@ class DSO(Node):
         >>> ebus = Bus(label="electricity_bus")
         >>> my_dso = DSO(
         ...     name="main_grid",
-        ...     bus_electricity=ebus,
+        ...     bus=ebus,
         ...     energy_price=0.25,
         ...     feedin_tariff=0.08,
         ... )
 
         """
         self.name = name
-        self.bus_electricity = to_bus
+        self.bus_electricity = bus
         self.energy_price = energy_price
         self.feedin_tariff = feedin_tariff
         self.peak_demand_pricing = peak_demand_pricing

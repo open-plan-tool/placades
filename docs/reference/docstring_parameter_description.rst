@@ -106,11 +106,15 @@
 
 .. |thermal_loss_rate| replace:: Definition of thermal loss rate. [-] (numeric).
 
+.. |bus_in| replace:: Connected Bus component for an input flow. [object].
+
 .. |bus_in_electricity| replace:: Connected Bus component for the electricity input flow. [object].
 
 .. |bus_out_electricity| replace:: Connected Bus component for the electricity output flow. [object].
 
 .. |bus_in_heat| replace:: Connected Bus component for the heat input flow. [object].
+
+.. |bus_out| replace:: Connected Bus component for the output flow. [object].
 
 .. |bus_out_heat| replace:: Connected Bus component for the heat output flow. [object].
 

@@ -1,9 +1,9 @@
 import warnings
 from pathlib import Path
 
+from oemof.datapackage import datapackage  # noqa
 from oemof.network import graph
 from oemof.solph import EnergySystem
-from oemof.datapackage import datapackage  # noqa
 from oemof.tools.debugging import ExperimentalFeatureWarning
 from oemof.visio import ESGraphRenderer
 

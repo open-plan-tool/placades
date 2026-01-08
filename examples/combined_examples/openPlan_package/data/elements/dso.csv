@@ -1,2 +1,2 @@
-type,name,energy_price,feedin_tariff,peak_demand_pricing,peak_demand_pricing_period,renewable_share,feedin_cap,to_bus
+type,name,energy_price,feedin_tariff,peak_demand_pricing,peak_demand_pricing_period,renewable_share,feedin_cap,bus_electricity
 dso,My_DSO,0.1,0.04,0.0,1,0.44,,electricity

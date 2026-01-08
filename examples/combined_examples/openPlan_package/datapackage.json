@@ -75,7 +75,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "from_bus",
+                        "name": "bus_in_electricity",
                         "type": "string",
                         "format": "default"
                     }
@@ -86,7 +86,7 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "from_bus",
+                        "fields": "bus_in_electricity",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"
@@ -151,7 +151,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "to_bus",
+                        "name": "bus_electricity",
                         "type": "string",
                         "format": "default"
                     }
@@ -162,7 +162,7 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "to_bus",
+                        "fields": "bus_electricity",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"
@@ -251,7 +251,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "to_bus",
+                        "name": "bus_out_electricity",
                         "type": "string",
                         "format": "default"
                     }
@@ -262,7 +262,7 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "to_bus",
+                        "fields": "bus_out_electricity",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"
@@ -364,7 +364,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "to_bus",
+                        "name": "bus_out_electricity",
                         "type": "string",
                         "format": "default"
                     }
@@ -388,7 +388,7 @@
                         }
                     },
                     {
-                        "fields": "to_bus",
+                        "fields": "bus_out_electricity",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"

@@ -56,7 +56,7 @@ class DSO(Node):
         >>> ebus = Bus(label="electricity_bus")
         >>> my_dso = DSO(
         ...     name="main_grid",
-        ...     bus=ebus,
+        ...     bus_electricity=ebus,
         ...     energy_price=0.25,
         ...     feedin_tariff=0.08,
         ... )

@@ -17,6 +17,10 @@ class Project:
         discount_factor,
         shortage_cost=999,
         excess_cost=99,
+        disable_shortage=False,
+        disable_excess=False,
+        latitude=50.587031,
+        longitude=10.165876,
     ):
         self.name = name
         self.tax = tax

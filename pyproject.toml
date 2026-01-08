@@ -27,7 +27,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -39,14 +38,14 @@ classifiers = [
 keywords = [
     # eg: "keyword1", "keyword2", "keyword3",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "oemof-network",
     "oemof-solph",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pvlib"]
+dev = ["pytest", "pvlib", "demandlib", "tox"]
 dummy = ["oemof"]
 
 [project.urls]
@@ -59,7 +58,7 @@ dummy = ["oemof"]
 extend-exclude = ["static", "ci/templates"]
 line-length = 79
 src = ["src", "tests"]
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint.per-file-ignores]
 "ci/*" = ["S"]

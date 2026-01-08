@@ -1,16 +1,18 @@
 from oemof.solph import Bus
 
 
-class CarrierBus(Bus):
+class CarrierBus(Bus):  # todo add shortage source and excess sink with costs
     """Bus mit Medium-Attribut"""
 
-    def __init__(self, label, carrier=None):
+    def __init__(
+        self, name, carrier=None, balanced=None, excess=None, excess_costs=None
+    ):
         """
         Bus mit Energieträger-Information
 
         Parameters
         ----------
-        label : str or tuple
+        name : str or tuple
             Eindeutige Bezeichnung des Bus
         carrier : str
             Energieträger/Medium (z.B. 'electricity', 'gas', 'heat',
@@ -20,13 +22,14 @@ class CarrierBus(Bus):
 
         Examples
         --------
-        >>> electricity_bus = CarrierBus(label="grid", carrier="electricity")
-        >>> gas_bus = CarrierBus(label="gas_grid", carrier="natural_gas")
-        >>> heat_bus = CarrierBus(label="district_heating", carrier="heat")
-        >>> h2_bus = CarrierBus(label="h2_network", carrier="hydrogen")
+        >>> electricity_bus = CarrierBus(name="grid", carrier="electricity")
+        >>> gas_bus = CarrierBus(name="gas_grid", carrier="natural_gas")
+        >>> heat_bus = CarrierBus(name="district_heating", carrier="heat")
+        >>> h2_bus = CarrierBus(name="h2_network", carrier="hydrogen")
         """
-        super().__init__(label=label)
+        super().__init__(label=name)
         self.carrier = carrier
+        self.name = name
 
     def __repr__(self):
-        return f"<CarrierBus '{self.label}' carrier='{self.carrier}'>"
+        return f"<CarrierBus '{self.name}' carrier='{self.carrier}'>"

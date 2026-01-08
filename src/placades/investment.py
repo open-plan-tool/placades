@@ -63,7 +63,7 @@ def get_replacement_costs(
         )
 
     present_value_of_capital_expenditures = pd.DataFrame(
-        [0 for _i in range(project_lifetime + 1)],
+        [0.0 for _i in range(project_lifetime + 1)],
         index=list(range(project_lifetime + 1)),
     )
 
@@ -114,11 +114,11 @@ def _create_invest_if_wanted(
     if optimise_cap is True:
         epc = (
             project_data.calculate_epc(
-                capex_var, lifetime, age_installed, method="oemof"
+                capex_var, lifetime, age_installed, method="mvs"
             )
             + opex_fix
         )
-        return Investment(ep_costs=epc)
+        return Investment(ep_costs=epc, existing=existing_capacity)
     else:
         return existing_capacity
 

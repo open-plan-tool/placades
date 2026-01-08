@@ -30,10 +30,8 @@ class DSO(Node):
             factor calculation.
 
         :Structure:
-          *input*
-            1. from_bus : Electricity
-          *output*
-            1. to_bus : Electricity
+          *input* & *output*
+            bus : Electricity
 
         Parameters
         ----------

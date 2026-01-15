@@ -11,8 +11,8 @@ class H2Demand(Sink):
         according to a specified time series pattern.
 
         :Structure:
-        *input*
-            1. from_bus : Hydrogen
+            *input:*
+                1. from_bus : Hydrogen
 
         Parameters
         ----------

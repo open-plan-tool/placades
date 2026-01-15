@@ -11,8 +11,8 @@ class Demand(Sink):
         electrical energy according to a specified time series pattern.
 
         :Structure:
-        *input*
-            1. from_bus : Electricity
+            *input*
+                1. from_bus : Electricity
 
         Parameters
         ----------

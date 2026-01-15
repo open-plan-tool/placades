@@ -1,0 +1,6 @@
+# Docs & Code immer LF – unabhängig von Windows / Editor
+*.py   text eol=lf
+*.rst  text eol=lf
+*.md   text eol=lf
+*.yml  text eol=lf
+*.toml text eol=lf

@@ -26,7 +26,7 @@ class H2Demand(Sink):
         Examples
         --------
         >>> from placades import CarrierBus as Bus
-        >>> h2_bus = Bus(label="hydrogen_bus")
+        >>> h2_bus = Bus(name="hydrogen_bus")
         >>> my_h2_demand = H2Demand(
         ...     name="fuel_cell_demand",
         ...     bus_in_hydrogen=h2_bus,

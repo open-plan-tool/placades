@@ -77,11 +77,7 @@ class DSO(Node):
 
         self.subnode(
             Converter,
-            inputs={
-                self.bus: Flow(
-                    variable_costs=self.feedin_tariff * -1
-                )
-            },
+            inputs={self.bus: Flow(variable_costs=self.feedin_tariff * -1)},
             outputs={internal_bus: Flow()},
             local_name="feedin_converter",
         )
@@ -93,9 +89,7 @@ class DSO(Node):
         self.subnode(
             Converter,
             inputs={internal_bus: Flow()},
-            outputs={
-                self.bus: Flow(variable_costs=self.energy_price)
-            },
+            outputs={self.bus: Flow(variable_costs=self.energy_price)},
             local_name="consumption_converter",
         )
 

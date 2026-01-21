@@ -4,9 +4,9 @@ import pandas as pd
 from oemof.solph import EnergySystem
 from oemof.solph import create_time_index
 
-from placades import DsoElectricity
 from placades import CarrierBus
 from placades import Demand
+from placades import DsoElectricity
 from placades import Project
 from placades import PvPlant
 from placades import WindTurbine

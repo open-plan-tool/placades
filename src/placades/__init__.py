@@ -14,11 +14,11 @@ from placades.typemap import TYPEMAP
 
 __all__ = [
     "CHP",
-    "DsoElectricity",
     "TYPEMAP",
     "Battery",
     "CarrierBus",
     "Demand",
+    "DsoElectricity",
     "Excess",
     "Project",
     "PvPlant",

@@ -4,7 +4,7 @@ import pandas as pd
 from oemof.solph import EnergySystem
 from oemof.solph import create_time_index
 
-from placades import DSO
+from placades import DsoElectricity
 from placades import CarrierBus
 from placades import Demand
 from placades import Project
@@ -44,7 +44,7 @@ def create_energy_system_sc():
     energy_system.add(bus_elec)
 
     energy_system.add(
-        DSO(
+        DsoElectricity(
             name="My_DSO",
             bus_electricity=bus_elec,
             energy_price=0.1,

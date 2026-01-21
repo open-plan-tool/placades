@@ -1,12 +1,7 @@
-from oemof.network import Node
-from oemof.solph import Bus
-from oemof.solph import Flow
-from oemof.solph.components import Converter
-from oemof.solph.components import Sink
-from oemof.solph.components import Source
+from placades.facades.providers.dso import DSO
 
 
-class DSO(Node):
+class DsoElectricity(DSO):
     def __init__(
         self,
         name,
@@ -62,45 +57,13 @@ class DSO(Node):
         ... )
 
         """
-        self.name = name
-        self.bus_electricity = bus_electricity
-        self.energy_price = energy_price
-        self.feedin_tariff = feedin_tariff
-        self.peak_demand_pricing = peak_demand_pricing
-        self.peak_demand_pricing_period = peak_demand_pricing_period
-        self.renewable_share = renewable_share
-        self.feedin_cap = feedin_cap
-
-        super().__init__(label=self.name)
-
-        internal_bus = self.subnode(Bus, local_name="internal_bus")
-
-        self.subnode(
-            Converter,
-            inputs={
-                self.bus_electricity: Flow(
-                    variable_costs=self.feedin_tariff * -1
-                )
-            },
-            outputs={internal_bus: Flow()},
-            local_name="feedin_converter",
-        )
-
-        self.subnode(
-            Sink, inputs={internal_bus: Flow()}, local_name="feedin_sink"
-        )
-
-        self.subnode(
-            Converter,
-            inputs={internal_bus: Flow()},
-            outputs={
-                self.bus_electricity: Flow(variable_costs=self.energy_price)
-            },
-            local_name="consumption_converter",
-        )
-
-        self.subnode(
-            Source,
-            outputs={internal_bus: Flow()},
-            local_name="consumption_source",
+        super().__init__(
+            name=name,
+            bus=bus_electricity,
+            energy_price=energy_price,
+            feedin_tariff=feedin_tariff,
+            peak_demand_pricing=peak_demand_pricing,
+            peak_demand_pricing_period=peak_demand_pricing_period,
+            renewable_share=0.44,
+            feedin_cap=None,
         )

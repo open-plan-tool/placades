@@ -1,7 +1,7 @@
 from oemof.solph.components import Source
 
 from placades import CHP
-from placades import DSO
+from placades import DsoElectricity
 from placades import Battery
 from placades import CarrierBus
 from placades import Demand
@@ -18,7 +18,8 @@ TYPEMAP = {
     "project": Project,
     "pv_plant": PvPlant,
     "wind_plant": WindTurbine,
-    "dso": DSO,
+    "dso_electricity": DsoElectricity,
+    "dso": DsoElectricity,
     "gas_dso": None,
     "h2_dso": None,
     "heat_dso": None,

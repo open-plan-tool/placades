@@ -13,8 +13,8 @@ class DSO(Node):
         bus,
         energy_price,
         feedin_tariff,
-        peak_demand_pricing,
-        peak_demand_pricing_period,
+        peak_demand_pricing=0,
+        peak_demand_pricing_period=1,
         renewable_share=0.44,
         feedin_cap=None,
     ):
@@ -53,10 +53,10 @@ class DSO(Node):
         Examples
         --------
         >>> from oemof.solph import Bus
-        >>> ebus = Bus(label="electricity_bus")
+        >>> ebus = Bus(label="any_bus")
         >>> my_dso = DSO(
-        ...     name="main_grid",
-        ...     bus_electricity=ebus,
+        ...     name="any_network",
+        ...     bus=ebus,
         ...     energy_price=0.25,
         ...     feedin_tariff=0.08,
         ... )

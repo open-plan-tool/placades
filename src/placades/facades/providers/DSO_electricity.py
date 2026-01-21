@@ -47,9 +47,9 @@ class DsoElectricity(DSO):
 
         Examples
         --------
-        >>> from oemof.solph import Bus
-        >>> ebus = Bus(label="electricity_bus")
-        >>> my_dso = DSO(
+        >>> from placades import CarrierBus, DsoElectricity
+        >>> ebus = CarrierBus(name="electricity_bus")
+        >>> my_dso = DsoElectricity(
         ...     name="main_grid",
         ...     bus_electricity=ebus,
         ...     energy_price=0.25,
@@ -64,6 +64,6 @@ class DsoElectricity(DSO):
             feedin_tariff=feedin_tariff,
             peak_demand_pricing=peak_demand_pricing,
             peak_demand_pricing_period=peak_demand_pricing_period,
-            renewable_share=0.44,
-            feedin_cap=None,
+            renewable_share=renewable_share,
+            feedin_cap=feedin_cap,
         )

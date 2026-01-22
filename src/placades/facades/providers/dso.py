@@ -68,7 +68,7 @@ class DSO(Node):
         self.feedin_tariff = feedin_tariff
         self.peak_demand_pricing = peak_demand_pricing
         self.peak_demand_pricing_period = peak_demand_pricing_period
-        self.renewable_share = renewable_share
+        self.renewable_share = renewable_share  # Specific emission
         self.feedin_cap = feedin_cap
 
         super().__init__(label=self.name)

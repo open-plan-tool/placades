@@ -1,0 +1,48 @@
+{
+  "name": "oemof_solph_results",
+  "profile": "tabular-data-package",
+  "resources": [
+    {
+      "name": "Problem",
+      "path": "results/elements/Problem.csv",
+      "kind": "element",
+      "format": "csv",
+      "header_rows": 1
+    },
+    {
+      "name": "variable_costs",
+      "path": "results/sequences/variable_costs.csv",
+      "kind": "sequence",
+      "format": "csv",
+      "header_rows": 2
+    },
+    {
+      "name": "flow",
+      "path": "results/sequences/flow.csv",
+      "kind": "sequence",
+      "format": "csv",
+      "header_rows": 2
+    },
+    {
+      "name": "Solution",
+      "path": "results/elements/Solution.csv",
+      "kind": "element",
+      "format": "csv",
+      "header_rows": 1
+    },
+    {
+      "name": "objective",
+      "path": "results/elements/objective.csv",
+      "kind": "element",
+      "format": "csv",
+      "header_rows": 1
+    },
+    {
+      "name": "Solver",
+      "path": "results/elements/Solver.csv",
+      "kind": "element",
+      "format": "csv",
+      "header_rows": 1
+    }
+  ]
+}

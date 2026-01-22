@@ -12,7 +12,7 @@ from placades import TYPEMAP
 warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 
 
-def create_energy_system_dp():
+def create_energy_system_from_dp():
     results_path = Path(Path.home(), "placades", "results")
     scenario_name = "test_placade_example"
     scenario_dir = "openPlan_package"

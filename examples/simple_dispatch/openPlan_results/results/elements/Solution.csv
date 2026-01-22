@@ -1,0 +1,2 @@
+index,Gap,Status,Message,Problem,Objective,Variable,Constraint
+0,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FA3B00>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FA3AD0>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FA18E0>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FA1BE0>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FA29C0>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FA0860>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FA2840>

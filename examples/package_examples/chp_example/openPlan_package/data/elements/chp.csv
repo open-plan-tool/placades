@@ -1,2 +1,0 @@
-name,type,bus_gas,bus_electricity,bus_heat,electrical_capacity,electrical_efficiency,thermal_efficiency,opex
-bhkw,CHP,gas,electricity,heat,300,0.35,0.55,0.01

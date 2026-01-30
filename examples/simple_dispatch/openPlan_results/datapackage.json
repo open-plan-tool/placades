@@ -3,11 +3,11 @@
   "profile": "tabular-data-package",
   "resources": [
     {
-      "name": "objective",
-      "path": "results/elements/objective.csv",
-      "kind": "element",
+      "name": "flow",
+      "path": "results/sequences/flow.csv",
+      "kind": "sequence",
       "format": "csv",
-      "header_rows": 1
+      "header_rows": 2
     },
     {
       "name": "variable_costs",
@@ -17,11 +17,18 @@
       "header_rows": 2
     },
     {
-      "name": "flow",
-      "path": "results/sequences/flow.csv",
+      "name": "objective",
+      "path": "results/elements/objective.csv",
+      "kind": "element",
+      "format": "csv",
+      "header_rows": 1
+    },
+    {
+      "name": "storage_content",
+      "path": "results/sequences/storage_content.csv",
       "kind": "sequence",
       "format": "csv",
-      "header_rows": 2
+      "header_rows": 1
     },
     {
       "name": "Solver",
@@ -41,6 +48,13 @@
       "name": "Solution",
       "path": "results/elements/Solution.csv",
       "kind": "element",
+      "format": "csv",
+      "header_rows": 1
+    },
+    {
+      "name": "storage_losses",
+      "path": "results/sequences/storage_losses.csv",
+      "kind": "sequence",
       "format": "csv",
       "header_rows": 1
     }

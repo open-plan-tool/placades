@@ -7,6 +7,7 @@ from oemof.solph import create_time_index
 from placades import CarrierBus
 from placades import Demand
 from placades import DsoElectricity
+from placades import ElectricalStorage
 from placades import Project
 from placades import PvPlant
 from placades import WindTurbine
@@ -72,6 +73,25 @@ def create_energy_system_sc():
             installed_capacity=5.0,
             input_timeseries=data["pv"],
             optimize_cap=False,
+        )
+    )
+
+    energy_system.add(
+        ElectricalStorage(
+            name="Batterie",
+            bus_electricity=bus_elec,
+            age_installed=0,
+            installed_capacity=1000,
+            capex_var=3,
+            opex_fix=5,
+            lifetime=10,
+            optimize_cap=False,
+            soc_max=1,
+            soc_min=0,
+            crate=1,
+            efficiency=0.99,
+            project_data=project,
+            self_discharge=0.0001,
         )
     )
 

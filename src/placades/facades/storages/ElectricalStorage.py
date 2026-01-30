@@ -20,8 +20,8 @@ class ElectricalStorage(GenericStorage):
         optimize_cap,
         soc_max,
         soc_min,
-        crate,
-        efficiency,
+        crate,  # ToDo: Distinguish input and output and change to c_rate
+        efficiency,  # ToDo: Distinguish input and output
         # # Keep in mind for thermal storages
         # fixed_thermal_losses_relative,
         # fixed_thermal_losses_absolute,

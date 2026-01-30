@@ -43,7 +43,8 @@
 #             2. electricity_bus : Electricity
 #
 #         :Optimization:
-#           The characteristic quantity of the optimization is the *maximum electricity
+#           The characteristic quantity of the optimization is the
+#           *maximum electricity
 #           power-output (active power)* of the CHP given in kW
 #
 #         Parameters
@@ -95,7 +96,7 @@
 #         ...     lifetime=20,
 #         ...     optimize_cap=True,
 #         ... )
-# 
+#
 #         """
 #
 #         nv = _create_invest_if_wanted(
@@ -133,7 +134,8 @@
 #         self.lifetime = lifetime
 #         self.expandable = expandable
 #         self.maximum_capacity = maximum_capacity
-#         self.conversion_factor_to_electricity = conversion_factor_to_electricity
+#         self.conversion_factor_to_electricity = (
+#             conversion_factor_to_electricity)
 #         self.conversion_factor_to_heat = conversion_factor_to_heat
 #         super().__init__(
 #             label=label,

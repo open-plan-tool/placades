@@ -104,7 +104,7 @@ class ElectricalStorage(GenericStorage):
 
         super().__init__(
             label=name,
-            nominal_storage_capacity=nv,
+            nominal_capacity=nv,
             inputs={
                 bus_electricity: Flow(nominal_capacity=self.capacity_charge)
             },

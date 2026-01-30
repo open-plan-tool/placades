@@ -87,9 +87,10 @@ def file_dialog():
     return filedialog.askopenfilename(filetypes=[("json files", "*.json")])
 
 
-def main():
-    path = file_dialog()
-    es = create_energy_system_from_dp(path)
+def main(path=None, plot="graph"):
+    if path is None:
+        path = file_dialog()
+    es = create_energy_system_from_dp(path, plot=plot)
     results = optimise(es)
     process_results(results)
 

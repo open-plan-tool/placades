@@ -88,6 +88,20 @@ def file_dialog():
 
 
 def main(path=None, plot="graph"):
+    """
+    Optimise any datapackage.
+
+    Parameters
+    ----------
+    path : path-Object or str
+       Full path to .json-file.
+    plot : str
+        Either "graph" or "visio.
+
+    Returns
+    -------
+
+    """
     if path is None:
         path = file_dialog()
     es = create_energy_system_from_dp(path, plot=plot)

@@ -22,7 +22,7 @@ def create_energy_system_from_dp():
 
     # create energy system object from the datapackage
     es = EnergySystem.from_datapackage(
-        Path(scenario_dir) / "datapackage.json",
+        Path(scenario_dir, "datapackage.json"),
         attributemap={},
         typemap=TYPEMAP,
     )

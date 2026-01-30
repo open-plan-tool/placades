@@ -3,8 +3,8 @@
   "profile": "tabular-data-package",
   "resources": [
     {
-      "name": "Problem",
-      "path": "results/elements/Problem.csv",
+      "name": "objective",
+      "path": "results/elements/objective.csv",
       "kind": "element",
       "format": "csv",
       "header_rows": 1
@@ -24,22 +24,22 @@
       "header_rows": 2
     },
     {
-      "name": "Solution",
-      "path": "results/elements/Solution.csv",
-      "kind": "element",
-      "format": "csv",
-      "header_rows": 1
-    },
-    {
-      "name": "objective",
-      "path": "results/elements/objective.csv",
-      "kind": "element",
-      "format": "csv",
-      "header_rows": 1
-    },
-    {
       "name": "Solver",
       "path": "results/elements/Solver.csv",
+      "kind": "element",
+      "format": "csv",
+      "header_rows": 1
+    },
+    {
+      "name": "Problem",
+      "path": "results/elements/Problem.csv",
+      "kind": "element",
+      "format": "csv",
+      "header_rows": 1
+    },
+    {
+      "name": "Solution",
+      "path": "results/elements/Solution.csv",
       "kind": "element",
       "format": "csv",
       "header_rows": 1

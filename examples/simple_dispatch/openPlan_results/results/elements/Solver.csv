@@ -1,8 +1,8 @@
 index,Name,Status,Return code,Message,User time,System time,Wallclock time,Termination condition,Termination message,Statistics,Error rc,Time
-0,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FA1D00>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FA1280>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FB74A0>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FB5A60>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FB4200>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FB5040>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FB5220>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FB6000>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FB6300>,"
-Branch and bound: 
+0,<pyomo.opt.results.container.ScalarData object at 0x000001D4EE6866F0>,<pyomo.opt.results.container.ScalarData object at 0x000001D4E8EA76E0>,<pyomo.opt.results.container.ScalarData object at 0x000001D4EE685010>,<pyomo.opt.results.container.ScalarData object at 0x000001D4EE685130>,<pyomo.opt.results.container.ScalarData object at 0x000001D4EE684AA0>,<pyomo.opt.results.container.ScalarData object at 0x000001D4EE691070>,<pyomo.opt.results.container.ScalarData object at 0x000001D4EE691610>,<pyomo.opt.results.container.ScalarData object at 0x000001D4EE6907D0>,<pyomo.opt.results.container.ScalarData object at 0x000001D4EE693830>,"
+Branch and bound:
   Number of bounded subproblems: None
   Number of created subproblems: None
-Black box: 
+Black box:
   Number of iterations: 0
-",<pyomo.opt.results.container.ScalarData object at 0x00000241A4FB7560>,<pyomo.opt.results.container.ScalarData object at 0x00000241A4FA9520>
+",<pyomo.opt.results.container.ScalarData object at 0x000001D4EE652E10>,<pyomo.opt.results.container.ScalarData object at 0x000001D4EE698770>

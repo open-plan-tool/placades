@@ -2,12 +2,14 @@ import logging
 from pathlib import Path
 
 import pandas as pd
+from oemof.datapackage.resultpackage import read
+from oemof.datapackage.resultpackage import write
+from oemof.network import graph
 from oemof.solph import Model
 from oemof.solph import Results
 from oemof.tools.logger import define_logging
 from simple_dispatch_dp import create_energy_system_from_dp
 from simple_dispatch_scripted import create_energy_system_sc
-from oemof.datapackage.resultpackage import write, read
 
 
 def main(kind, debug=False):
@@ -32,6 +34,8 @@ def optimise(kind, debug=False):
     else:
         ValueError(f"Wrong kind: {kind}")
     # create optimization model based on energy_system
+    graph_path = Path(Path.home(), "test_graph.graphml")
+    graph.create_nx_graph(energy_system, filename=graph_path)
     logging.info("Create model")
     optimization_model = Model(energysystem=energy_system)
 

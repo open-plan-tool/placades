@@ -11,11 +11,12 @@ class ElectricalStorage(GenericStorage):
     def __init__(
         self,
         name,
-        bus_electricity,
+        bus_in_electricity,
         age_installed,
         installed_capacity,
         capex_var,
         opex_fix,
+        opex_var,
         lifetime,
         optimize_cap,
         soc_max,
@@ -26,7 +27,9 @@ class ElectricalStorage(GenericStorage):
         # fixed_thermal_losses_relative,
         # fixed_thermal_losses_absolute,
         project_data,
+        capex_fix=0.0,
         self_discharge=0.0,
+        bus_out_electricity=None,
         maximum_capacity=float("+inf"),
     ):
         """
@@ -63,7 +66,7 @@ class ElectricalStorage(GenericStorage):
         >>> el_bus = CarrierBus(name="my_electricity_bus")
         >>> my_bess = ElectricalStorage(
         ...     name="lithium_battery_system",
-        ...     bus_electricity=el_bus,
+        ...     bus_in_electricity=el_bus,
         ...     age_installed=0,
         ...     installed_capacity=0,
         ...     capex_var=3,
@@ -104,14 +107,22 @@ class ElectricalStorage(GenericStorage):
             self.crate_charge = None
             self.crate_discharge = None
 
+        if bus_out_electricity is None:
+            bus_out_electricity = bus_in_electricity
+
         super().__init__(
             label=name,
             nominal_capacity=nv,
             inputs={
-                bus_electricity: Flow(nominal_capacity=self.capacity_charge)
+                bus_in_electricity: Flow(
+                    nominal_capacity=self.capacity_charge,
+                    variable_costs=opex_var,
+                )
             },
             outputs={
-                bus_electricity: Flow(nominal_capacity=self.capacity_discharge)
+                bus_out_electricity: Flow(
+                    nominal_capacity=self.capacity_discharge
+                )
             },
             loss_rate=self.self_discharge,
             min_storage_level=soc_min,

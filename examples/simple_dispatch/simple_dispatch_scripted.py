@@ -79,19 +79,20 @@ def create_energy_system_sc():
     energy_system.add(
         ElectricalStorage(
             name="Batterie",
-            bus_electricity=bus_elec,
+            bus_in_electricity=bus_elec,
             age_installed=0,
             installed_capacity=1000,
-            capex_var=3,
-            opex_fix=5,
-            lifetime=10,
+            capex_var=3.0,
+            opex_fix=5.0,
+            opex_var=0.0,
+            lifetime=10.0,
             optimize_cap=False,
             soc_max=1,
             soc_min=0,
-            crate=1,
+            crate=1.0,
             efficiency=0.99,
             project_data=project,
-            self_discharge=0.0001,
+            self_discharge=0.000,
         )
     )
 

@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_fix,capex_var,opex_fix,opex_var,lifetime,optimize_cap,maximum_capacity,efficiency,soc_max,soc_min,crate,bus_in_electricity,bus_out_electricity
+bess,Placades,lithium_battery_system,0.0,1000.0,0.0,3.0,5.0,0.0,10,False,,0.99,1.0,0.0,1.0,electricity,electricity

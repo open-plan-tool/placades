@@ -27,6 +27,7 @@ class ElectricalStorage(GenericStorage):
         # fixed_thermal_losses_absolute,
         project_data,
         self_discharge=0.0,
+        maximum_capacity=float("+inf"),
     ):
         """
         Battery Energy Storage System (BESS).
@@ -85,6 +86,7 @@ class ElectricalStorage(GenericStorage):
             lifetime=lifetime,
             age_installed=age_installed,
             existing_capacity=installed_capacity,
+            maximum_capacity=maximum_capacity,
             project_data=project_data,
         )
 

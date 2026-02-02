@@ -5,6 +5,7 @@ from placades import Battery
 from placades import CarrierBus
 from placades import Demand
 from placades import DsoElectricity
+from placades import ElectricalStorage
 from placades import Project
 from placades import PvPlant
 from placades import WindTurbine
@@ -42,7 +43,7 @@ TYPEMAP = {
     "charging_power": None,
     "discharging_power": None,
     "capacity": None,
-    "bess": None,
+    "bess": ElectricalStorage,
     "gess": None,
     "h2ess": None,
     "hess": None,

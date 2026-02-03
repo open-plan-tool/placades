@@ -71,7 +71,10 @@ def process_results(results):
     print("*****************")
     print("Input:", round(elec_in.sum().sum()))
     print("Output:", round(elec_out.sum().sum()))
-    print(results["objective"])
+    if "invest" in results:
+        print("Invest:", results["invest"])
+
+    print("Objective:", results["objective"])
 
 
 def export_results(results):

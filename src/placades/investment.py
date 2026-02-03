@@ -124,7 +124,7 @@ def _create_invest_if_wanted(
             ep_costs=epc,
             existing=existing_capacity,
             maximum=maximum_capacity,
-            minumum=minimum_capacity,
+            minimum=minimum_capacity,
         )
     else:
         return existing_capacity

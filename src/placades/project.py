@@ -23,9 +23,9 @@ class Project:
         longitude=10.165876,
     ):
         self.name = name
-        self.tax = tax
+        self.tax = float(tax)
         self.lifetime = lifetime
-        self.discount_factor = discount_factor
+        self.discount_factor = float(discount_factor)
         self.shortage_cost = shortage_cost
         self.excess_cost = excess_cost
 

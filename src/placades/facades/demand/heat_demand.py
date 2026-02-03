@@ -2,7 +2,7 @@ from oemof.solph import Flow
 from oemof.solph.components import Sink
 
 
-class Demand(Sink):
+class HeatDemand(Sink):
     def __init__(self, name, bus_in_heat, input_timeseries):
         """
         Heat demand/consumption component.

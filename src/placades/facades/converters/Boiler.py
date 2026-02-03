@@ -7,19 +7,20 @@ from placades.investment import _create_invest_if_wanted
 class Boiler(Converter):
     def __init__(
         self,
-        label,
-        input_bus,
-        output_bus,
+        name,
+        bus_in_fuel,
+        bus_out_heat,
+        project_data,
+        efficiency=0.8,
         age_installed=0,
         installed_capacity=0,
-        capex_specific=1000,
-        opex_specific=1000,
+        capex_var=1000,
+        capex_fix=0,
+        opex_fix=10,
+        opex_var=0,
         lifetime=20,
-        maximum_capacity=None,
-        efficiency=0.8,
-        dispatch_costs=0,
-        expandable=True,
-        project_data=None,
+        optimize_cap=True,
+        maximum_capacity=float("+inf"),
     ):
         """
         Boiler for heat generation.
@@ -78,17 +79,17 @@ class Boiler(Converter):
         >>> heat_bus = Bus(label="heat_bus")
         >>> my_gas_boiler = Boiler(
         ...     label="central_gas_boiler",
-        ...     input_bus=gas_bus,
-        ...     output_bus=heat_bus,
+        ...     bus_in_fuel=gas_bus,
+        ...     bus_out_heat=heat_bus,
         ...     age_installed=0,
         ...     installed_capacity=0,
-        ...     capex_specific=1000,
-        ...     opex_specific=1000,
+        ...     capex_var=1000,
+        ...     opex_fix=1000,
         ...     lifetime=20,
         ...     maximum_capacity=None,
         ...     efficiency=0.8,
-        ...     dispatch_costs=0,
-        ...     expandable=True,
+        ...     opex_var=0,
+        ...     optimize_cap=True,
         ...     project_data=Project(
         ...         name="Project_X", lifetime=20, tax=0,
         ...         discount_factor=0.01),
@@ -96,36 +97,38 @@ class Boiler(Converter):
 
         """
         nv = _create_invest_if_wanted(
-            optimise_cap=expandable,
-            capex_var=capex_specific,
-            opex_fix=opex_specific,
+            optimise_cap=optimize_cap,
+            capex_var=capex_var,
+            opex_fix=opex_fix,
             lifetime=lifetime,
             age_installed=age_installed,
             existing_capacity=installed_capacity,
+            maximum_capacity=maximum_capacity,
             project_data=project_data,
         )
 
-        inputs = {input_bus: Flow()}
+        inputs = {bus_in_fuel: Flow()}
 
         outputs = {
-            output_bus: Flow(
+            bus_out_heat: Flow(
                 nominal_capacity=nv,
-                variable_costs=dispatch_costs,
+                variable_costs=opex_var,
             )
         }
 
-        self.name = label
+        self.name = name
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_fix = capex_specific
-        self.capex_var = opex_specific
-        self.dispatch_costs = dispatch_costs
+        self.capex_fix = capex_fix
+        self.capex_var = capex_var
+        self.opex_fix = opex_fix
+        self.opex_var = opex_var
         self.lifetime = lifetime
         self.maximum_capacity = maximum_capacity
         self.efficiency = efficiency
         super().__init__(
-            label=label,
+            label=name,
             outputs=outputs,
             inputs=inputs,
-            conversion_factors={output_bus: efficiency},
+            conversion_factors={bus_out_heat: efficiency},
         )

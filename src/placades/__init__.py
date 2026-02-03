@@ -3,6 +3,7 @@ __version__ = "0.0.0"
 from placades.facades.buses.carrier import CarrierBus
 from placades.facades.compansation.excess import Excess
 from placades.facades.compansation.shortage import Shortage
+from placades.facades.converters.ChpFixedRatio import ChpFixedRatio
 from placades.facades.demand.electricity_demand import Demand
 from placades.facades.komponenten import CHP
 from placades.facades.komponenten import Battery
@@ -18,6 +19,7 @@ __all__ = [
     "TYPEMAP",
     "Battery",
     "CarrierBus",
+    "ChpFixedRatio",
     "Demand",
     "DsoElectricity",
     "ElectricalStorage",

@@ -3,6 +3,7 @@ from oemof.solph.components import Source
 from placades import CHP
 from placades import Battery
 from placades import CarrierBus
+from placades import ChpFixedRatio
 from placades import Demand
 from placades import DsoElectricity
 from placades import ElectricalStorage
@@ -48,5 +49,5 @@ TYPEMAP = {
     "h2ess": None,
     "hess": None,
     "chp": None,
-    "chp_fixed_ratio": None,
+    "chp_fixed_ratio": ChpFixedRatio,
 }

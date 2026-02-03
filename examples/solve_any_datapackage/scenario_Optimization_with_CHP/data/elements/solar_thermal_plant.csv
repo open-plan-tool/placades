@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_fix,capex_var,opex_fix,opex_var,lifetime,optimize_cap,maximum_capacity,renewable_asset,input_timeseries,bus_out_heat
+solar_thermal_plant,Sector coupling for apartment building,Solarkollektor,0.0,0.0,0.0,300.0,20.0,0.0,20,True,30.0,True,Solarkollektor_migration,Wärme_bus

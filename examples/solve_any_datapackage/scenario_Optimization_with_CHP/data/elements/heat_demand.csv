@@ -1,0 +1,2 @@
+type,name,input_timeseries,bus_in_heat
+heat_demand,Wärmebedarf,Wärmebedarf_migration,Wärme_bus

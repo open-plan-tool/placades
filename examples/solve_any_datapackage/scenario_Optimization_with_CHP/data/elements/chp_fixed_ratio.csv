@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_var,opex_fix,lifetime,optimize_cap,maximum_capacity,conversion_factor_to_heat,conversion_factor_to_electricity,bus_in_fuel,bus_out_heat,bus_out_electricity
+chp_fixed_ratio,Sector coupling for apartment building,BHKW,0.0,0.0,1100.0,11.0,15,True,,0.45,0.45,Gas_bus,Wärme_bus,Strom_bus

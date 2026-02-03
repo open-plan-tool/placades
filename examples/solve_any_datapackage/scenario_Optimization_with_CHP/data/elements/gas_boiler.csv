@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_fix,capex_var,opex_fix,opex_var,lifetime,optimize_cap,maximum_capacity,efficiency,bus_in_fuel,bus_out_heat
+gas_boiler,Sector coupling for apartment building,Gas_boiler,0.0,0.0,0.0,120.0,4.0,0.0,20,True,,1,Gas_bus,Wärme_bus

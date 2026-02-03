@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_fix,capex_var,opex_fix,opex_var,lifetime,optimize_cap,maximum_capacity,efficiency,soc_max,soc_min,crate,thermal_loss_rate,fixed_thermal_losses_relative,fixed_thermal_losses_absolute,bus_in_heat,bus_out_heat
+hess,Sector coupling for apartment building,Wärmespeicher,0.0,20.0,0.0,80.0,2.0,1e-05,30,True,,1,1.0,0.0,1.0,0.0,0.00763157894736842,0.0,Wärme_bus,Wärme_bus

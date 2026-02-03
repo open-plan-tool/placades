@@ -1,0 +1,2 @@
+type,name,energy_price,feedin_tariff,peak_demand_pricing,peak_demand_pricing_period,renewable_share,feedin_cap,bus_fuel
+gas_dso,Gasversorger,0.15,0.0,0.0,1,0.44,,Gas_bus

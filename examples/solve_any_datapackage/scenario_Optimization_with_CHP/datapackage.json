@@ -1,0 +1,873 @@
+{
+    "profile": "tabular-data-package",
+    "name": "scenario_Optimization_with_CHP",
+    "oemof_datapackage_version": "0.0.6dev",
+    "resources": [
+        {
+            "path": "data/elements/bus.csv",
+            "profile": "tabular-data-resource",
+            "name": "bus",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "carrier",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "balanced",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "excess",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "excess_costs",
+                        "type": "number",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": []
+            }
+        },
+        {
+            "path": "data/elements/chp_fixed_ratio.csv",
+            "profile": "tabular-data-resource",
+            "name": "chp_fixed_ratio",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "project_data",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "age_installed",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "installed_capacity",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_var",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "optimize_cap",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum_capacity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "conversion_factor_to_heat",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "conversion_factor_to_electricity",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_in_fuel",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_out_heat",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_out_electricity",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_in_fuel",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "bus_out_electricity",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "bus_out_heat",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "project_data",
+                        "reference": {
+                            "resource": "project",
+                            "fields": "name"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/elements/demand.csv",
+            "profile": "tabular-data-resource",
+            "name": "demand",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "input_timeseries",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_in_electricity",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_in_electricity",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "input_timeseries",
+                        "reference": {
+                            "resource": "profiles"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/elements/dso.csv",
+            "profile": "tabular-data-resource",
+            "name": "dso",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "energy_price",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "feedin_tariff",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "peak_demand_pricing",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "peak_demand_pricing_period",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "renewable_share",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "feedin_cap",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_electricity",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_electricity",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/elements/gas_boiler.csv",
+            "profile": "tabular-data-resource",
+            "name": "gas_boiler",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "project_data",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "age_installed",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "installed_capacity",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_var",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_var",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "optimize_cap",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum_capacity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "efficiency",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_in_fuel",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_out_heat",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_in_fuel",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "bus_out_heat",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "project_data",
+                        "reference": {
+                            "resource": "project",
+                            "fields": "name"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/elements/gas_dso.csv",
+            "profile": "tabular-data-resource",
+            "name": "gas_dso",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "energy_price",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "feedin_tariff",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "peak_demand_pricing",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "peak_demand_pricing_period",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "renewable_share",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "feedin_cap",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_fuel",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_fuel",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/elements/heat_demand.csv",
+            "profile": "tabular-data-resource",
+            "name": "heat_demand",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "input_timeseries",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_in_heat",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_in_heat",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "input_timeseries",
+                        "reference": {
+                            "resource": "profiles"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/elements/hess.csv",
+            "profile": "tabular-data-resource",
+            "name": "hess",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "project_data",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "age_installed",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "installed_capacity",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_var",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_var",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "optimize_cap",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum_capacity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "efficiency",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "soc_max",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "soc_min",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "crate",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "thermal_loss_rate",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "fixed_thermal_losses_relative",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "fixed_thermal_losses_absolute",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_in_heat",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_out_heat",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_in_heat",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "bus_out_heat",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "project_data",
+                        "reference": {
+                            "resource": "project",
+                            "fields": "name"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/elements/solar_thermal_plant.csv",
+            "profile": "tabular-data-resource",
+            "name": "solar_thermal_plant",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "project_data",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "age_installed",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "installed_capacity",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "capex_var",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "opex_var",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "optimize_cap",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum_capacity",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "renewable_asset",
+                        "type": "boolean",
+                        "format": "default"
+                    },
+                    {
+                        "name": "input_timeseries",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "bus_out_heat",
+                        "type": "string",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ],
+                "primaryKey": "name",
+                "foreignKeys": [
+                    {
+                        "fields": "bus_out_heat",
+                        "reference": {
+                            "resource": "bus",
+                            "fields": "name"
+                        }
+                    },
+                    {
+                        "fields": "input_timeseries",
+                        "reference": {
+                            "resource": "profiles"
+                        }
+                    },
+                    {
+                        "fields": "project_data",
+                        "reference": {
+                            "resource": "project",
+                            "fields": "name"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "path": "data/project.csv",
+            "profile": "tabular-data-resource",
+            "name": "project",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "tax",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "discount_factor",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "lifetime",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "shortage_cost",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "excess_cost",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "data/sequences/profiles.csv",
+            "profile": "tabular-data-resource",
+            "name": "profiles",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "timeindex",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "Strombedarf_migration",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "W\u00e4rmebedarf_migration",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "Solarkollektor_migration",
+                        "type": "number",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        }
+    ]
+}

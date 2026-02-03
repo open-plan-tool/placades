@@ -1,0 +1,2 @@
+type,name,energy_price,feedin_tariff,peak_demand_pricing,peak_demand_pricing_period,renewable_share,feedin_cap,bus_electricity
+dso,Stromversorger,0.31,0.08,0.0,1,0.44,,Strom_bus

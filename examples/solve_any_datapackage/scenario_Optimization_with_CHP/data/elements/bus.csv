@@ -1,0 +1,4 @@
+name,type,carrier,balanced,excess,excess_costs
+Gas_bus,CarrierBus,Gas,True,False,0.0
+Wärme_bus,CarrierBus,Heat,True,False,0.0
+Strom_bus,CarrierBus,Electricity,True,False,0.0

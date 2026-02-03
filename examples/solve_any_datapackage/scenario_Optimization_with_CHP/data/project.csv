@@ -1,0 +1,2 @@
+tax,name,type,discount_factor,lifetime,shortage_cost,excess_cost
+0.07,Sector coupling for apartment building,project,0.05,20,999,99

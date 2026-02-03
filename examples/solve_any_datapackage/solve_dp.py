@@ -1,3 +1,4 @@
+import argparse
 import logging
 import tkinter as tk
 import warnings
@@ -110,4 +111,12 @@ def main(path=None, plot="graph"):
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        prog="solve datapackage",
+        description="Simulate an energy system from a datapackage",
+    )
+    parser.add_argument("filename")
+    parser.add_argument("-p", "--plot", default="visio", type=str)
+
+    args = parser.parse_args()
+    main(path=Path(args.filename) / "datapackage.json", plot="visio")

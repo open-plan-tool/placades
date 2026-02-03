@@ -6,6 +6,8 @@ from placades import CarrierBus
 from placades import ChpFixedRatio
 from placades import Demand
 from placades import DsoElectricity
+from placades import DsoFuel
+from placades import DsoHeat
 from placades import ElectricalStorage
 from placades import Project
 from placades import PvPlant
@@ -22,9 +24,9 @@ TYPEMAP = {
     "wind_plant": WindTurbine,
     "dso_electricity": DsoElectricity,
     "dso": DsoElectricity,
-    "gas_dso": None,
+    "gas_dso": DsoFuel,
     "h2_dso": None,
-    "heat_dso": None,
+    "heat_dso": DsoHeat,
     "gas_demand": None,
     "h2_demand": None,
     "heat_demand": None,

@@ -10,6 +10,8 @@ from placades.facades.komponenten import Battery
 from placades.facades.production.PvPlant import PvPlant
 from placades.facades.production.WindTurbine import WindTurbine
 from placades.facades.providers.DSO_electricity import DsoElectricity
+from placades.facades.providers.DSO_fuel import DsoFuel
+from placades.facades.providers.DSO_heat import DsoHeat
 from placades.facades.storages.ElectricalStorage import ElectricalStorage
 from placades.project import Project
 from placades.typemap import TYPEMAP
@@ -22,6 +24,8 @@ __all__ = [
     "ChpFixedRatio",
     "Demand",
     "DsoElectricity",
+    "DsoFuel",
+    "DsoHeat",
     "ElectricalStorage",
     "Excess",
     "Project",

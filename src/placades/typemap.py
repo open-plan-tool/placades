@@ -11,6 +11,7 @@ from placades import DsoFuel
 from placades import DsoHeat
 from placades import ElectricalStorage
 from placades import HeatDemand
+from placades import HeatPump
 from placades import Project
 from placades import PvPlant
 from placades import SolarThermalPlant
@@ -43,7 +44,7 @@ TYPEMAP = {
     "fuel_cell": None,
     "gas_boiler": Boiler,
     "electrolyzer": None,
-    "heat_pump": None,
+    "heat_pump": HeatPump,
     "biogas_plant": None,
     "geothermal_conversion": None,
     "solar_thermal_plant": SolarThermalPlant,

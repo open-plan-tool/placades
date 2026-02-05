@@ -9,6 +9,7 @@ from placades.facades.converters.DieselGenerator import DieselGenerator
 from placades.facades.converters.ElectricalTransformator import (
     ElectricalTransformator,
 )
+from placades.facades.converters.HeatPump import HeatPump
 from placades.facades.demand.electricity_demand import Demand
 from placades.facades.demand.heat_demand import HeatDemand
 from placades.facades.komponenten import CHP
@@ -40,6 +41,7 @@ __all__ = [
     "ElectricalTransformator",
     "Excess",
     "HeatDemand",
+    "HeatPump",
     "Project",
     "PvPlant",
     "Shortage",

@@ -38,6 +38,10 @@ class Boiler(Converter):
           *output*
             1. to_bus : Heat
 
+        :Optimization:
+          The characteristic quantity of the optimization is the *maximum
+          power-output* of the Boiler given in kW
+
         Parameters
         ----------
         name : str
@@ -78,7 +82,7 @@ class Boiler(Converter):
         >>> gas_bus = Bus(label="gas_bus")
         >>> heat_bus = Bus(label="heat_bus")
         >>> my_gas_boiler = Boiler(
-        ...     label="central_gas_boiler",
+        ...     name="central_gas_boiler",
         ...     bus_in_fuel=gas_bus,
         ...     bus_out_heat=heat_bus,
         ...     age_installed=0,

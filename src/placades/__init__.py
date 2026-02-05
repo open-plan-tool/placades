@@ -5,6 +5,10 @@ from placades.facades.compansation.excess import Excess
 from placades.facades.compansation.shortage import Shortage
 from placades.facades.converters.Boiler import Boiler
 from placades.facades.converters.ChpFixedRatio import ChpFixedRatio
+from placades.facades.converters.DieselGenerator import DieselGenerator
+from placades.facades.converters.ElectricalTransformator import (
+    ElectricalTransformator,
+)
 from placades.facades.demand.electricity_demand import Demand
 from placades.facades.demand.heat_demand import HeatDemand
 from placades.facades.komponenten import CHP
@@ -28,10 +32,12 @@ __all__ = [
     "CarrierBus",
     "ChpFixedRatio",
     "Demand",
+    "DieselGenerator",
     "DsoElectricity",
     "DsoFuel",
     "DsoHeat",
     "ElectricalStorage",
+    "ElectricalTransformator",
     "Excess",
     "HeatDemand",
     "Project",

@@ -110,9 +110,9 @@ def main(path=None, plot="graph"):
     es = create_energy_system_from_dp(path, plot=plot)
     results = optimise(es)
     process_results(results)
-    export_path = Path(Path(__file__).parent, "openPlan_results")
-    export_results(results, export_path=export_path)
-    import_results(export_path)
+    results_path = Path(Path(__file__).parent, "openPlan_results")
+    export_results(results, export_path=results_path)
+    import_results(scenario_dir=path, results_path=results_path)
 
 
 if __name__ == "__main__":

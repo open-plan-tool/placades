@@ -4,7 +4,10 @@ import pandas as pd
 from oemof.datapackage import datapackage  # noqa
 from oemof.datapackage.resultpackage import read
 from oemof.datapackage.resultpackage import write
-from simple_dispatch_dp import create_energy_system_from_dp
+
+from placades.datapackage.create_energy_system import (
+    create_energy_system_from_dp,
+)
 
 
 def process_results(results):
@@ -41,9 +44,12 @@ def export_results(results, export_path):
     return export_path
 
 
-def import_results(path):
-    results = read.import_results_from_resultpackage(path)
-    groups = create_energy_system_from_dp().groups
+def import_results(scenario_dir, results_path):
+    results = read.import_results_from_resultpackage(results_path)
+
+    groups = create_energy_system_from_dp(
+        scenario_dir=scenario_dir, results_path=results_path
+    ).groups
     for key in results.keys():
         if isinstance(results[key], pd.DataFrame):
             results[key].rename(columns=groups, inplace=True)

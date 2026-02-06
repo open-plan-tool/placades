@@ -6,10 +6,12 @@ from placades import Boiler
 from placades import CarrierBus
 from placades import ChpFixedRatio
 from placades import Demand
+from placades import DieselGenerator
 from placades import DsoElectricity
 from placades import DsoFuel
 from placades import DsoHeat
 from placades import ElectricalStorage
+from placades import ElectricalTransformator
 from placades import HeatDemand
 from placades import HeatPump
 from placades import Project
@@ -35,12 +37,12 @@ TYPEMAP = {
     "gas_demand": None,
     "h2_demand": None,
     "heat_demand": HeatDemand,
-    "transformer_station_in": None,
-    "transformer_station_out": None,
-    "storage_charge_controller_in": None,
-    "storage_charge_controller_out": None,
-    "solar_inverter": None,
-    "diesel_generator": None,
+    "transformer_station_in": ElectricalTransformator,
+    "transformer_station_out": ElectricalTransformator,
+    "storage_charge_controller_in": ElectricalTransformator,
+    "storage_charge_controller_out": ElectricalTransformator,
+    "solar_inverter": ElectricalTransformator,
+    "diesel_generator": DieselGenerator,
     "fuel_cell": None,
     "gas_boiler": Boiler,
     "electrolyzer": None,

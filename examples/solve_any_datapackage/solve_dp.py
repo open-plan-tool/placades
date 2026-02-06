@@ -14,6 +14,8 @@ from oemof.tools.debugging import ExperimentalFeatureWarning
 from oemof.visio import ESGraphRenderer
 
 from placades import TYPEMAP
+from placades.datapackage.results import export_results
+from placades.datapackage.results import import_results
 
 warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 
@@ -108,6 +110,9 @@ def main(path=None, plot="graph"):
     es = create_energy_system_from_dp(path, plot=plot)
     results = optimise(es)
     process_results(results)
+    export_path = Path(Path(__file__).parent, "openPlan_results")
+    export_results(results, export_path=export_path)
+    import_results(export_path)
 
 
 if __name__ == "__main__":

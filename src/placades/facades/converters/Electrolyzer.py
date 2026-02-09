@@ -10,8 +10,8 @@ class Electrolyzer(Converter):
         name,
         bus_in_electricity,
         bus_out_h2,
-        bus_out_heat,
         project_data,
+        bus_out_heat=None,
         efficiency=0.3,
         efficiency_heat=0.6,
         age_installed=0,
@@ -118,15 +118,14 @@ class Electrolyzer(Converter):
         inputs = {bus_in_electricity: Flow()}
 
         outputs = {
-            bus_out_heat: Flow(
-                nominal_capacity=nv,
-                variable_costs=opex_var,
-            ),
             bus_out_h2: Flow(
                 nominal_capacity=nv,
                 variable_costs=opex_var,
-            ),
+            )
         }
+
+        if bus_out_heat is not None:
+            outputs[bus_out_heat] = Flow()
 
         self.name = name
         self.age_installed = age_installed

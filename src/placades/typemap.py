@@ -2,6 +2,7 @@ from oemof.solph.components import Source
 
 from placades import CHP
 from placades import Battery
+from placades import BiogasPlant
 from placades import Boiler
 from placades import CarrierBus
 from placades import ChpFixedRatio
@@ -15,6 +16,10 @@ from placades import ElectricalStorage
 from placades import ElectricalTransformator
 from placades import Electrolyzer
 from placades import FuelCell
+from placades import FuelDemand
+from placades import FuelStorage
+from placades import GeothermalPlant
+from placades import H2Demand
 from placades import HeatDemand
 from placades import HeatPump
 from placades import HydrogenStorage
@@ -38,8 +43,8 @@ TYPEMAP = {
     "gas_dso": DsoFuel,
     "h2_dso": DsoHydrogen,
     "heat_dso": DsoHeat,
-    "gas_demand": None,
-    "h2_demand": None,
+    "gas_demand": FuelDemand,
+    "h2_demand": H2Demand,
     "heat_demand": HeatDemand,
     "transformer_station_in": ElectricalTransformator,
     "transformer_station_out": ElectricalTransformator,
@@ -51,11 +56,11 @@ TYPEMAP = {
     "gas_boiler": Boiler,
     "electrolyzer": Electrolyzer,
     "heat_pump": HeatPump,
-    "biogas_plant": None,
-    "geothermal_conversion": None,
+    "biogas_plant": BiogasPlant,
+    "geothermal_conversion": GeothermalPlant,
     "solar_thermal_plant": SolarThermalPlant,
     "bess": ElectricalStorage,
-    "gess": None,
+    "gess": FuelStorage,
     "h2ess": HydrogenStorage,
     "hess": ThermalStorage,
     "chp": None,

@@ -1,47 +1,48 @@
-# from oemof.solph import Flow
-# from oemof.solph.components import Sink
-#
-#
-# class GasDemand(Sink):
-#     """
-#     Gas demand/consumption component.
-#
-#     This class represents a gas demand that consumes gas according
-#     to a specified time series pattern.
-#
-#     :Structure:
-#       *input*
-#         1. from_bus : Gas
-#
-#     Parameters
-#     ----------
-#     name : str
-#         Name of the asset.
-#     input_timeseries : str or None, default=None
-#         Name of the csv file containing the input generation or
-#         demand timeseries.
-#
-#     Examples
-#     --------
-#     >>> from oemof.solph import Bus
-#     >>> gas_bus = Bus(label="gas_bus")
-#     >>> my_gas_demand = GasDemand(
-#     ...     name="industrial_gas_demand",
-#     ...     bus=gas_bus,
-#     ...     input_timeseries="gas_demand.csv",
-#     ... )
-#
-#     """
-#
-#     def __init__(self, name, bus, input_timeseries):
-#         self.profile = input_timeseries
-#         self.name = name
-#         super().__init__(
-#             label=name,
-#             inputs={
-#                 bus: Flow(
-#                     fix=input_timeseries,
-#                     nominal_capacity=1,
-#                 )
-#             },
-#         )
+from oemof.solph import Flow
+from oemof.solph.components import Sink
+
+
+class HeatDemand(Sink):
+    def __init__(self, name, bus_in_fuel, input_timeseries):
+        """
+        Gas demand/consumption component.
+
+        This class represents a gas demand that consumes gas according
+        to a specified time series pattern.
+        :Structure:
+            *input*
+                1. bus_in_fuel : Gas
+
+        Parameters
+        ----------
+        name : str
+            |name|
+        bus_in_fuel : placades.CarrierBus
+            |bus_in_fuel|
+        input_timeseries : array-like
+            |input_timeseries|
+
+        Examples
+        --------
+        >>> from placades import CarrierBus as Bus
+        >>> fuel_bus = Bus(name="fuel_bus")
+        >>> my_demand = HeatDemand(
+        ...     name="office_demand",
+        ...     bus_in_fuel=fuel_bus,
+        ...     input_timeseries="fuel_demand.csv",
+        ... )
+
+        """
+
+        self.profile = input_timeseries
+        self.name = name
+
+        super().__init__(
+            label=name,
+            inputs={
+                bus_in_fuel: Flow(
+                    fix=input_timeseries,
+                    nominal_capacity=1,
+                )
+            },
+        )

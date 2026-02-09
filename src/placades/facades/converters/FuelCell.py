@@ -7,18 +7,19 @@ from placades.investment import _create_invest_if_wanted
 class FuelCell(Converter):
     def __init__(
         self,
-        label,
-        input_bus,
-        output_bus,
+        name,
+        bus_in_h2,
+        bus_out_electricity,
         age_installed=0,
         installed_capacity=0,
-        capex_specific=1000,
-        opex_specific=10,
-        dispatch_costs=0.01,
+        capex_var=1000,
+        capex_fix=0,
+        opex_fix=10,
+        opex_var=0,
         lifetime=20,
-        maximum_capacity=None,
+        optimize_cap=True,
         efficiency=0.8,
-        expandable=True,
+        maximum_capacity=float("+inf"),
         project_data=None,
     ):
         """
@@ -33,13 +34,13 @@ class FuelCell(Converter):
 
         :Structure:
           *input*
-            1. from_bus : H2
+            1. bus_in_h2 : H2
           *output*
-            1. to_bus : Electricity
+            1. bus_out_electricity : Electricity
 
         Parameters
         ----------
-        label : str
+        name : str
             Name of the asset.
         age_installed : int, default=0
             Number of years the asset has already been in operation.
@@ -63,6 +64,9 @@ class FuelCell(Converter):
         optimize_cap : bool, default=False
             Choose if capacity optimization should be performed for
             this asset.
+        maximum_capacity : float or None, default=None
+            Maximum total capacity of an asset that can be installed
+            at the project site.
         efficiency : float, default=0.8
             Ratio of energy output to energy input.
 
@@ -74,56 +78,58 @@ class FuelCell(Converter):
         >>> el_bus = Bus(label="electricity_bus")
         >>> my_fuel_cell = FuelCell(
         ...     label="hydrogen_fuel_cell",
-        ...     input_bus=h2_bus,
-        ...     output_bus=el_bus,
+        ...     bus_in_h2=h2_bus,
+        ...     bus_out_electricity=el_bus,
         ...     age_installed=0,
         ...     installed_capacity=0,
-        ...     capex_specific=1000,
-        ...     opex_specific=1000,
+        ...     capex_var=1000,
+        ...     opex_fix=1000,
         ...     lifetime=20,
         ...     maximum_capacity=None,
-        ...     efficiency=0.7,
-        ...     dispatch_costs=0,
-        ...     expandable=True,
+        ...     efficiency=0.9,
+        ...     efficiency_heat=0.1,
+        ...     opex_var=0,
+        ...     optimize_cap=True
         ...     project_data=Project(
         ...         name="Project_X", lifetime=20, tax=0,
         ...         discount_factor=0.01),
         ...     )
-
         """
 
         nv = _create_invest_if_wanted(
-            optimise_cap=expandable,
-            capex_var=capex_specific,
-            opex_fix=opex_specific,
+            optimise_cap=optimize_cap,
+            capex_var=capex_var,
+            opex_fix=opex_fix,
             lifetime=lifetime,
             age_installed=age_installed,
             existing_capacity=installed_capacity,
+            maximum_capacity=maximum_capacity,
             project_data=project_data,
         )
 
-        inputs = {input_bus: Flow()}
+        inputs = {bus_in_h2: Flow()}
 
         outputs = {
-            output_bus: Flow(
+            bus_out_electricity: Flow(
                 nominal_capacity=nv,
-                variable_costs=dispatch_costs,
+                variable_costs=opex_var,
             )
         }
 
-        # self.label = label
+        self.name = name
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_specific = capex_specific
-        self.opex_specific = opex_specific
-        self.dispatch_costs = dispatch_costs
+        self.capex_fix = capex_fix
+        self.capex_var = capex_var
+        self.opex_fix = opex_fix
+        self.opex_var = opex_var
         self.lifetime = lifetime
         self.maximum_capacity = maximum_capacity
         self.efficiency = efficiency
 
         super().__init__(
-            label=label,
+            label=name,
             outputs=outputs,
             inputs=inputs,
-            conversion_factors={output_bus: efficiency},
+            conversion_factors={bus_out_electricity: efficiency},
         )

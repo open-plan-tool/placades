@@ -13,6 +13,7 @@ from placades import DsoHeat
 from placades import ElectricalStorage
 from placades import ElectricalTransformator
 from placades import Electrolyzer
+from placades import FuelCell
 from placades import HeatDemand
 from placades import HeatPump
 from placades import Project
@@ -44,7 +45,7 @@ TYPEMAP = {
     "storage_charge_controller_out": ElectricalTransformator,
     "solar_inverter": ElectricalTransformator,
     "diesel_generator": DieselGenerator,
-    "fuel_cell": None,
+    "fuel_cell": FuelCell,
     "gas_boiler": Boiler,
     "electrolyzer": Electrolyzer,
     "heat_pump": HeatPump,

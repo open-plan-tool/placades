@@ -77,7 +77,7 @@ class FuelCell(Converter):
         >>> h2_bus = Bus(label="hydrogen_bus")
         >>> el_bus = Bus(label="electricity_bus")
         >>> my_fuel_cell = FuelCell(
-        ...     label="hydrogen_fuel_cell",
+        ...     name="hydrogen_fuel_cell",
         ...     bus_in_h2=h2_bus,
         ...     bus_out_electricity=el_bus,
         ...     age_installed=0,
@@ -87,13 +87,13 @@ class FuelCell(Converter):
         ...     lifetime=20,
         ...     maximum_capacity=None,
         ...     efficiency=0.9,
-        ...     efficiency_heat=0.1,
         ...     opex_var=0,
-        ...     optimize_cap=True
+        ...     optimize_cap=True,
         ...     project_data=Project(
         ...         name="Project_X", lifetime=20, tax=0,
-        ...         discount_factor=0.01),
+        ...         discount_factor=0.01,
         ...     )
+        ... )
         """
 
         nv = _create_invest_if_wanted(

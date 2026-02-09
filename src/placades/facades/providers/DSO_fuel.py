@@ -51,7 +51,7 @@ class DsoFuel(DSO):
         >>> gbus = CarrierBus(name="gas_bus")
         >>> my_dso = DsoFuel(
         ...     name="main_grid",
-        ...     bus_fuel=ebus,
+        ...     bus_fuel=gbus,
         ...     energy_price=0.25,
         ...     feedin_tariff=0.08,
         ... )

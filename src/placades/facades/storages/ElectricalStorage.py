@@ -71,6 +71,7 @@ class ElectricalStorage(GenericStorage):
         ...     installed_capacity=0,
         ...     capex_var=3,
         ...     opex_fix=5,
+        ...     opex_var=0.,
         ...     lifetime=10,
         ...     optimize_cap=False,
         ...     soc_max=1,

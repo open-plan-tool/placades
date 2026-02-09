@@ -76,14 +76,22 @@ class HeatPump(Converter):
 
         Examples
         --------
+        >>> from placades import Project
         >>> from oemof.solph import Bus
         >>> el_bus = Bus(label="electricity_bus")
         >>> ambient_heat_bus = Bus(label="ambient_heat_bus")
         >>> heat_bus = Bus(label="heat_bus")
         >>> my_heat_pump = HeatPump(
         ...     name="air_source_heat_pump",
+        ...     bus_in_electricity=el_bus,
+        ...     bus_in_heat=ambient_heat_bus,
+        ...     bus_out_heat=heat_bus,
         ...     installed_capacity=15,
         ...     cop=3.5,
+        ...     project_data=Project(
+        ...         name="Project_X", lifetime=20, tax=0,
+        ...         discount_factor=0.01,
+        ...     )
         ... )
 
         """

@@ -49,9 +49,9 @@ class DsoHeat(DSO):
         --------
         >>> from placades import CarrierBus, DsoElectricity
         >>> hbus = CarrierBus(name="heat_bus")
-        >>> my_dso = DsoFuel(
+        >>> my_dso = DsoHeat(
         ...     name="main_grid",
-        ...     bus_heat=ebus,
+        ...     bus_heat=hbus,
         ...     energy_price=0.25,
         ...     feedin_tariff=0.08,
         ... )

@@ -70,6 +70,7 @@ class ThermalStorage(GenericStorage):
         ...     installed_capacity=0,
         ...     capex_var=3,
         ...     opex_fix=5,
+        ...     opex_var=0,
         ...     lifetime=10,
         ...     optimize_cap=False,
         ...     soc_max=1,
@@ -77,7 +78,9 @@ class ThermalStorage(GenericStorage):
         ...     crate=1,
         ...     efficiency=0.99,
         ...     project_data=my_project,
-        ...     self_discharge=0.0001,
+        ...     fixed_thermal_losses_relative=0.6,
+        ...     fixed_thermal_losses_absolute=200,
+        ...     thermal_loss_rate=0.0001,
         ... )
         """
 

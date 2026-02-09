@@ -56,11 +56,11 @@ class ChpFixedRatio(Converter):
         bus_out_heat:  bus-object
             |bus_out_heat|
         conversion_factor_to_electricity : float
-            |conversion_factor_to_electricity|
+            conversion_factor_to_electricity
         conversion_factor_to_heat : float
-            |conversion_factor_to_heat|
-        expandable : bool, default=True
-            |expandable|
+            conversion_factor_to_heat
+        optimize_cap : bool, default=True
+            |optimize_cap|
         maximum_capacity : float or None, default=None
             |maximum_capacity|
         age_installed : int, default=0
@@ -82,12 +82,16 @@ class ChpFixedRatio(Converter):
 
         Examples
         --------
+        >>> from placades import Project
         >>> from oemof.solph import Bus
         >>> gas_bus = Bus(label="gas_bus")
         >>> heat_bus = Bus(label="heat_bus")
         >>> el_bus = Bus(label="electricity_bus")
         >>> my_chp_fixed = ChpFixedRatio(
         ...     name="fixed_ratio_chp",
+        ...     bus_in_fuel=gas_bus,
+        ...     bus_out_heat=heat_bus,
+        ...     bus_out_electricity=el_bus,
         ...     installed_capacity=300,
         ...     conversion_factor_to_electricity=0.3,
         ...     conversion_factor_to_heat=0.5,
@@ -95,6 +99,10 @@ class ChpFixedRatio(Converter):
         ...     opex_fix=15,
         ...     lifetime=20,
         ...     optimize_cap=True,
+        ...     project_data=Project(
+        ...         name="Project_X", lifetime=20, tax=0,
+        ...         discount_factor=0.01,
+        ...     )
         ... )
 
         """

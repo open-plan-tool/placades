@@ -27,7 +27,7 @@ class HeatDemand(Sink):
         --------
         >>> from placades import CarrierBus as Bus
         >>> heat_bus = Bus(name="heat_bus")
-        >>> my_demand = Demand(
+        >>> my_demand = HeatDemand(
         ...     name="office_demand",
         ...     bus_in_heat=heat_bus,
         ...     input_timeseries="heat_demand.csv",

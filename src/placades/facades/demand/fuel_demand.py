@@ -2,7 +2,7 @@ from oemof.solph import Flow
 from oemof.solph.components import Sink
 
 
-class HeatDemand(Sink):
+class FuelDemand(Sink):
     def __init__(self, name, bus_in_fuel, input_timeseries):
         """
         Gas demand/consumption component.
@@ -26,7 +26,7 @@ class HeatDemand(Sink):
         --------
         >>> from placades import CarrierBus as Bus
         >>> fuel_bus = Bus(name="fuel_bus")
-        >>> my_demand = HeatDemand(
+        >>> my_demand = FuelDemand(
         ...     name="office_demand",
         ...     bus_in_fuel=fuel_bus,
         ...     input_timeseries="fuel_demand.csv",

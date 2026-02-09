@@ -5,6 +5,7 @@ from placades.facades.compansation.excess import Excess
 from placades.facades.compansation.shortage import Shortage
 from placades.facades.converters.Boiler import Boiler
 from placades.facades.converters.ChpFixedRatio import ChpFixedRatio
+from placades.facades.converters.ChpVariableRatio import ChpVariableRatio
 from placades.facades.converters.DieselGenerator import DieselGenerator
 from placades.facades.converters.ElectricalTransformator import (
     ElectricalTransformator,
@@ -42,6 +43,7 @@ __all__ = [
     "Boiler",
     "CarrierBus",
     "ChpFixedRatio",
+    "ChpVariableRatio",
     "Demand",
     "DieselGenerator",
     "DsoElectricity",

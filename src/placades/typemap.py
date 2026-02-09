@@ -6,6 +6,7 @@ from placades import BiogasPlant
 from placades import Boiler
 from placades import CarrierBus
 from placades import ChpFixedRatio
+from placades import ChpVariableRatio
 from placades import Demand
 from placades import DieselGenerator
 from placades import DsoElectricity
@@ -63,6 +64,6 @@ TYPEMAP = {
     "gess": FuelStorage,
     "h2ess": HydrogenStorage,
     "hess": ThermalStorage,
-    "chp": None,
+    "chp": ChpVariableRatio,
     "chp_fixed_ratio": ChpFixedRatio,
 }

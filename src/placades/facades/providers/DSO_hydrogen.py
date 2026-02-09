@@ -1,21 +1,16 @@
-from oemof.network import Node
-from oemof.solph import Bus
-from oemof.solph import Flow
-from oemof.solph.components import Converter
-from oemof.solph.components import Sink
-from oemof.solph.components import Source
+from placades.facades.providers.dso import DSO
 
 
-class DSO(Node):
+class DsoHydrogen(DSO):
     def __init__(
         self,
         name,
-        bus,
-        energy_price=0.9,
-        feedin_tariff=0.5,
+        bus_h2,
+        energy_price=0.3,
+        feedin_tariff=0.1,
         peak_demand_pricing=0,
         peak_demand_pricing_period=1,
-        renewable_share=0,
+        renewable_share=0.44,
         feedin_cap=None,
     ):
         """
@@ -31,76 +26,44 @@ class DSO(Node):
 
         :Structure:
           *input* & *output*
-            bus : hydrogen
+            bus : bus_h2
 
         Parameters
         ----------
         name : str
             |name|
-        energy_price : float, default=0.9
+        energy_price : float, default=0.3
             |energy_prics|
-        feedin_tariff : float, default=0.5
+        feedin_tariff : float, default=0.1
             |feedin_tariff|
         peak_demand_pricing : float, default=0
             |peak_demand_pricing|
         peak_demand_pricing_period : int, default=1
             |peak_demand_period|
-        renewable_share : float, default=0
+        renewable_share : float, default=0.44
             |renewable_share|
         feedin_cap : float or None, default=None
             |feedin_cap|
 
         Examples
         --------
-        >>> from oemof.solph import Bus
-        >>> h2_bus = Bus(label="hydrogen_bus")
-        >>> my_dso = DSO(
-        ...     name="hydrogen_grid",
-        ...     bus=h2_bus,
-        ...     energy_price=0.6,
-        ...     feedin_tariff=0.5,
+        >>> from placades import CarrierBus, DsoElectricity
+        >>> h2bus = CarrierBus(name="h2_bus")
+        >>> my_dso = DsoHydrogen(
+        ...     name="main_grid",
+        ...     bus_h2=h2bus,
+        ...     energy_price=0.25,
+        ...     feedin_tariff=0.08,
         ... )
 
         """
-        self.name = name
-        self.bus_electricity = bus
-        self.energy_price = energy_price
-        self.feedin_tariff = feedin_tariff
-        self.peak_demand_pricing = peak_demand_pricing
-        self.peak_demand_pricing_period = peak_demand_pricing_period
-        self.renewable_share = renewable_share
-        self.feedin_cap = feedin_cap
-
-        super().__init__(label=self.name)
-
-        internal_bus = self.subnode(Bus, local_name="internal_bus")
-
-        self.subnode(
-            Converter,
-            inputs={
-                self.bus_electricity: Flow(
-                    variable_costs=self.feedin_tariff * -1
-                )
-            },
-            outputs={internal_bus: Flow()},
-            local_name="feedin_converter",
-        )
-
-        self.subnode(
-            Sink, inputs={internal_bus: Flow()}, local_name="feedin_sink"
-        )
-
-        self.subnode(
-            Converter,
-            inputs={internal_bus: Flow()},
-            outputs={
-                self.bus_electricity: Flow(variable_costs=self.energy_price)
-            },
-            local_name="consumption_converter",
-        )
-
-        self.subnode(
-            Source,
-            outputs={internal_bus: Flow()},
-            local_name="consumption_source",
+        super().__init__(
+            name=name,
+            bus=bus_h2,
+            energy_price=energy_price,
+            feedin_tariff=feedin_tariff,
+            peak_demand_pricing=peak_demand_pricing,
+            peak_demand_pricing_period=peak_demand_pricing_period,
+            renewable_share=renewable_share,
+            feedin_cap=feedin_cap,
         )

@@ -10,12 +10,14 @@ from placades import DieselGenerator
 from placades import DsoElectricity
 from placades import DsoFuel
 from placades import DsoHeat
+from placades import DsoHydrogen
 from placades import ElectricalStorage
 from placades import ElectricalTransformator
 from placades import Electrolyzer
 from placades import FuelCell
 from placades import HeatDemand
 from placades import HeatPump
+from placades import HydrogenStorage
 from placades import Project
 from placades import PvPlant
 from placades import SolarThermalPlant
@@ -34,7 +36,7 @@ TYPEMAP = {
     "dso_electricity": DsoElectricity,
     "dso": DsoElectricity,
     "gas_dso": DsoFuel,
-    "h2_dso": None,
+    "h2_dso": DsoHydrogen,
     "heat_dso": DsoHeat,
     "gas_demand": None,
     "h2_demand": None,
@@ -54,7 +56,7 @@ TYPEMAP = {
     "solar_thermal_plant": SolarThermalPlant,
     "bess": ElectricalStorage,
     "gess": None,
-    "h2ess": None,
+    "h2ess": HydrogenStorage,
     "hess": ThermalStorage,
     "chp": None,
     "chp_fixed_ratio": ChpFixedRatio,

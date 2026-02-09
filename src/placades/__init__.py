@@ -22,7 +22,9 @@ from placades.facades.production.WindTurbine import WindTurbine
 from placades.facades.providers.DSO_electricity import DsoElectricity
 from placades.facades.providers.DSO_fuel import DsoFuel
 from placades.facades.providers.DSO_heat import DsoHeat
+from placades.facades.providers.DSO_hydrogen import DsoHydrogen
 from placades.facades.storages.ElectricalStorage import ElectricalStorage
+from placades.facades.storages.HydrogenStorage import HydrogenStorage
 from placades.facades.storages.ThermalStorage import ThermalStorage
 from placades.project import Project
 from placades.typemap import TYPEMAP
@@ -39,6 +41,7 @@ __all__ = [
     "DsoElectricity",
     "DsoFuel",
     "DsoHeat",
+    "DsoHydrogen",
     "ElectricalStorage",
     "ElectricalTransformator",
     "Electrolyzer",
@@ -46,6 +49,7 @@ __all__ = [
     "FuelCell",
     "HeatDemand",
     "HeatPump",
+    "HydrogenStorage",
     "Project",
     "PvPlant",
     "Shortage",

@@ -11,6 +11,7 @@ from oemof.eesyplan import Project
 from oemof.eesyplan import PvPlant
 from oemof.eesyplan import WindTurbine
 from oemof.eesyplan import optimise
+from oemof.eesyplan.postprocessing.graphs import sankey
 from oemof.eesyplan.postprocessing.node_balance import balance
 from oemof.tools.logger import define_logging
 
@@ -103,9 +104,12 @@ def simple_script():
             input_timeseries=data["demand_elec"],
         )
     )
-    return optimise(energy_system)
+    return optimise(energy_system), energy_system
 
 
 if __name__ == "__main__":
     define_logging()
-    print(balance(simple_script()).sum().sort_index())
+    res, es = simple_script()
+    print(balance(res).sum().sort_index())
+    fig = sankey(res["flow"], es=es)
+    fig.show()

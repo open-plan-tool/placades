@@ -42,6 +42,8 @@ from oemof.eesyplan.facades.storages.ThermalStorage import ThermalStorage
 from oemof.eesyplan.project import Project
 from oemof.eesyplan.typemap import TYPEMAP
 
+from oemof.eesyplan.importer.weather_data import WeatherData
+
 __all__ = [
     "DSO",
     "TYPEMAP",

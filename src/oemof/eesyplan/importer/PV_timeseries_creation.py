@@ -1,6 +1,7 @@
 import pandas as pd
 import pvlib
 
+
 def create_pv_production_timeseries(
     # times,
     weather_data,
@@ -62,19 +63,26 @@ def create_pv_production_timeseries(
 
     # create site location and times characteristics
 
-    #todo: get time from project
-    times = pd.date_range("2021-01-01 0:00", "2021-12-31 23:00", freq="1h",
-                          tz="Europe/Berlin")
+    # todo: get time from project
+    times = pd.date_range(
+        "2021-01-01 0:00", "2021-12-31 23:00", freq="1h", tz="Europe/Berlin"
+    )
 
-    loc = pvlib.location.Location(latitude=weather_data.latitude, longitude=weather_data.longitude, tz=times.tz)
+    loc = pvlib.location.Location(
+        latitude=weather_data.latitude,
+        longitude=weather_data.longitude,
+        tz=times.tz,
+    )
 
-    solar_position = loc.get_solarposition(times+pd.Timedelta(minutes=30)) #todo change to general version (+ half the time resolution)
+    solar_position = loc.get_solarposition(
+        times + pd.Timedelta(minutes=30)
+    )  # todo change to general version (+ half the time resolution)
     solar_position.index = times
 
     dirhi = weather_data.direct_solar_wm2.copy().astype(float)
     diffhi = weather_data.diffuse_solar_wm2.copy().astype(float)
-    dirhi.index = times[:len(dirhi)]
-    diffhi.index = times[:len(diffhi)]
+    dirhi.index = times[: len(dirhi)]
+    diffhi.index = times[: len(diffhi)]
     ghi = dirhi + diffhi
 
     axis_tilt = 0
@@ -82,7 +90,10 @@ def create_pv_production_timeseries(
     albedo = 0.25
 
     # Define mounting system
-    if mounting_type == "fix tilt" or mounting_type == "fix tilt two directions back to back":
+    if (
+        mounting_type == "fix tilt"
+        or mounting_type == "fix tilt two directions back to back"
+    ):
         mounting_system = pvlib.pvsystem.FixedMount(
             surface_tilt=tilt, surface_azimuth=azimuth
         )
@@ -110,12 +121,13 @@ def create_pv_production_timeseries(
         dni_clear=None,
         clearsky_tolerance=1.1,
         zenith_threshold_for_zero_dni=85.0,
-        zenith_threshold_for_clearsky_limit=80.0)
+        zenith_threshold_for_clearsky_limit=80.0,
+    )
 
     dni_extra = pvlib.irradiance.get_extra_radiation(
         times,
         solar_constant=1366.1,
-        method='spencer',
+        method="spencer",
         epoch_year=2020,
     )
 
@@ -152,7 +164,6 @@ def create_pv_production_timeseries(
             model_perez="allsitescomposite1990",
         )
 
-
     irrad["poa_direct"] = irrad["poa_direct"].fillna(0)
     irrad["poa_global"] = irrad["poa_direct"] + irrad["poa_diffuse"]
 
@@ -166,9 +177,6 @@ def create_pv_production_timeseries(
         ac2 = irrad2["poa_global"] * system_eff / 1000
         ac2.fillna(0, inplace=True)
 
-        ac = (ac+ ac2) /2
+        ac = (ac + ac2) / 2
 
     return ac
-
-
-

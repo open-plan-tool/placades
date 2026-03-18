@@ -111,6 +111,19 @@ class ElectricalStorage(GenericStorage):
             project_data=project_data,
         )
 
+        self.bus_in_electricity = bus_in_electricity
+        self.bus_out_electricity = bus_out_electricity
+        self.name = name
+        self.age_installed = age_installed
+        self.installed_capacity = installed_capacity
+        self.capex_fix = capex_fix
+        self.capex_var = capex_var
+        self.opex_fix = opex_fix
+        self.opex_var = opex_var
+        self.lifetime = lifetime
+        self.optimize_cap = optimize_cap
+        self.maximum_capacity = maximum_capacity
+
         self.self_discharge = self_discharge
         self.efficiency = sqrt(efficiency)
 

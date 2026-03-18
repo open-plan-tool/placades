@@ -176,3 +176,79 @@ def sankey(
 
     fig.update_layout(title_text=title, font_size=12)
     return fig
+
+
+def capacities_graph(
+    invest: pd.DataFrame, energy_system: EnergySystem
+) -> go.Figure:
+    """
+    Create a grouped bar chart comparing installed and optimized capacities
+    for energy system components.
+
+    The function extracts installed capacities from nodes in ``energy_system``
+    that provide an ``installed_capacity`` attribute and matches them against
+    optimized capacities from ``invest``.
+
+    Parameters
+    ----------
+    invest : pandas.DataFrame
+        Obtained from oemof.solph.Result object accessing the 'invest' key
+    energy_system : oemof.eesyplan.model.EnergySystem
+
+    Returns
+    -------
+    plotly.graph_objects.Figure
+        Plotly figure containing a grouped bar chart with installed and
+        optimized capacities for each component.
+    """
+
+    optimized_map = pd.Series(
+        invest.iloc[0].values,
+        index=invest.columns.get_level_values(0).astype(str),
+    ).to_dict()
+
+    components = []
+    installed_capacities = []
+    for n in energy_system.nodes:
+        if hasattr(n, "installed_capacity"):
+            components.append(n.label)
+            installed_capacities.append(n.installed_capacity)
+
+    df = pd.DataFrame(
+        {"component": components, "installed_capacity": installed_capacities}
+    )
+
+    df["optimized_capacity"] = df["component"].map(optimized_map).fillna(0)
+
+    fig = go.Figure()
+
+    fig.add_bar(
+        x=df["component"].astype(str),
+        y=df["installed_capacity"],
+        name="Installed capacity",
+        marker={
+            "color": "#d64e12",
+            "pattern": {
+                "shape": "x",
+                "fgcolor": "#d64e12",
+                "bgcolor": "rgba(0,0,0,0)",
+            },
+        },
+    )
+
+    fig.add_bar(
+        x=df["component"].astype(str),
+        y=df["optimized_capacity"],
+        name="Optimized capacity",
+        marker={"color": "#d64e12"},
+    )
+
+    fig.update_layout(
+        barmode="stack",
+        xaxis_title="Component",
+        yaxis_title="Capacity",
+        margin={"b": 150},
+        title="Installed vs Optimized Capacity",
+    )
+
+    return fig

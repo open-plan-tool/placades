@@ -1,7 +1,15 @@
 from pathlib import Path
 
+import requests
 import pandas as pd
+import numpy as np
 from pyproj import Transformer
+import pvlib
+from feedinlib import era5
+from pvlib.location import Location
+from pvlib.modelchain import ModelChain
+from pvlib.pvsystem import PVSystem
+from pvlib.temperature import TEMPERATURE_MODEL_PARAMETERS
 
 
 class WeatherData:
@@ -120,3 +128,101 @@ def try_file2df(file: Path):
     return pd.read_csv(
         filepath_or_buffer=file, skiprows=32, delimiter=r"\s+"
     ).iloc[1:, :]
+
+
+def request_era5_df(WEATHER_DATA_API_HOST, lat, lon):
+    session = requests.Session()
+
+    # TODO one shouldn't need a csrftoken for server to server
+    # fetch CSRF token
+    csrf_response = session.get(WEATHER_DATA_API_HOST + "get_csrf_token/")
+    csrftoken = csrf_response.json()["csrfToken"]
+
+    payload = {"latitude": lat, "longitude": lon}
+
+    # headers = {"content-type": "application/json"}
+    headers = {
+        "X-CSRFToken": csrftoken,
+        "Referer": WEATHER_DATA_API_HOST,
+    }
+
+    post_response = session.post(WEATHER_DATA_API_HOST, data=payload, headers=headers)
+    # TODO here would be best to return a token but this requires celery on the weather_data API side
+    # If we get a high request amount we might need to do so anyway
+    if post_response.ok:
+        response_data = post_response.json()
+        df = pd.DataFrame(response_data["variables"])
+        logger.info("The weather data API fetch worked successfully")
+
+        if timeinfo is True:
+            timeindex = response_data["time"]
+    else:
+        df = pd.DataFrame()
+        logger.error("The weather data API fetch did not work")
+
+    if timeinfo is False:
+        return df
+    else:
+        return df, timeindex
+
+
+def build_xarray_for_pvlib(lat, lon, dt_index):
+    era5_units = {
+        "d2m": {"units": "K", "long_name": "2 metre dewpoint temperature"},
+        "e": {"units": "m", "long_name": "Evaporation (water equivalent)"},
+        "fdir": {
+            "units": "J/m²",
+            "long_name": "Total sky direct solar radiation at surface",
+        },
+        "fsr": {"units": "1", "long_name": "Fraction of solar radiation"},
+        "sp": {"units": "Pa", "long_name": "Surface pressure"},
+        "ssrd": {"units": "J/m²", "long_name": "Surface solar radiation downwards"},
+        "t2m": {"units": "K", "long_name": "2 metre temperature"},
+        "tp": {"units": "m", "long_name": "Total precipitation"},
+        "u10": {"units": "m/s", "long_name": "10 metre U wind component"},
+        "u100": {"units": "m/s", "long_name": "100 metre U wind component"},
+        "v10": {"units": "m/s", "long_name": "10 metre V wind component"},
+        "v100": {"units": "m/s", "long_name": "100 metre V wind component"},
+    }
+
+    df = request_weather_data(lat, lon)
+    df.index = dt_index
+    df.index.name = "time"
+    ds = df.to_xarray()
+
+    # Attach scalar coords for the site
+    ds = ds.assign_coords(latitude=float(lat), longitude=float(lon))
+
+    # Add ERA5-style attributes expected by pvlib
+    for var, attrs in era5_units.items():
+        if var in ds:
+            ds[var] = ds[var].assign_attrs(attrs)
+
+    return ds
+
+def prepare_weather_data(data_xr):
+    df = era5.format_pvlib(data_xr)
+    df = df.reset_index()
+    df = df.rename(columns={"time": "dt", "latitude": "lat", "longitude": "lon"})
+    df = df.set_index(["dt"])
+    df["dni"] = np.nan
+    lat = float(data_xr.latitude)
+    lon = float(data_xr.longitude)
+    solar_position = pvlib.solarposition.get_solarposition(
+        time=df.index,
+        latitude=lat,
+        longitude=lon,
+    )
+    df["dni"] = pvlib.irradiance.dni(
+        ghi=df["ghi"],
+        dhi=df["dhi"],
+        zenith=solar_position["apparent_zenith"],
+    ).fillna(0)
+    df = df.reset_index()
+    df["dt"] = df["dt"] - pd.Timedelta("30min")
+    df["dt"] = df["dt"].dt.tz_convert("UTC").dt.tz_localize(None)
+    df.iloc[:, 3:] = (df.iloc[:, 3:] + 0.0000001).round(1)
+    df.loc[:, "lon"] = df.loc[:, "lon"].round(3)
+    df.loc[:, "lat"] = df.loc[:, "lat"].round(7)
+    df = df.set_index("dt")
+    return df

@@ -283,3 +283,26 @@
 #     ).get_bdew_profile()
 #
 #     return demand_profile
+
+def get_dc_feed_in(lat, lon, weather_df):
+    module = pvlib.pvsystem.retrieve_sam("SandiaMod")[
+        "SolarWorld_Sunmodule_250_Poly__2013_"
+    ]
+    inverter = pvlib.pvsystem.retrieve_sam("cecinverter")[
+        "ABB__MICRO_0_25_I_OUTD_US_208__208V_"
+    ]
+    temperature_model_parameters = TEMPERATURE_MODEL_PARAMETERS["sapm"][
+        "open_rack_glass_glass"
+    ]
+    system = PVSystem(
+        surface_tilt=30,
+        surface_azimuth=180,
+        module_parameters=module,
+        inverter_parameters=inverter,
+        temperature_model_parameters=temperature_model_parameters,
+    )
+    location = Location(latitude=lat, longitude=lon)
+    mc = ModelChain(system, location)
+    mc.run_model(weather=weather_df)
+    dc_power = mc.results.dc["p_mp"].clip(0).fillna(0) / 1000
+    return dc_power

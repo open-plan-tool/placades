@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -408,3 +409,38 @@ def graph_costs(arrangement, scenario_name=None):
         y_values.append(df.sum(axis=1))
     elif arrangement == COSTS_PER_ASSETS_STACKED:
         y_values.append(df.sum(axis=0))
+
+    def graph_load_duration(flows, es, energy_carrier):
+        """Was drafted within FlowResults.load_duration_figure within OpenPlan. but wasn't implemented"""
+        df_consumption = pd.DataFrame()  # collect all flows which go out of buses with given energy_carrier and have the component as column
+        df_production = pd.Dataframe()  # collect all flows which go inside of buses with given energy_carrier and have the component as column
+
+        percentage = np.linspace(0, 100, df_production.index.size)
+        fig = go.Figure(
+            data=[
+                go.Scatter(
+                    x=percentage.tolist(),
+                    y=df_production.loc[:, col]
+                    .sort_values(ascending=False)
+                    .values.tolist(),
+                    name=col,
+                    stackgroup="production",
+                )
+                for col in df_production.columns
+            ]
+            + [
+                go.Scatter(
+                    x=percentage.tolist(),
+                    y=df_consumption.sort_values(
+                        ascending=False
+                    ).values.tolist(),
+                    name="demand",
+                )
+            ],
+            layout={
+                "title": f"Load duration curve for {energy_carrier}",
+                "hovermode": "x unified",
+            },
+        )
+
+        return fig

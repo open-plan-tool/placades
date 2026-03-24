@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import pytest
 
-from oemof import solph
 from oemof import eesyplan
+from oemof import solph
 
 
 def test_relative_losses():
@@ -81,13 +79,13 @@ def test_electrical_storage_investment():
         crate=1,
         efficiency=1,
         project_data=eesyplan.Project(
-                name="Project_X",
-                lifetime=20,
-                tax=0,
-                discount_factor=0.01,
-            ),
+            name="Project_X",
+            lifetime=20,
+            tax=0,
+            discount_factor=0.01,
+        ),
         self_discharge=0,
-        )
+    )
     es.add(my_invest_bess)
     result = eesyplan.optimise(es)
     print(result["invest"].squeeze())

@@ -193,24 +193,35 @@ def build_xarray_for_pvlib(lat, lon, dt_index):
 
     return ds
 
-def prepare_weather_data(data_xr):
-    df = era5.format_pvlib(data_xr)
-    df = df.reset_index()
-    df = df.rename(columns={"time": "dt", "latitude": "lat", "longitude": "lon"})
-    df = df.set_index(["dt"])
-    df["dni"] = np.nan
-    lat = float(data_xr.latitude)
-    lon = float(data_xr.longitude)
+def _add_dni_from_ghi_dhi(era5_variables_df, latitude, longitude, zenith_col="apparent_zenith"):
+    """
+    Return a copy of a pvlib input weather dataframe with a computed `dni` column.
+
+    Requires:
+    - DatetimeIndex
+    - columns: `ghi`, `dhi`
+    """
+    if not isinstance(era5_variables_df.index, pd.DatetimeIndex):
+        raise ValueError("DataFrame must have a DatetimeIndex.")
+
+    if "ghi" not in era5_variables_df.columns or "dhi" not in era5_variables_df.columns:
+        raise ValueError("DataFrame must contain 'ghi' and 'dhi' columns.")
+
+    df = era5_variables_df.copy()
+
     solar_position = pvlib.solarposition.get_solarposition(
         time=df.index,
-        latitude=lat,
-        longitude=lon,
+        latitude=float(latitude),
+        longitude=float(longitude),
     )
+
     df["dni"] = pvlib.irradiance.dni(
         ghi=df["ghi"],
         dhi=df["dhi"],
-        zenith=solar_position["apparent_zenith"],
+        zenith=solar_position[zenith_col],
     ).fillna(0)
+
+    return df
     df = df.reset_index()
     df["dt"] = df["dt"] - pd.Timedelta("30min")
     df["dt"] = df["dt"].dt.tz_convert("UTC").dt.tz_localize(None)

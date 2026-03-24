@@ -130,41 +130,34 @@ def try_file2df(file: Path):
     ).iloc[1:, :]
 
 
-def request_era5_df(WEATHER_DATA_API_HOST, lat, lon):
+def request_era5_df(api_host, lat, lon, timeinfo=False):
+    """
+        Request ERA5 weather data from the weather-data API.
+    """
     session = requests.Session()
 
-    # TODO one shouldn't need a csrftoken for server to server
-    # fetch CSRF token
-    csrf_response = session.get(WEATHER_DATA_API_HOST + "get_csrf_token/")
-    csrftoken = csrf_response.json()["csrfToken"]
+    csrf_response = session.get(api_host + "get_csrf_token/")
+    csrf_token = csrf_response.json()["csrfToken"]
 
     payload = {"latitude": lat, "longitude": lon}
-
-    # headers = {"content-type": "application/json"}
     headers = {
-        "X-CSRFToken": csrftoken,
-        "Referer": WEATHER_DATA_API_HOST,
+        "X-CSRFToken": csrf_token,
+        "Referer": api_host,
     }
 
-    post_response = session.post(WEATHER_DATA_API_HOST, data=payload, headers=headers)
-    # TODO here would be best to return a token but this requires celery on the weather_data API side
-    # If we get a high request amount we might need to do so anyway
-    if post_response.ok:
-        response_data = post_response.json()
-        df = pd.DataFrame(response_data["variables"])
-        logger.info("The weather data API fetch worked successfully")
+    post_response = session.post(api_host, data=payload, headers=headers)
 
-        if timeinfo is True:
-            timeindex = response_data["time"]
-    else:
-        df = pd.DataFrame()
-        logger.error("The weather data API fetch did not work")
+    if not post_response.ok:
+        raise RuntimeError("ERA5 weather data API fetch failed")
 
-    if timeinfo is False:
-        return df
-    else:
-        return df, timeindex
+    response_data = post_response.json()
+    era5_variables_df = pd.DataFrame(response_data["variables"])
 
+    if timeinfo:
+        dt_index = pd.date_range(**response_data["time"])
+        return era5_variables_df, dt_index
+
+    return era5_variables_df
 
 def build_xarray_for_pvlib(lat, lon, dt_index):
     era5_units = {

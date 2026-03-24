@@ -1,8 +1,13 @@
-# import datetime
-#
-# import pandas as pd
-# import pvlib
-# from demandlib import bdew
+import datetime
+
+import pandas as pd
+import pvlib
+from demandlib import bdew
+from pvlib.location import Location
+from pvlib.modelchain import ModelChain
+from pvlib.pvsystem import PVSystem
+from pvlib.temperature import TEMPERATURE_MODEL_PARAMETERS
+
 #
 #
 # def apply_curtailability_if_wanted(timeseries, curtailable):
@@ -284,7 +289,7 @@
 #
 #     return demand_profile
 
-def get_dc_feed_in(lat, lon, weather_df):
+def get_pv_dc_feedin(lat, lon, pvlib_weather_df):
     module = pvlib.pvsystem.retrieve_sam("SandiaMod")[
         "SolarWorld_Sunmodule_250_Poly__2013_"
     ]
@@ -303,6 +308,6 @@ def get_dc_feed_in(lat, lon, weather_df):
     )
     location = Location(latitude=lat, longitude=lon)
     mc = ModelChain(system, location)
-    mc.run_model(weather=weather_df)
+    mc.run_model(weather=pvlib_weather_df)
     dc_power = mc.results.dc["p_mp"].clip(0).fillna(0) / 1000
     return dc_power

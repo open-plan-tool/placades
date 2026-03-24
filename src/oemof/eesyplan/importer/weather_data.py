@@ -1,15 +1,10 @@
 from pathlib import Path
 
-import requests
 import pandas as pd
-import numpy as np
-from pyproj import Transformer
 import pvlib
+import requests
 from feedinlib import era5
-from pvlib.location import Location
-from pvlib.modelchain import ModelChain
-from pvlib.pvsystem import PVSystem
-from pvlib.temperature import TEMPERATURE_MODEL_PARAMETERS
+from pyproj import Transformer
 
 
 class WeatherData:
@@ -132,7 +127,7 @@ def try_file2df(file: Path):
 
 def request_era5_df(api_host, lat, lon, timeinfo=False):
     """
-        Request ERA5 weather data from the weather-data API.
+    Request ERA5 weather data from the weather-data API.
     """
     session = requests.Session()
 
@@ -159,7 +154,8 @@ def request_era5_df(api_host, lat, lon, timeinfo=False):
 
     return era5_variables_df
 
-def build_xarray_for_pvlib(lat, lon, dt_index):
+
+def build_era5_xarray(era5_variables_df, lat, lon, dt_index):
     era5_units = {
         "d2m": {"units": "K", "long_name": "2 metre dewpoint temperature"},
         "e": {"units": "m", "long_name": "Evaporation (water equivalent)"},
@@ -169,7 +165,10 @@ def build_xarray_for_pvlib(lat, lon, dt_index):
         },
         "fsr": {"units": "1", "long_name": "Fraction of solar radiation"},
         "sp": {"units": "Pa", "long_name": "Surface pressure"},
-        "ssrd": {"units": "J/m²", "long_name": "Surface solar radiation downwards"},
+        "ssrd": {
+            "units": "J/m²",
+            "long_name": "Surface solar radiation downwards",
+        },
         "t2m": {"units": "K", "long_name": "2 metre temperature"},
         "tp": {"units": "m", "long_name": "Total precipitation"},
         "u10": {"units": "m/s", "long_name": "10 metre U wind component"},
@@ -178,7 +177,7 @@ def build_xarray_for_pvlib(lat, lon, dt_index):
         "v100": {"units": "m/s", "long_name": "100 metre V wind component"},
     }
 
-    df = request_weather_data(lat, lon)
+    df = era5_variables_df.copy()
     df.index = dt_index
     df.index.name = "time"
     ds = df.to_xarray()
@@ -186,14 +185,17 @@ def build_xarray_for_pvlib(lat, lon, dt_index):
     # Attach scalar coords for the site
     ds = ds.assign_coords(latitude=float(lat), longitude=float(lon))
 
-    # Add ERA5-style attributes expected by pvlib
+    # Assign ERA5 variable attributes to xarray dataset
     for var, attrs in era5_units.items():
         if var in ds:
             ds[var] = ds[var].assign_attrs(attrs)
 
     return ds
 
-def _add_dni_from_ghi_dhi(era5_variables_df, latitude, longitude, zenith_col="apparent_zenith"):
+
+def _add_dni_from_ghi_dhi(
+    era5_variables_df, latitude, longitude, zenith_col="apparent_zenith"
+):
     """
     Return a copy of a pvlib input weather dataframe with a computed `dni` column.
 
@@ -204,7 +206,10 @@ def _add_dni_from_ghi_dhi(era5_variables_df, latitude, longitude, zenith_col="ap
     if not isinstance(era5_variables_df.index, pd.DatetimeIndex):
         raise ValueError("DataFrame must have a DatetimeIndex.")
 
-    if "ghi" not in era5_variables_df.columns or "dhi" not in era5_variables_df.columns:
+    if (
+        "ghi" not in era5_variables_df.columns
+        or "dhi" not in era5_variables_df.columns
+    ):
         raise ValueError("DataFrame must contain 'ghi' and 'dhi' columns.")
 
     df = era5_variables_df.copy()
@@ -222,11 +227,48 @@ def _add_dni_from_ghi_dhi(era5_variables_df, latitude, longitude, zenith_col="ap
     ).fillna(0)
 
     return df
+
+
+def prepare_pvlib_weather_from_era5(era5_variables_ds):
+    df = era5.format_pvlib(era5_variables_ds)
     df = df.reset_index()
-    df["dt"] = df["dt"] - pd.Timedelta("30min")
-    df["dt"] = df["dt"].dt.tz_convert("UTC").dt.tz_localize(None)
-    df.iloc[:, 3:] = (df.iloc[:, 3:] + 0.0000001).round(1)
-    df.loc[:, "lon"] = df.loc[:, "lon"].round(3)
-    df.loc[:, "lat"] = df.loc[:, "lat"].round(7)
-    df = df.set_index("dt")
+    df = df.rename(
+        columns={"time": "dt", "latitude": "lat", "longitude": "lon"}
+    )
+    df = df.set_index(["dt"])
+
+    lat = float(era5_variables_ds.latitude)
+    lon = float(era5_variables_ds.longitude)
+
+    df = _add_dni_from_ghi_dhi(df, lat, lon)
+
+    return df
+
+
+def prepare_pvlib_weather_from_dwd(wd, dt_index):
+    if wd.air_temperature_c is None or wd.wind_speed_ms is None:
+        raise ValueError(
+            "WeatherData must contain air_temperature_c and wind_speed_ms."
+        )
+    if wd.direct_solar_wm2 is None or wd.diffuse_solar_wm2 is None:
+        raise ValueError(
+            "WeatherData must contain direct_solar_wm2 and diffuse_solar_wm2."
+        )
+    if wd.latitude is None or wd.longitude is None:
+        raise ValueError("WeatherData must contain latitude and longitude.")
+
+    df = pd.DataFrame(
+        {
+            "temp_air": wd.air_temperature_c.astype(float),
+            "wind_speed": wd.wind_speed_ms.astype(float),
+            "dhi": wd.diffuse_solar_wm2.astype(float),
+            "ghi": wd.direct_solar_wm2.astype(float)
+            + wd.diffuse_solar_wm2.astype(float),
+        }
+    )
+
+    df = _add_dni_from_ghi_dhi(df, wd.latitude, wd.longitude)
+    df.index = dt_index
+    df = df[["wind_speed", "temp_air", "ghi", "dhi", "dni"]]
+
     return df

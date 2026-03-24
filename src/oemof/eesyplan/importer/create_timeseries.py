@@ -1,8 +1,7 @@
-import datetime
-
-import pandas as pd
+# import datetime
+# import pandas as pd
+# from demandlib import bdew
 import pvlib
-from demandlib import bdew
 from pvlib.location import Location
 from pvlib.modelchain import ModelChain
 from pvlib.pvsystem import PVSystem
@@ -289,7 +288,16 @@ from pvlib.temperature import TEMPERATURE_MODEL_PARAMETERS
 #
 #     return demand_profile
 
+
 def get_pv_dc_feedin(lat, lon, pvlib_weather_df):
+    """
+    Run a pvlib ModelChain simulation and return DC power output.
+
+    A simple PV system is constructed from predefined module, inverter, and
+    temperature-model parameters. The pvlib ModelChain is then run using the
+    supplied weather DataFrame.
+    """
+
     module = pvlib.pvsystem.retrieve_sam("SandiaMod")[
         "SolarWorld_Sunmodule_250_Poly__2013_"
     ]

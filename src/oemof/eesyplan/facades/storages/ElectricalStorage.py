@@ -150,7 +150,7 @@ class ElectricalStorage(GenericStorage):
             inflow_conversion_factor=self.efficiency,
             outflow_conversion_factor=self.efficiency,
             invest_relation_input_capacity=self.crate_charge,
-            invest_relation_output_capacity=self.crate_charge,
+            invest_relation_output_capacity=self.crate_discharge,
             # # Keep in mind for thermal storages
             # fixed_losses_absolute=fixed_thermal_losses_absolute,
             # fixed_losses_relative=fixed_thermal_losses_relative,

@@ -133,7 +133,7 @@ def test_sankey_diagramm():
     energy_system = es.create_energy_system_from_dp(path)
     results = optimise(energy_system)
 
-    fig = sankey(results["flow"], es=energy_system)
+    fig, _ = sankey(results["flow"], es=energy_system)
     with Path(
         Path(__file__).parent, "test_data", "sankey_dict.json"
     ).open() as fp:

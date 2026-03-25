@@ -15,11 +15,14 @@ def sankey(
     drop_zero_links: bool = False,
 ) -> tuple[go.Figure, pd.DataFrame]:
     """
-    Create a Plotly Sankey diagram from a DataFrame whose columns are a 2-level MultiIndex:
+    Create a Plotly Sankey diagram from a DataFrame whose columns are a
+    2-level MultiIndex:
         columns = MultiIndex[(source, target), ...]
 
     Parameters
     ----------
+    es : EnergySystem
+        Energy system object from eesyplan.EnergySystem.
     flows : pd.DataFrame
         Result.get("flow") of an oemof.solph Result object
     title : str
@@ -98,7 +101,8 @@ def sankey(
     if links_df.empty:
         raise ValueError("No links remain after filtering.")
 
-    # TODO here the nodes need to hide the level behind the atomic components (this should be done by filtering at the results level)
+    # TODO here the nodes need to hide the level behind the atomic components
+    #  (this should be done by filtering at the results level)
     # Build node mapping
     nodes = (
         pd.Index(links_df["source"])
@@ -176,7 +180,7 @@ def sankey(
     )
 
     fig.update_layout(title_text=title, font_size=12)
-    return fig
+    return fig, links_df
 
 
 def capacities_graph(
@@ -257,17 +261,22 @@ def capacities_graph(
 
 def stacked_timeseries(flows, energy_system, scenario_name=None):
     """
-      go through each busses of a different carrier type and flag the components belonging to the different carriers
-     flow coming into a "storage", "heat_pump", "chp_fixed_ratio" or "chp" are flagged as "demand" for the `group`
-     attribute of the stacked graph. Any component of type sink will also be flagged as "demand", all other components
-     will belong to the "production" group. The value into the `mode` attribute will be 'lines' for `group="demand"` and 'none'
-     The value into the `fill` attribute will be 'none' for the demand group and 'tonexty' for the production group
-     One needs also to sort the timeseries according to this rule: first demand, then storages and finally dsos, the
-     other types come then next
-     Here we shouldn't a priori see the flows internal to subnetworks
+    Go through each busses of a different carrier type and flag the
+    components belonging to the different carriers flow coming into a
+    "storage", "heat_pump", "chp_fixed_ratio" or "chp" are flagged as "demand"
+    for the `group` attribute of the stacked graph. Any component of type
+    sink will also be flagged as "demand", all other components
+    will belong to the "production" group. The value into the `mode` attribute
+    will be 'lines' for `group="demand"` and 'none'. The value into the `fill`
+    attribute will be 'none' for the demand group and 'tonexty' for the
+    production group. One needs also to sort the timeseries according to this
+    rule: first demand, then storages and finally dsos, the other types come
+    then next. Here we shouldn't a priori see the flows internal to
+    subnetworks
 
-    if scenario_name is provided, then the label of the traces should have it as a prefix (useful when producing a
-    comparison figure of several simulations)
+    If scenario_name is provided, then the label of the traces should have
+    it as a prefix (useful when producing a comparison figure of several
+    simulations)
 
     """
 
@@ -276,19 +285,23 @@ def graph_timeseries(
     flows, energy_system, y_variables=None, scenario_name=None
 ):
     """
-    prepare a graph with all timeseries of the components of the energy_system with
-    a positive sign for the "production" (going into a bus) and a negative sign for "demand" (going outside a bus)
+    prepare a graph with all timeseries of the components of the energy_system
+    with a positive sign for the "production" (going into a bus) and a
+    negative sign for "demand" (going outside a bus)
 
-    if y_variables is provided (list of strings), then only the component label within this list will be graphed
+    If y_variables is provided (list of strings), then only the component
+    label within this list will be graphed
 
-    if scenario_name is provided, then the label of the traces should have it as a prefix (useful when producing a
-    comparison figure of several simulations)
+    if scenario_name is provided, then the label of the traces should have it
+    as a prefix (useful when producing a comparison figure of several
+    simulations)
     """
 
 
 def graph_costs(arrangement, scenario_name=None):
     """
-    Compute capex_total, opex_fix_total, opex_var_total, fuel_costs_total from the following information one need to
+    Compute capex_total, opex_fix_total, opex_var_total, fuel_costs_total from
+    the following information one need to
     gather for each component:
     Example:
     >                         label  installed_capacity  capex_fix  capex_var  opex_fix  opex_var  lifetime energy_price   optimized_capacity     total_flow direction
@@ -296,20 +309,25 @@ def graph_costs(arrangement, scenario_name=None):
     1                  Gas_boiler                 0.0        0.0      120.0       4.0   0.00000        20            0     93.602946            159106.826600        in
     2              Solarkollektor                 0.0        0.0      300.0      20.0   0.00000        20            0     3.872608               2800.789583        in
 
-    Maybe those calculation are already provided by the Results object and the first part of this fonction is obsolete
+    Maybe those calculation are already provided by the Results object and the
+    first part of this fonction is obsolete
 
-    if scenario_name is provided, then the label of the traces should have it as a prefix (useful when producing a
-    comparison figure of several simulations)
+    if scenario_name is provided, then the label of the traces should have it
+    as a prefix (useful when producing a comparison figure of several
+    simulations)
 
     """
 
-    # 4 variant of the cost graph, to be chosen by the user within arrangement argument
-    COSTS_PER_ASSETS = "var1"  # currently this one is plotted on the result page in OpenPlan GUI
-    COSTS_PER_CATEGORY = "var2"
-    COSTS_PER_CATEGORY_STACKED = "var3"
-    COSTS_PER_ASSETS_STACKED = "var4"
+    # 4 variant of the cost graph, to be chosen by the user within arrangement
+    # argument
+    # currently this one is plotted on the result page in OpenPlan GUI
+    costs_per_assets = "var1"
+    costs_per_category = "var2"
+    costs_per_category_stacked = "var3"
+    costs_per_assets_stacked = "var4"
 
-    wacc = 0.1  # should come from `discount_factor` value within project.csv resource
+    # should come from `discount_factor` value within project.csv resource
+    wacc = 0.1
     df = pd.DataFrame()  # should contain the above
 
     def annualize_capex(capex, wacc, lifetime):
@@ -320,7 +338,8 @@ def graph_costs(arrangement, scenario_name=None):
         )
         return ann_capex
 
-    # TODO costs for batteries are skewed as battery capacity does not exists in fancy results
+    # TODO costs for batteries are skewed as battery capacity does not exists
+    #  in fancy results
     # TODO costs for dso not implemented yet
     df["capex_total"] = df.apply(
         lambda x: annualize_capex(
@@ -344,7 +363,7 @@ def graph_costs(arrangement, scenario_name=None):
         lambda x: x.total_flow * x.energy_price, axis=1
     )
 
-    if arrangement in [COSTS_PER_ASSETS_STACKED, COSTS_PER_CATEGORY_STACKED]:
+    if arrangement in [costs_per_assets_stacked, costs_per_category_stacked]:
         x_values = [
             # x
             # for x in Scenario.objects.filter(simulation__in=simulations).values_list(
@@ -354,7 +373,7 @@ def graph_costs(arrangement, scenario_name=None):
         y_values = []
 
     # This is the current arrangement within OpenPlan GUI
-    if arrangement == COSTS_PER_ASSETS:
+    if arrangement == costs_per_assets:
         x_values = df.index.values.tolist()
         y_values = []
         for i in range(len(df.columns)):
@@ -374,13 +393,19 @@ def graph_costs(arrangement, scenario_name=None):
                         if scenario_name is None
                         else f"{name} {scenario_name}"
                     ),
-                    "hover": "<b>%{text}, </b><br><br>Block value: %{customdata:.2f}$<br>Stacked value: %{y:.2f}$<extra> %{x}</extra>",
+                    "hover": (
+                        "<b>%{text}, </b><br><br>Block value: "
+                        "%{customdata:.2f}$<br>Stacked value: "
+                        "%{y:.2f}$<extra> %{x}</extra>"
+                    ),
                     "customdata": y,
-                    # https://stackoverflow.com/questions/59057881/python-plotly-how-to-customize-hover-template-on-with-what-information-to-show
+                    # https://stackoverflow.com/questions/59057881/
+                    # python-plotly-how-to-customize-hover-template-on-with-
+                    # what-information-to-show
                 }
             )
 
-    elif arrangement == COSTS_PER_CATEGORY:
+    elif arrangement == costs_per_category:
         x_values = df.columns.tolist()
         y_values = []
         for i in range(len(df.index)):
@@ -400,20 +425,30 @@ def graph_costs(arrangement, scenario_name=None):
                         if scenario_name is None
                         else f"{name} {scenario_name}"
                     ),
-                    "hover": "<b>%{text}</b><br><br>Block value: %{customdata:.2f}$<br>Stacked value: %{y:.2f}$",
+                    "hover": (
+                        "<b>%{text}</b><br><br>Block value: %{"
+                        "customdata:.2f}$<br>Stacked value: %{y:.2f}$"
+                    ),
                     "customdata": y,
                 }
             )
 
-    elif arrangement == COSTS_PER_CATEGORY_STACKED:
+    elif arrangement == costs_per_category_stacked:
         y_values.append(df.sum(axis=1))
-    elif arrangement == COSTS_PER_ASSETS_STACKED:
+    elif arrangement == costs_per_assets_stacked:
         y_values.append(df.sum(axis=0))
 
     def graph_load_duration(flows, es, energy_carrier):
-        """Was drafted within FlowResults.load_duration_figure within OpenPlan. but wasn't implemented"""
-        df_consumption = pd.DataFrame()  # collect all flows which go out of buses with given energy_carrier and have the component as column
-        df_production = pd.Dataframe()  # collect all flows which go inside of buses with given energy_carrier and have the component as column
+        """
+        Was drafted within FlowResults.load_duration_figure within OpenPlan.
+        but wasn't implemented
+        """
+        # collect all flows which go out of buses with given energy_carrier
+        # and have the component as column
+        df_consumption = pd.DataFrame()
+        # collect all flows which go inside of buses with given energy_carrier
+        # and have the component as column
+        df_production = pd.Dataframe()
 
         percentage = np.linspace(0, 100, df_production.index.size)
         fig = go.Figure(

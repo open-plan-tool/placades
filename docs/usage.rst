@@ -36,9 +36,7 @@ to connect components. An overview of all components can be found at
 
 .. code-block:: python
 
-    from oemof.eesyplan import (
-        DsoElectricity, WindTurbine, ElectricalStorage, Demand
-        )
+    from oemof.eesyplan import DsoElectricity, PvPlant, Demand
 
     bus_elec = CarrierBus(name="electricity")
     energy_system.add(bus_elec)

@@ -7,12 +7,11 @@ import zipfile
 from pathlib import Path
 from tkinter import filedialog
 
-import pandas as pd
-
 from oemof.datapackage import datapackage  # noqa
 from oemof.eesyplan import TYPEMAP
 from oemof.eesyplan import export_results
 from oemof.eesyplan import import_results
+from oemof.eesyplan.postprocessing import balance
 from oemof.network import graph
 from oemof.solph import EnergySystem
 from oemof.solph import Model
@@ -63,25 +62,6 @@ def optimise(energy_system, solver="cbc", debug=False):
         skwargs = {}
     optimization_model.solve(solver=solver, solve_kwargs=skwargs)
     return Results(optimization_model)
-
-
-def process_results(results):
-    logging.info("Process results")
-    flows = results["flow"]
-    nodes = {b[0] for b in flows.columns} | {b[1] for b in flows.columns}
-
-    balances = {}
-    for node in nodes:
-        in_flow = flows[[c for c in flows.columns if c[0] == node]]
-        out_flow = flows[[c for c in flows.columns if c[1] == node]]
-        balances[node] = pd.concat(
-            [in_flow, out_flow], keys=["in", "out"], axis=1
-        )
-    balances = pd.DataFrame(
-        pd.concat(balances.values(), keys=balances.keys(), axis=1)
-    )
-    print(balances.sum())
-    print("Objective:", results["objective"])
 
 
 def file_dialog():
@@ -140,12 +120,12 @@ def main(path=None, plot="graph"):
     else:
         es = create_energy_system_from_dp(path, plot=plot)
     results = optimise(es)
-    process_results(results)
+    print(balance.nodes_io(results["flow"]))
     results_path = Path(Path.home(), "openplan", "openPlan_results")
     results_path.mkdir(parents=True, exist_ok=True)
     export_results(results, path=results_path)
     imported_results = import_results(path=results_path, es=es)
-    process_results(imported_results)
+    print(balance.nodes_io(imported_results["flow"]))
 
 
 if __name__ == "__main__":

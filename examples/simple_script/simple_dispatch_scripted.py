@@ -11,8 +11,8 @@ from oemof.eesyplan import Project
 from oemof.eesyplan import PvPlant
 from oemof.eesyplan import WindTurbine
 from oemof.eesyplan import optimise
+from oemof.eesyplan.postprocessing.balance import nodes_io
 from oemof.eesyplan.postprocessing.graphs import sankey
-from oemof.eesyplan.postprocessing.node_balance import balance
 from oemof.tools.logger import define_logging
 
 DATA_PATH = Path("data")
@@ -110,6 +110,6 @@ def simple_script():
 if __name__ == "__main__":
     define_logging()
     res, es = simple_script()
-    print(balance(res).sum().sort_index())
+    print(nodes_io(res).sum().sort_index())
     fig = sankey(res["flow"], es=es)
     fig.show()

@@ -78,8 +78,8 @@ class EnergySystem(SolphES):
 
 
 class Results(SolphResults):
-    def __init__(self, optimization_model):
-        super().__init__(optimization_model)
+    def __init__(self, model):
+        super().__init__(model)
 
 
 def optimise(energy_system, solver="cbc", debug=False):

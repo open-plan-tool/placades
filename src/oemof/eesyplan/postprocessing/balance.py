@@ -9,13 +9,13 @@ from oemof.tools.debugging import ExperimentalFeatureWarning
 warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 
 
-def balance(results):
+def nodes_io(flows):
     """
     Create an i/o-balance around every node.
 
     Parameters
     ----------
-    results : eesyplan.Results
+    flows : pandas.DataFrame
 
     Returns
     -------
@@ -23,7 +23,6 @@ def balance(results):
 
     """
     logging.info("Process results")
-    flows = results["flow"]
     nodes = {b[0] for b in flows.columns} | {b[1] for b in flows.columns}
 
     balances = {}

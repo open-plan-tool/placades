@@ -2,8 +2,6 @@
 
 __version__ = "0.0.1"
 
-from oemof.eesyplan.datapackage import energy_system
-from oemof.eesyplan.datapackage import results
 from oemof.eesyplan.datapackage.results import export_results
 from oemof.eesyplan.datapackage.results import import_results
 from oemof.eesyplan.facades.buses.carrier import CarrierBus

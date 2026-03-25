@@ -3,8 +3,9 @@ import warnings
 from pathlib import Path
 
 import pandas as pd
-
 from oemof.datapackage import datapackage  # noqa
+from oemof.tools.debugging import ExperimentalFeatureWarning
+
 from oemof.eesyplan import CarrierBus
 from oemof.eesyplan import Demand
 from oemof.eesyplan import DsoElectricity
@@ -17,7 +18,6 @@ from oemof.eesyplan import optimise
 from oemof.eesyplan.datapackage import energy_system as es
 from oemof.eesyplan.postprocessing.graphs import capacities_graph
 from oemof.eesyplan.postprocessing.graphs import sankey
-from oemof.tools.debugging import ExperimentalFeatureWarning
 
 DATA_PATH = Path("test_data", "simple_script_data")
 
@@ -33,7 +33,7 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
     # Read data file
     data = {}
     for key, fn in DATA_FILES.items():
-        path = Path(DATA_PATH, fn)
+        path = Path(Path(__file__).parent, DATA_PATH, fn)
         data[key] = pd.read_csv(path, header=None).squeeze()
 
     project = Project(name="test", lifetime=20, tax=0, discount_factor=0)

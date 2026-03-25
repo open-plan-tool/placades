@@ -3,9 +3,8 @@ import warnings
 from pathlib import Path
 
 import pandas as pd
-from oemof.datapackage import datapackage  # noqa
-from oemof.tools.debugging import ExperimentalFeatureWarning
 
+from oemof.datapackage import datapackage  # noqa
 from oemof.eesyplan import CarrierBus
 from oemof.eesyplan import Demand
 from oemof.eesyplan import DsoElectricity
@@ -18,6 +17,7 @@ from oemof.eesyplan import optimise
 from oemof.eesyplan.datapackage import energy_system as es
 from oemof.eesyplan.postprocessing.graphs import capacities_graph
 from oemof.eesyplan.postprocessing.graphs import sankey
+from oemof.tools.debugging import ExperimentalFeatureWarning
 
 DATA_PATH = Path("test_data", "simple_script_data")
 

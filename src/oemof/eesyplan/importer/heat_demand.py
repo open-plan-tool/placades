@@ -23,6 +23,23 @@ def import_heat_demand_f_heat(path, network=None):
     return df
 
 
+PROFILE_TYPES_HEAT_BDEW = [
+    "Single-family house",
+    "Apartment building",
+    "Commerce/Services general",
+    "Restaurants",
+    "Retail and wholesale",
+    "Metal and automotive",
+    "Accommodation",
+    "Local authorities, credit institutions and insurancecompanies",
+    "Other operational services",
+    "Laundries, dry cleaning",
+    "Horticulture",
+    "Bakery",
+    "Paper and printing",
+]
+
+
 def create_heat_demand(
     outdoor_temperature,
     profile_type,

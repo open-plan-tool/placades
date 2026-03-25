@@ -9,6 +9,7 @@ import pandas as pd
 import pytest
 
 from oemof.eesyplan.importer import heat_demand as heat
+from oemof.eesyplan.importer import weather_data as weather
 
 
 def create_test_heat_demand_data(periods=48, seed=42):
@@ -62,3 +63,23 @@ def test_f_heat_importer_with_mocked_select_value(heat_demand_zip_file):
 
     assert round(df.sum(), 2) == 101.91
     mock_select_value.assert_called_once()
+
+
+PROFILE_TYPES_HEAT_BDEW = heat.PROFILE_TYPES_HEAT_BDEW
+WIND_CLASS = ["Windy", "Not windy"]
+
+
+@pytest.mark.parametrize("profile_type", PROFILE_TYPES_HEAT_BDEW)
+@pytest.mark.parametrize("wind_class", WIND_CLASS)
+def test_heat_demand_profile_by_bdew(profile_type, wind_class):
+    weather_data = weather.WeatherData.from_try_file(
+        "examples/simple_script/data/TRY2015.dat"
+    )
+    heat_demand = heat.create_heat_demand(
+        outdoor_temperature=weather_data.air_temperature_c,
+        profile_type=profile_type,
+        annual_heat_demand=231,
+        building_year=1992,
+        wind_class=wind_class,
+    )
+    assert round(heat_demand.sum(), 0) == 231

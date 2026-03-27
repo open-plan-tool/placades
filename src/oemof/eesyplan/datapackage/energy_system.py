@@ -20,7 +20,9 @@ warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 
 def create_energy_system_from_dp(path, plot="graph"):
     """create energy system object from the datapackage"""
-    # create energy system object from the datapackage
+
+    path = Path(path)
+
     es = EnergySystem.from_datapackage(
         path,
         attributemap={},

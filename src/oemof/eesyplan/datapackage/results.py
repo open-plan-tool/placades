@@ -11,7 +11,7 @@ def export_results(results, path):
     write.export_results_to_datapackage(
         results=results, base_path=path, zip=False
     )
-    logging.info(f"Exported results to {path}")
+    logging.info(f"Exported results to {path.resolve()}")
 
 
 def import_results(path, es):

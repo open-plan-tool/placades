@@ -1,13 +1,12 @@
 import argparse
 import logging
-import tempfile
 import warnings
-import zipfile
 from pathlib import Path
 
 from oemof.datapackage import datapackage  # noqa
 from oemof.eesyplan import TYPEMAP
 from oemof.eesyplan import export_results
+from oemof.eesyplan.io import unzip_package
 from oemof.eesyplan.model import optimise
 from oemof.network import graph
 from oemof.solph import EnergySystem
@@ -22,6 +21,8 @@ def create_energy_system_from_dp(path, plot="graph"):
     """create energy system object from the datapackage"""
 
     path = Path(path)
+    if path.suffix != ".json":
+        path = path / "datapackage.json"
 
     es = EnergySystem.from_datapackage(
         path,
@@ -45,30 +46,7 @@ def create_energy_system_from_dp(path, plot="graph"):
     return es
 
 
-def unzip_package(zip_path: Path, ext_path: Path) -> Path:
-    """
-    Extract a zip file to a temporary directory.
-
-    Returns:
-        TemporaryDirectory object (caller must manage cleanup)
-    """
-
-    with zipfile.ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall(ext_path)
-
-    json_files = list(Path(ext_path).rglob("*.json"))
-    if len(json_files) > 1:
-        filenames = [file.name for file in Path(ext_path).rglob("*.json")]
-        filenames_str = ",".join(filenames)
-        raise ValueError(
-            f"To many json files ({filenames_str}) found in zip-Package:\n"
-            f" {zip_path}"
-        )
-    else:
-        return json_files[0]
-
-
-def main(path, plot="graph", results_path=None):
+def solve_energy_system_from_dp(path, plot="graph", results_path=None):
     """
     Optimise any datapackage.
 
@@ -84,11 +62,21 @@ def main(path, plot="graph", results_path=None):
 
     """
     if path.suffix == ".zip":
-        temp_dir = tempfile.TemporaryDirectory()
-        path = unzip_package(path, Path(temp_dir.name))
+        ext_path = unzip_package(path)
+        json_files = list(Path(ext_path).rglob("*.json"))
+        # Check there are no more than one "datapackage.json" file
+        if len(json_files) > 1:
+            filenames = [file.name for file in Path(ext_path).rglob("*.json")]
+            filenames_str = ",".join(filenames)
+            raise ValueError(
+                f"To many json files ({filenames_str}) found in zip-Package:\n"
+                f" {path}"
+            )
+        else:
+            path = json_files[0]
         es = create_energy_system_from_dp(path, plot=plot)
-        temp_dir.cleanup()
-    elif path.suffix == ".json":
+        ext_path.cleanup()
+    else:
         es = create_energy_system_from_dp(path, plot=plot)
     results = optimise(es)
     if results_path is None:
@@ -121,7 +109,9 @@ def cli():
     if results_path is not None:
         results_path = Path(results_path)
 
-    main(path=my_path, plot=args.plot, results_path=results_path)
+    solve_energy_system_from_dp(
+        path=my_path, plot=args.plot, results_path=results_path
+    )
 
 
 if __name__ == "__main__":

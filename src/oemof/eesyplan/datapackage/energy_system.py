@@ -2,19 +2,13 @@ import argparse
 import logging
 import tempfile
 import warnings
-
-# import tkinter as tk
 import zipfile
 from pathlib import Path
 
 from oemof.datapackage import datapackage  # noqa
-
-# from tkinter import filedialog
 from oemof.eesyplan import TYPEMAP
 from oemof.eesyplan import export_results
-from oemof.eesyplan import import_results
 from oemof.eesyplan.model import optimise
-from oemof.eesyplan.postprocessing import balance
 from oemof.network import graph
 from oemof.solph import EnergySystem
 from oemof.tools.debugging import ExperimentalFeatureWarning
@@ -24,20 +18,8 @@ from oemof.visio import ESGraphRenderer
 warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 
 
-# def create_energy_system_from_dp(scenario_dir):
-#     """create energy system object from the datapackage"""
-#
-#     # TODO load the typemap from information within the datapackage
-#     return EnergySystem.from_datapackage(
-#         Path(scenario_dir, "datapackage.json"),
-#         attributemap={},
-#         typemap=TYPEMAP,
-#     )
-
-
 def create_energy_system_from_dp(path, plot="graph"):
     """create energy system object from the datapackage"""
-    path = Path(path)
     # create energy system object from the datapackage
     es = EnergySystem.from_datapackage(
         path,
@@ -84,7 +66,7 @@ def unzip_package(zip_path: Path, ext_path: Path) -> Path:
         return json_files[0]
 
 
-def main(path, plot="graph", result_path=None):
+def main(path, plot="graph", results_path=None):
     """
     Optimise any datapackage.
 
@@ -104,16 +86,13 @@ def main(path, plot="graph", result_path=None):
         path = unzip_package(path, Path(temp_dir.name))
         es = create_energy_system_from_dp(path, plot=plot)
         temp_dir.cleanup()
-    else:
+    elif path.suffix == ".json":
         es = create_energy_system_from_dp(path, plot=plot)
     results = optimise(es)
-    print(balance.nodes_io(results["flow"]))
-    if result_path is None:
+    if results_path is None:
         results_path = Path(Path.home(), "openplan", "openPlan_results")
     results_path.mkdir(parents=True, exist_ok=True)
     export_results(results, path=results_path)
-    imported_results = import_results(path=results_path, es=es)
-    print(balance.nodes_io(imported_results["flow"]))
 
 
 def cli():
@@ -128,12 +107,19 @@ def cli():
 
     args = parser.parse_args()
 
-    if args.filename is not None:
-        my_path = Path(args.filename, "datapackage.json")
-    else:
-        my_path = None
+    fname = args.filename
 
-    main(path=my_path, plot=args.plot, result_path=args.output)
+    if fname.endswith(".zip") is False and fname.endswith(".json") is False:
+        my_path = Path(fname, "datapackage.json")
+    else:
+        my_path = Path(fname)
+
+    results_path = args.output
+
+    if results_path is not None:
+        results_path = Path(results_path)
+
+    main(path=my_path, plot=args.plot, results_path=results_path)
 
 
 if __name__ == "__main__":

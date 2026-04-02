@@ -118,22 +118,21 @@ def create_pv_production_timeseries(
     albedo = 0.25  # Reflection fraction of sunligth (25% is a typical value when not knowing better)
 
     # Define mounting system fix tilt
-    if (
-        mounting_type == "fix tilt"
-        or mounting_type == "fix tilt two directions back to back"
-    ):
-        mounting_system = pvlib.pvsystem.FixedMount(
-            surface_tilt=tilt, surface_azimuth=azimuth
-        )
-
-    elif mounting_type == "tracker":
-        mounting_system = pvlib.pvsystem.SingleAxisTrackerMount(
-            axis_tilt=axis_tilt,
-            axis_azimuth=azimuth,
-            max_angle=max_angle,
-            backtrack=True,
-            gcr=gcr,
-        )
+    match mounting_type:
+        case "fix tilt" | "fix tilt two directions back to back":
+            mounting_system = pvlib.pvsystem.FixedMount(
+                surface_tilt=tilt, surface_azimuth=azimuth
+            )
+        case "tracker":
+            mounting_system = pvlib.pvsystem.SingleAxisTrackerMount(
+                axis_tilt=axis_tilt,
+                axis_azimuth=azimuth,
+                max_angle=max_angle,
+                backtrack=True,
+                gcr=gcr,
+            )
+        case _:  # pragma: no cover
+            return "Unknown value"
 
     orientation = mounting_system.get_orientation(
         solar_position["apparent_zenith"], solar_position["azimuth"]

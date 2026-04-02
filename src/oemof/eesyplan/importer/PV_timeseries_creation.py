@@ -5,7 +5,10 @@ import pvlib
 
 def create_pv_production_timeseries(
     time_series,
-    weather_data,  # todo: Rewrite Function in a way other data-sources can be used
+    latitude,
+    longitude,
+    direct_irradiation_horizontal,
+    diffuse_irradiation_horizontal,
     azimuth,
     system_eff,
     mounting_type,
@@ -42,7 +45,10 @@ def create_pv_production_timeseries(
     >>> weather_data = WeatherData.from_try_file("examples/simple_dispatch/data/TRY2015.dat")
     >>> production_timeseries_fix=create_pv_production_timeseries(
     ...     times,
-    ...     weather_data=weather_data,
+    ...     latitude=weather_data.latitude,
+    ...     longitude=weather_data.longitude,
+    ...     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
+    ...     diffuse_irradiation_horizontal=weather_data.diffuse_solar_wm2,
     ...     azimuth=180,
     ...     tilt=15,
     ...     system_eff=0.85,
@@ -50,7 +56,10 @@ def create_pv_production_timeseries(
     ...     )
     >>> production_timeseries_east_west=create_pv_production_timeseries(
     ...     times,
-    ...     weather_data=weather_data,
+    ...     latitude=weather_data.latitude,
+    ...     longitude=weather_data.longitude,
+    ...     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
+    ...     diffuse_irradiation_horizontal=weather_data.diffuse_solar_wm2,
     ...     azimuth=93, #273° added automatically
     ...     tilt=10,
     ...     system_eff=0.85,
@@ -58,7 +67,10 @@ def create_pv_production_timeseries(
     ...     )
     >>> production_timeseries_tracker=create_pv_production_timeseries(
     ...     times,
-    ...     weather_data=weather_data,
+    ...     latitude=weather_data.latitude,
+    ...     longitude=weather_data.longitude,
+    ...     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
+    ...     diffuse_irradiation_horizontal=weather_data.diffuse_solar_wm2,
     ...     azimuth=180,
     ...     system_eff=0.85,
     ...     mounting_type="tracker",
@@ -67,13 +79,13 @@ def create_pv_production_timeseries(
     """
 
     loc = pvlib.location.Location(
-        latitude=weather_data.latitude,
-        longitude=weather_data.longitude,
+        latitude=latitude,
+        longitude=longitude,
         tz=time_series.tz,
     )
 
-    if not isinstance(time_series, pd.DatetimeIndex):
-        time_series = pd.DatetimeIndex(time_series)
+    # if not isinstance(time_series, pd.DatetimeIndex):
+    #    time_series = pd.DatetimeIndex(time_series)
 
     ts = (
         time_series.tz_localize(None)
@@ -82,10 +94,10 @@ def create_pv_production_timeseries(
     )
 
     # todo: How do we actually want to handle leap years?
-    if len(ts) > 8760:
-        raise ValueError(
-            "DWD reference year weather data only contains 8760 values"
-        )
+    # if len(ts) > 8760:
+    #    raise ValueError(
+    #        "DWD reference year weather data only contains 8760 values"
+    #    )
 
     # for better calculation of DNI
     solar_position = loc.get_solarposition(
@@ -94,8 +106,8 @@ def create_pv_production_timeseries(
     solar_position.index = time_series
 
     # Get Values from weather_data
-    dirhi_vals = np.asarray(weather_data.direct_solar_wm2, dtype=float)
-    diffhi_vals = np.asarray(weather_data.diffuse_solar_wm2, dtype=float)
+    dirhi_vals = np.asarray(direct_irradiation_horizontal, dtype=float)
+    diffhi_vals = np.asarray(diffuse_irradiation_horizontal, dtype=float)
 
     hour_of_year = (ts.dayofyear - 1) * 24 + ts.hour - 1
 
@@ -208,4 +220,5 @@ def create_pv_production_timeseries(
         ac2.fillna(0, inplace=True)
 
         ac = (ac + ac2) / 2
-    return ac
+
+    return ac.reset_index(drop=True)

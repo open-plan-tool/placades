@@ -94,10 +94,6 @@ def create_pv_production_timeseries(
     )
 
     # todo: How do we actually want to handle leap years?
-    # if len(ts) > 8760:
-    #    raise ValueError(
-    #        "DWD reference year weather data only contains 8760 values"
-    #    )
 
     # for better calculation of DNI
     solar_position = loc.get_solarposition(
@@ -138,9 +134,6 @@ def create_pv_production_timeseries(
             backtrack=True,
             gcr=gcr,
         )
-
-    else:
-        raise NotImplementedError(f"Type {mounting_type} does not exist.")
 
     orientation = mounting_system.get_orientation(
         solar_position["apparent_zenith"], solar_position["azimuth"]

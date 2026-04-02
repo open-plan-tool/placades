@@ -27,6 +27,7 @@ PROFILE_TYPES_HEAT_BDEW = [
     "Single-family house",
     "Apartment building",
     "Commerce/Services general",
+    "Household-like business enterprises",
     "Restaurants",
     "Retail and wholesale",
     "Metal and automotive",
@@ -37,6 +38,22 @@ PROFILE_TYPES_HEAT_BDEW = [
     "Horticulture",
     "Bakery",
     "Paper and printing",
+]
+PROFILE_TYPES_HEAT_BDEW_ABBR = [
+    "EFH",
+    "MFH",
+    "GHD",
+    "GMF",
+    "GGA",
+    "GMF",
+    "GMK",
+    "GBH",
+    "GKO",
+    "GBD",
+    "GWA",
+    "GGB",
+    "GBA",
+    "GPD",
 ]
 
 
@@ -63,19 +80,20 @@ def create_heat_demand(
     profile_type: str
         A BDWD profile can be chosen. Available BDEW heat profiles are:
 
-        "Single-family house"
-        "Apartment building"
-        "Commerce/Services general"
-        "Restaurants"
-        "Retail and wholesale"
-        "Metal and automotive"
-        "Accommodation"
-        "Local authorities, credit institutions and insurancecompanies"
-        "Other operational services"
-        "Laundries, dry cleaning"
-        "Horticulture"
-        "Bakery"
-        "Paper and printing"
+        "EFH" or "Single-family house"
+        "MFH" or "Apartment building"
+        "GHD" or "Commerce/Services general"
+        "GMF" or "Household-like business enterprises"
+        "GGA" or "Restaurants"
+        "GBH" or "Retail and wholesale"
+        "GMK" or "Metal and automotive"
+        "GBH" or "Accommodation"
+        "GKO" or "Local authorities, credit institutions and insurancecompanies"
+        "GBD" or "Other operational services"
+        "GWA" or "Laundries, dry cleaning"
+        "GGB" or "Horticulture"
+        "GBA" or "Bakery"
+        "GPD" or "Paper and printing"
 
     annual_heat_demand: numeric
         total heat demand in the chosen timeperiod
@@ -108,10 +126,14 @@ def create_heat_demand(
             wind_class = 0
         case "Windy":
             wind_class = 1
-    if (
-        profile_type != "Single-family house"
-        and profile_type != "Apartment building"
-    ):
+        case _:  # pragma: no cover
+            pass
+    if profile_type not in [
+        "Single-family house",
+        "Apartment building",
+        "EFH",
+        "MFH",
+    ]:
         building_class = 0
     else:
         match building_year:
@@ -137,6 +159,8 @@ def create_heat_demand(
                 building_class = 10
             case y if y >= 2011:
                 building_class = 11
+            case _:  # pragma: no cover
+                pass
 
     match profile_type:
         case "Single-family house":
@@ -167,6 +191,10 @@ def create_heat_demand(
             profile_type = "GBA"
         case "Paper and printing":
             profile_type = "GPD"
+        case _ if profile_type in PROFILE_TYPES_HEAT_BDEW_ABBR:
+            pass
+        case _:  # pragma: no cover
+            return "Unknown value"
 
     holidays = {  # ToDo: Create a more accurate table based on location of project
         datetime.date(times[0].year, 1, 1): "New year",

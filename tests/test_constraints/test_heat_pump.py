@@ -91,23 +91,24 @@ def test_heat_pump_investment():
     es.add(heat_pump)
     results = optimise(es)
 
-    # !!!!!! CHECK THE VALUE !!!!!!
     # Check annuity
-    annuity = 83.123
+    annuity = 5.542
     assert (
         round(
             (
                 results["objective"]
-                + results["invest"].squeeze() * heat_pump.capex_var
-                - results["invest"].squeeze() * heat_pump.opex_fix
-            ),
+                - results["invest"].squeeze() * number * heat_pump.opex_var
+            )
+            / results["invest"].squeeze(),
             3,
         )
         == annuity
     )
 
     # Check total objective
-    assert round(results["objective"], 3) == -1401.877
+    # gain + annuity * invested_capacity = objective
+    # -1500 + 5.542 * 15 = -1417
+    assert round(results["objective"], 3) == -1416.877
 
     flows = results["flow"]
 

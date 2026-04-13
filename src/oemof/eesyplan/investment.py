@@ -119,7 +119,6 @@ def _create_invest_if_wanted(
             project_data.calculate_epc(
                 capex_var, lifetime, age_installed, method="mvs"
             )
-            + opex_fix
         )
         return Investment(
             ep_costs=epc,

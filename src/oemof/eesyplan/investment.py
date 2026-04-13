@@ -141,7 +141,11 @@ def calculate_annuity_mvs(
     # ToDo: As I understand it should be: remaining = lifetime - age_installed
     first_time_investment = capex_var * (1 + tax)
     specific_replacement_costs_optimized = get_replacement_costs(
-        0, lifetime_project, lifetime, first_time_investment, discount_factor
+        0,
+        lifetime_project,
+        lifetime - age_installed,
+        first_time_investment,
+        discount_factor,
     )
     specific_capex = (
         first_time_investment + specific_replacement_costs_optimized

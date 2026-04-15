@@ -1,59 +1,66 @@
 import logging
+import warnings
 from pathlib import Path
 
-from simple_dispatch_dp import create_energy_system_from_dp
-from simple_dispatch_scripted import create_energy_system_sc
-
+from oemof.datapackage import datapackage  # noqa
+from oemof.eesyplan import TYPEMAP
+from oemof.eesyplan import EnergySystem
 from oemof.eesyplan import export_results
 from oemof.eesyplan import import_results
+from oemof.eesyplan.model import optimise
 from oemof.network import graph
-from oemof.solph import Model
-from oemof.solph import Results
+from oemof.tools.debugging import ExperimentalFeatureWarning
 from oemof.tools.logger import define_logging
+from oemof.visio import ESGraphRenderer
+
+warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 
 
-def main(kind, debug=False):
-    results = optimise(kind=kind, debug=debug)
+def create_energy_system_from_dp():
+    results_path = Path(Path.home(), "eesyplan", "results")
+    scenario_name = "test_placade_example"
+    scenario_dir = "openPlan_package"
+    plot = "graph"  # "graph", "visio", None
+
+    Path.mkdir(results_path, parents=True, exist_ok=True)
+
+    # create energy system object from the datapackage
+    es = EnergySystem.from_datapackage(
+        Path(scenario_dir, "datapackage.json"),
+        attributemap={},
+        typemap=TYPEMAP,
+    )
+
+    if plot == "graph":
+        graph.create_nx_graph(
+            es, filename=Path(results_path, "test_graph.graphml")
+        )
+    elif plot == "visio":
+        energy_system_graph = Path(
+            results_path, f"{scenario_name}_energy_system.png"
+        )
+
+        es_graph = ESGraphRenderer(
+            es,
+            legend=False,
+            filepath=str(energy_system_graph),
+            img_format="png",
+        )
+        es_graph.render()
+    return es
+
+
+def main(debug=False):
+    results = optimise(energy_system=create_energy_system_from_dp())
     print("'*************** First time **************")
     process_results(results)  # original result object
     results_path = Path(Path.home(), "openplan", "openPlan_results")
     results_path.mkdir(parents=True, exist_ok=True)
     export_results(results, path=results_path)
-    if kind == "dp":
-        es = create_energy_system_from_dp()
-    else:
-        es = create_energy_system_sc()
+    es = create_energy_system_from_dp()
     results = import_results(results_path, es=es)
     print("'*************** Second time **************")
     process_results(results)  # imported result object
-
-
-def optimise(kind, debug=False):
-    solver = "cbc"
-
-    # ################################ optimization ###########################
-    energy_system = None
-    if kind == "dp":
-        energy_system = create_energy_system_from_dp()
-    elif kind == "sc":
-        energy_system = create_energy_system_sc()
-    else:
-        ValueError(f"Wrong kind: {kind}")
-    # create optimization model based on energy_system
-    graph_path = Path(Path.home(), "test_graph.graphml")
-    graph.create_nx_graph(energy_system, filename=graph_path)
-    logging.info("Create model")
-    optimization_model = Model(energysystem=energy_system)
-
-    # solve problem
-    logging.info("Solve model")
-
-    if debug:
-        skwargs = {"tee": True, "keepfiles": False}
-    else:
-        skwargs = {}
-    optimization_model.solve(solver=solver, solve_kwargs=skwargs)
-    return Results(optimization_model)
 
 
 def process_results(results):
@@ -87,6 +94,3 @@ if __name__ == "__main__":
     define_logging(screen_level=logging.WARNING)
     print("**************** Datapackage ******************")
     main("dp")
-
-    print("**************** Scripted ******************")
-    main("sc")

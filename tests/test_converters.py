@@ -5,7 +5,7 @@ from oemof.eesyplan.facades.converters.ChpVariableRatio import ChpVariableRatio
 from oemof.solph import Bus
 
 
-def test_chp_variable_ratio():
+def test_init_chp_variable_ratio():
     gas_bus = Bus(label="gas_bus")
     heat_bus = Bus(label="heat_bus")
     el_bus = Bus(label="electricity_bus")

@@ -1,5 +1,9 @@
+.. _eesyplan-reference-label:
+
 oemof-eesyPlan
 ==============
+
+
 
 .. testsetup::
 

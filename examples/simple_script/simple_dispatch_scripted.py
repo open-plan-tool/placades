@@ -6,11 +6,13 @@ from oemof.eesyplan import CarrierBus
 from oemof.eesyplan import Demand
 from oemof.eesyplan import DsoElectricity
 from oemof.eesyplan import ElectricalStorage
+from oemof.eesyplan import EnergySystem
 from oemof.eesyplan import Project
 from oemof.eesyplan import PvPlant
 from oemof.eesyplan import WindTurbine
-from oemof.solph import EnergySystem
-from oemof.solph import create_time_index
+from oemof.eesyplan import optimise
+from oemof.eesyplan.postprocessing.balance import nodes_io
+from oemof.tools.logger import define_logging
 
 DATA_PATH = Path("data")
 
@@ -22,20 +24,17 @@ DATA_FILES = {
 }
 
 
-def create_energy_system_sc():
+def simple_script():
     # Read data file
-    project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
-
     data = {}
     for key, fn in DATA_FILES.items():
         path = Path(DATA_PATH, fn)
         data[key] = pd.read_csv(path, header=None).squeeze()
 
+    project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
+
     # ####################### initialize the energy system ####################
-    datetimeindex = create_time_index(2024, number=8760)
-    energy_system = EnergySystem(
-        timeindex=datetimeindex, infer_last_interval=False
-    )
+    energy_system = EnergySystem(2023)
 
     # ######################### create energysystem components ################
 
@@ -104,4 +103,9 @@ def create_energy_system_sc():
             input_timeseries=data["demand_elec"],
         )
     )
-    return energy_system
+    return optimise(energy_system)
+
+
+if __name__ == "__main__":
+    define_logging()
+    print(nodes_io(simple_script()["flow"]).sum().sort_index())

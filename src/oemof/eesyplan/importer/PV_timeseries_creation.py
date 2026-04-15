@@ -140,7 +140,12 @@ def create_pv_production_timeseries(
                 gcr=gcr,
             )
         case _:  # pragma: no cover
-            return "Unknown value"
+            msg = (
+                f"Mounting system {mounting_type} not recognized.\nUse: "
+                f"'fix tilt', 'fix tilt two directions back to back' or "
+                f"'tracker'. See Documentation for more information."
+            )
+            return ValueError(msg)
 
     orientation = mounting_system.get_orientation(
         solar_position["apparent_zenith"], solar_position["azimuth"]

@@ -14,6 +14,8 @@ def create_pv_production_timeseries(
     mounting_type,
     tilt=15.0,
     gcr=1.0,
+    max_angle=60,
+    albedo=0.25,
 ):
     """
     This is an internal function based on PV-lib. It creates a simple AC-power-timeseries for a PV-plant.
@@ -38,6 +40,12 @@ def create_pv_production_timeseries(
         "fix tilt" for static systems with one orientation,
         "fix tilt two directions back to back" for an east-west like system (only one orientation is given),
         "tracker" for 1-axis tracking systems
+    albedo: numeric
+        Reflection fraction of sunligth (default: 0.25)
+    max_angle: numeric
+        Maximum tilt angle for tracking system (default: 60°). This value is
+        only used for 'tracker' systems.
+
 
     Example
     >>> from oemof.eesyplan import WeatherData

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from oemof.eesyplan.importer import weather_data
+from oemof.eesyplan.weather import weather_data
 
 
 def test_weather_file_import():

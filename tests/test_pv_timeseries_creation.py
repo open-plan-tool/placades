@@ -1,6 +1,7 @@
+from pathlib import Path
+
 import pandas as pd
 import pytest
-from pathlib import Path
 
 from oemof.eesyplan.importer import create_timeseries_pv as pv
 from oemof.eesyplan.weather import weather_data as weather

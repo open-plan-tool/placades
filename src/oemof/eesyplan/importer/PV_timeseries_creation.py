@@ -18,18 +18,24 @@ def create_pv_production_timeseries(
     albedo=0.25,
 ):
     """
-    This is an internal function based on PV-lib. It creates a simple AC-power-timeseries for a PV-plant.
-    Based on the given horizontal direct and horizontal diffuse irradiances, the function calculates the irradiation on the defined tilted PV-Array
-    Losses are not calculated in detail but as a plain percentage (this includes shading)
+    This is an internal function based on PV-lib. It creates a simple
+    AC-power-timeseries for a PV-plant.
+    Based on the given horizontal direct and horizontal diffuse irradiances,
+    the function calculates the irradiation on the defined tilted PV-Array
+    Losses are not calculated in detail but as a plain percentage
+    (this includes shading)
 
     time_series: pandas.Series
-        Time series (DatetimeIndex) of the times for which a production timesseries is to be created
+        Time series (DatetimeIndex) of the times for which a production
+        timesseries is to be created
     weather_data: .dat
-        The weather data currently has to be in the format of a DWD-Reference year
+        The weather data currently has to be in the format of a DWD-Reference
+        year
     tilt: numeric
         Tilt angle in degrees (0° is horizontal, 90° is vertical)
     azimuth: numeric
-        for fix tilt: Azimuth angle of the module orientation in degrees (North is 0°, East is 90°...)
+        for fix tilt: Azimuth angle of the module orientation in degrees
+        (North is 0°, East is 90°...)
         for tracker: Azimuth angle of the rotation-axis for tracking systems
     system_efficiency: numeric
         Performace Ratio of the total PV-system (usually around 0,8)
@@ -38,7 +44,8 @@ def create_pv_production_timeseries(
         the modulefield), only needed for tracker
     mounting_type: string
         "fix tilt" for static systems with one orientation,
-        "fix tilt two directions back to back" for an east-west like system (only one orientation is given),
+        "fix tilt two directions back to back" for an east-west like system
+        (only one orientation is given),
         "tracker" for 1-axis tracking systems
     albedo: numeric
         Reflection fraction of sunligth (default: 0.25)
@@ -49,8 +56,10 @@ def create_pv_production_timeseries(
 
     Example
     >>> from oemof.eesyplan import WeatherData
-    >>> times = pd.date_range("2021-01-01 0:00", "2021-12-31 23:00", freq="1h", tz="Europe/Berlin")
-    >>> weather_data = WeatherData.from_try_file("examples/simple_dispatch/data/TRY2015.dat")
+    >>> times = pd.date_range("2021-01-01 0:00", "2021-12-31 23:00", freq="1h",
+    ...     tz="Europe/Berlin")
+    >>> weather_data = WeatherData.from_try_file(
+    ...     "examples/simple_dispatch/data/TRY2015.dat")
     >>> production_timeseries_fix=create_pv_production_timeseries(
     ...     times,
     ...     latitude=weather_data.latitude,
@@ -122,8 +131,6 @@ def create_pv_production_timeseries(
 
     # default parameters the user cant change:
     axis_tilt = 0  # Tilt of the rotation axis of a tracking sytem
-    max_angle = 60  # Maximum tilt angle for tracking system (60° is standard for most systems)
-    albedo = 0.25  # Reflection fraction of sunligth (25% is a typical value when not knowing better)
 
     # Define mounting system fix tilt
     match mounting_type:
@@ -171,7 +178,7 @@ def create_pv_production_timeseries(
     )
 
     # Calculating the total irradiation on the defined tilted plane
-    irrad = pvlib.irradiance.get_total_irradiance(
+    irradiation = pvlib.irradiance.get_total_irradiance(
         surface_tilt=orientation["surface_tilt"],
         surface_azimuth=orientation["surface_azimuth"],
         solar_zenith=solar_position["apparent_zenith"],
@@ -187,9 +194,22 @@ def create_pv_production_timeseries(
         model_perez="allsitescomposite1990",
     )
 
-    # Calculating the total irradiation on the indirectly defined tilted 2nd plane in case of a two-direction b2b-system
+    # Currently some values fo the poa_direct and therefore poa_global will get
+    # NA-values, so we ensure that instead these values are set to 0 and we
+    # manually calculate the global irradiation
+    irradiation["poa_direct"] = irradiation["poa_direct"].fillna(0)
+    irradiation["poa_global"] = (
+        irradiation["poa_direct"] + irradiation["poa_diffuse"]
+    )
+
+    # Total AC-Power is then simply calculated by the total system efficiency
+    ac = irradiation["poa_global"] * system_eff / 1000
+    ac.fillna(0, inplace=True)
+
+    # Calculating the total irradiation on the indirectly defined tilted 2nd
+    # plane in case of a two-direction b2b-system
     if mounting_type == "fix tilt two directions back to back":
-        irrad2 = pvlib.irradiance.get_total_irradiance(
+        irradiation_back = pvlib.irradiance.get_total_irradiance(
             surface_tilt=tilt,
             surface_azimuth=((azimuth + 180) % 360),
             solar_zenith=solar_position["apparent_zenith"],
@@ -205,23 +225,16 @@ def create_pv_production_timeseries(
             model_perez="allsitescomposite1990",
         )
 
-    # Currently some values fo the poa_direct and therefore poa_global will get
-    # NA-values, so we ensure that instead these values are set to 0 and we
-    # manually calculate the global irradiation
-    irrad["poa_direct"] = irrad["poa_direct"].fillna(0)
-    irrad["poa_global"] = irrad["poa_direct"] + irrad["poa_diffuse"]
+        # In case of a two-direction b2b-system AC-Power is calculated by the
+        # irradiation of both orientations
+        irradiation_back["poa_direct"] = irradiation_back["poa_direct"].fillna(
+            0
+        )
+        irradiation_back["poa_global"] = (
+            irradiation_back["poa_direct"] + irradiation_back["poa_diffuse"]
+        )
 
-    # Total AC-Power is then simply calculated by the total system efficiency
-    ac = irrad["poa_global"] * system_eff / 1000
-    ac.fillna(0, inplace=True)
-
-    # In case of a two-direction b2b-system AC-Power is calculated by the
-    # irradiation of both orientations
-    if mounting_type == "fix tilt two directions back to back":
-        irrad2["poa_direct"] = irrad2["poa_direct"].fillna(0)
-        irrad2["poa_global"] = irrad2["poa_direct"] + irrad2["poa_diffuse"]
-
-        ac2 = irrad2["poa_global"] * system_eff / 1000
+        ac2 = irradiation_back["poa_global"] * system_eff / 1000
         ac2.fillna(0, inplace=True)
 
         ac = (ac + ac2) / 2

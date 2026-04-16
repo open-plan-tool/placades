@@ -2,14 +2,11 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from oemof.eesyplan import WeatherData
-from oemof.eesyplan.importer import PV_timeseries_creation as pv
+from oemof.eesyplan.importer import create_timeseries_pv as pv
 
-times = pd.date_range(
-    "2021-01-01 0:00", "2021-12-31 23:00", freq="1h", tz="Europe/Berlin"
-)
-weather_data = WeatherData.from_try_file("simple_dispatch/data/TRY2015.dat")
+
+weather_data = WeatherData.from_try_file("simple_script/data/TRY2015.dat")
 production_timeseries_fix = pv.create_pv_production_timeseries(
-    times,
     latitude=weather_data.latitude,
     longitude=weather_data.longitude,
     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -20,7 +17,6 @@ production_timeseries_fix = pv.create_pv_production_timeseries(
     mounting_type="fix tilt",
 )
 production_timeseries_east_west = pv.create_pv_production_timeseries(
-    times,
     latitude=weather_data.latitude,
     longitude=weather_data.longitude,
     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -31,7 +27,6 @@ production_timeseries_east_west = pv.create_pv_production_timeseries(
     mounting_type="fix tilt two directions back to back",
 )
 production_timeseries_tracker = pv.create_pv_production_timeseries(
-    times,
     latitude=weather_data.latitude,
     longitude=weather_data.longitude,
     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -43,7 +38,6 @@ production_timeseries_tracker = pv.create_pv_production_timeseries(
 )
 
 production_timeseries_east = pv.create_pv_production_timeseries(
-    times,
     latitude=weather_data.latitude,
     longitude=weather_data.longitude,
     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -54,7 +48,6 @@ production_timeseries_east = pv.create_pv_production_timeseries(
     mounting_type="fix tilt",
 )
 production_timeseries_west = pv.create_pv_production_timeseries(
-    times,
     latitude=weather_data.latitude,
     longitude=weather_data.longitude,
     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -65,7 +58,14 @@ production_timeseries_west = pv.create_pv_production_timeseries(
     mounting_type="fix tilt",
 )
 
+print(production_timeseries_fix.sum())
+exit(0)
+
 fig = go.Figure()
+
+times = pd.date_range(
+    "2021-01-01 0:00", "2021-12-31 23:00", freq="1h", tz="Europe/Berlin"
+)
 
 fig.add_trace(
     go.Scatter(x=times, y=production_timeseries_fix, name="fix tilt")

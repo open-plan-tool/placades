@@ -4,7 +4,6 @@ import pvlib
 
 
 def create_pv_production_timeseries(
-    time_series,
     latitude,
     longitude,
     direct_irradiation_horizontal,
@@ -12,6 +11,8 @@ def create_pv_production_timeseries(
     azimuth,
     system_eff,
     mounting_type,
+    start_datetime="2021-01-01 0:00",
+    tz="Europe/Berlin",
     tilt=15.0,
     gcr=1.0,
     max_angle=60,
@@ -25,12 +26,14 @@ def create_pv_production_timeseries(
     Losses are not calculated in detail but as a plain percentage
     (this includes shading)
 
-    time_series: pandas.Series
-        Time series (DatetimeIndex) of the times for which a production
-        timesseries is to be created
-    weather_data: .dat
-        The weather data currently has to be in the format of a DWD-Reference
-        year
+    start_datetime : str
+        Blubb, (default: "2021-01-01 0:00")
+    tz : str
+        Blubb, (default: "Europe/Berlin")
+    direct_solar_wm2 :
+        Blubb
+    diffuse_solar_wm2 :
+        BlubbBlubb
     tilt: numeric
         Tilt angle in degrees (0° is horizontal, 90° is vertical)
     azimuth: numeric
@@ -56,23 +59,24 @@ def create_pv_production_timeseries(
 
     Example
     >>> from oemof.eesyplan import WeatherData
-    >>> times = pd.date_range("2021-01-01 0:00", "2021-12-31 23:00", freq="1h",
-    ...     tz="Europe/Berlin")
-    >>> weather_data = WeatherData.from_try_file(
-    ...     "examples/simple_dispatch/data/TRY2015.dat")
-    >>> production_timeseries_fix=create_pv_production_timeseries(
-    ...     times,
+    >>> weather_data = WeatherData()
+    >>> weather_data.latitude = 52
+    >>> weather_data.longitude = 13
+    >>> weather_data.direct_solar_wm2=[100, 100, 100, 100, 100]
+    >>> weather_data.diffuse_solar_wm2=[100, 100, 100, 100, 100]
+    >>> pts = create_pv_production_timeseries(
     ...     latitude=weather_data.latitude,
     ...     longitude=weather_data.longitude,
     ...     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
     ...     diffuse_irradiation_horizontal=weather_data.diffuse_solar_wm2,
     ...     azimuth=180,
-    ...     tilt=15,
-    ...     system_eff=0.85,
+    ...     tilt=0,
+    ...     system_eff=1,
     ...     mounting_type="fix tilt",
     ...     )
+    >>> float(pts.sum())
+    0.5
     >>> production_timeseries_east_west=create_pv_production_timeseries(
-    ...     times,
     ...     latitude=weather_data.latitude,
     ...     longitude=weather_data.longitude,
     ...     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -83,7 +87,6 @@ def create_pv_production_timeseries(
     ...     mounting_type="fix tilt two directions back to back",
     ...     )
     >>> production_timeseries_tracker=create_pv_production_timeseries(
-    ...     times,
     ...     latitude=weather_data.latitude,
     ...     longitude=weather_data.longitude,
     ...     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -94,20 +97,22 @@ def create_pv_production_timeseries(
     ...     gcr = 0.5,
     ...     )
     """
+    steps = len(direct_irradiation_horizontal)
+
+    time_series = pd.date_range(
+        start_datetime, periods=steps, freq="1h", tz=tz
+    )
 
     loc = pvlib.location.Location(
         latitude=latitude,
         longitude=longitude,
         tz=time_series.tz,
     )
-
-    # if not isinstance(time_series, pd.DatetimeIndex):
-    #    time_series = pd.DatetimeIndex(time_series)
-
-    ts = (
-        time_series.tz_localize(None)
-        if time_series.tz is not None
-        else time_series
+    direct_irradiation_horizontal = pd.Series(
+        data=np.asarray(direct_irradiation_horizontal), index=time_series
+    )
+    diffuse_irradiation_horizontal = pd.Series(
+        data=np.asarray(diffuse_irradiation_horizontal), index=time_series
     )
 
     # todo: How do we actually want to handle leap years?
@@ -118,16 +123,8 @@ def create_pv_production_timeseries(
     )
     solar_position.index = time_series
 
-    # Get Values from weather_data
-    dirhi_vals = np.asarray(direct_irradiation_horizontal, dtype=float)
-    diffhi_vals = np.asarray(diffuse_irradiation_horizontal, dtype=float)
-
-    hour_of_year = (ts.dayofyear - 1) * 24 + ts.hour - 1
-
-    dirhi = pd.Series(dirhi_vals[hour_of_year], index=time_series)
-    diffhi = pd.Series(diffhi_vals[hour_of_year], index=time_series)
-
-    ghi = dirhi + diffhi  # global (total) irradiation on horizonal plane
+    # global (total) irradiation on horizonal plane
+    ghi = direct_irradiation_horizontal + diffuse_irradiation_horizontal
 
     # default parameters the user cant change:
     axis_tilt = 0  # Tilt of the rotation axis of a tracking sytem
@@ -161,7 +158,7 @@ def create_pv_production_timeseries(
     # Calculating the direct normal irradiance
     dni = pvlib.irradiance.dni(
         ghi,
-        diffhi,
+        diffuse_irradiation_horizontal,
         solar_position["zenith"],
         dni_clear=None,
         clearsky_tolerance=1.1,
@@ -185,7 +182,7 @@ def create_pv_production_timeseries(
         solar_azimuth=solar_position["azimuth"],
         dni=dni.astype(float),
         ghi=ghi.astype(float),
-        dhi=diffhi.astype(float),
+        dhi=diffuse_irradiation_horizontal.astype(float),
         dni_extra=dni_extra,
         airmass=None,
         albedo=albedo,
@@ -216,7 +213,7 @@ def create_pv_production_timeseries(
             solar_azimuth=solar_position["azimuth"],
             dni=dni.astype(float),
             ghi=ghi.astype(float),
-            dhi=diffhi.astype(float),
+            dhi=diffuse_irradiation_horizontal.astype(float),
             dni_extra=dni_extra,
             airmass=None,
             albedo=albedo,

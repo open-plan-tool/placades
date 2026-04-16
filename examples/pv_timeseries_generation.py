@@ -47,18 +47,16 @@ production_timeseries_east = pv.create_pv_production_timeseries(
     mounting_type="fix tilt",
 )
 production_timeseries_west = pv.create_pv_production_timeseries(
+    start_datetime="2022-07-01 0:00",
     latitude=weather_data.latitude,
     longitude=weather_data.longitude,
-    direct_irradiation_horizontal=weather_data.direct_solar_wm2,
-    diffuse_irradiation_horizontal=weather_data.diffuse_solar_wm2,
+    direct_irradiation_horizontal=weather_data.direct_solar_wm2[4343:],
+    diffuse_irradiation_horizontal=weather_data.diffuse_solar_wm2[4343:],
     azimuth=273,  # 273° added automatically
     tilt=45,
     system_eff=0.85,
     mounting_type="fix tilt",
 )
-
-print(production_timeseries_fix.sum())
-exit(0)
 
 fig = go.Figure()
 

@@ -23,7 +23,6 @@ def test_pv_timeseries_creation():
     )
 
     production_timeseries_fix = pv.create_pv_production_timeseries(
-        times,
         latitude=weather_data.latitude,
         longitude=weather_data.longitude,
         direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -33,9 +32,8 @@ def test_pv_timeseries_creation():
         system_eff=0.85,
         mounting_type="fix tilt",
     )
-    assert round(production_timeseries_fix.sum(), 0) == 933
+    assert round(production_timeseries_fix.sum(), 0) == 936
     production_timeseries_east_west = pv.create_pv_production_timeseries(
-        times,
         latitude=weather_data.latitude,
         longitude=weather_data.longitude,
         direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -45,9 +43,9 @@ def test_pv_timeseries_creation():
         system_eff=0.85,
         mounting_type="fix tilt two directions back to back",
     )
-    assert round(production_timeseries_east_west.sum(), 0) == 848
+    assert round(production_timeseries_east_west.sum(), 0) == 850
     production_timeseries_tracker = pv.create_pv_production_timeseries(
-        times,
+        start_datetime="2022-06-01 0:00",
         latitude=weather_data.latitude,
         longitude=weather_data.longitude,
         direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -57,10 +55,10 @@ def test_pv_timeseries_creation():
         mounting_type="tracker",
         gcr=0.7,
     )
+    assert production_timeseries_tracker.index[0] == 45
     assert round(production_timeseries_tracker.sum(), 0) == 956
     with pytest.raises(ValueError, match="Mounting system 'no_type' not"):
         pv.create_pv_production_timeseries(
-            times,
             latitude=weather_data.latitude,
             longitude=weather_data.longitude,
             direct_irradiation_horizontal=weather_data.direct_solar_wm2,

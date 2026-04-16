@@ -4,7 +4,6 @@ import plotly.graph_objects as go
 from oemof.eesyplan import WeatherData
 from oemof.eesyplan.importer import create_timeseries_pv as pv
 
-
 weather_data = WeatherData.from_try_file("simple_script/data/TRY2015.dat")
 production_timeseries_fix = pv.create_pv_production_timeseries(
     latitude=weather_data.latitude,

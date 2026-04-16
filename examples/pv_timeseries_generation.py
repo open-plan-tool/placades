@@ -78,6 +78,9 @@ fig.add_trace(
 
 fig.add_trace(go.Scatter(x=times, y=production_timeseries_east, name="east"))
 
-fig.add_trace(go.Scatter(x=times, y=production_timeseries_west, name="west"))
+
+fig.add_trace(
+    go.Scatter(x=times[4343:], y=production_timeseries_west, name="west")
+)
 
 fig.show()

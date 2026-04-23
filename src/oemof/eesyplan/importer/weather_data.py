@@ -1,11 +1,13 @@
 from pathlib import Path
 
+import geopandas as gpd
 import numpy as np
 import pandas as pd
 import requests
 import xarray as xr
 from feedinlib import era5
 from pyproj import Transformer
+from shapely.geometry import Point
 
 
 class WeatherData:
@@ -317,3 +319,18 @@ def __rebuild_netcdf_file_from_df(
     ds.to_netcdf(filepath)
     ds.close()
     return filepath
+
+
+def extract_coordinates_from_era5(era5_netcdf_filename):
+    """
+    Extract all coordinates from a er5 netCDf-file and return them as a
+    geopandas.Series
+    """
+    ds = xr.open_dataset(era5_netcdf_filename)
+
+    # Extract all points from the netCDF-file:
+    points = []
+    for x in ds.longitude:
+        for y in ds.latitude:
+            points.append(Point(x, y))
+    return gpd.GeoSeries(points)

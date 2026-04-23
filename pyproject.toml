@@ -73,6 +73,7 @@ test = [
     "coverage",
     "pvlib",
     "demandlib",
+    "feedinlib==0.1.0rc4",
     "tox",
     "oemof-visio",
     "pyproj",

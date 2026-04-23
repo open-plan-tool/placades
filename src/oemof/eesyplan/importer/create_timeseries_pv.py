@@ -8,32 +8,37 @@ def create_pv_production_timeseries(
     longitude,
     direct_irradiation_horizontal,
     diffuse_irradiation_horizontal,
-    azimuth,
-    system_eff,
-    mounting_type,
+    azimuth=180,
+    tilt=15.0,
+    system_eff=0.80,
+    mounting_type="fix tilt",
     start_datetime="2021-01-01 0:00",
     tz="Europe/Berlin",
-    tilt=15.0,
-    gcr=1.0,
+    gcr=0.5,
     max_angle=60,
     albedo=0.25,
 ):
     """
     This is an internal function based on PV-lib. It creates a simple
-    AC-power-timeseries for a PV-plant.
+    AC-power-timeseries for a PV-plant with 1 kWp DC-Power.
     Based on the given horizontal direct and horizontal diffuse irradiances,
-    the function calculates the irradiation on the defined tilted PV-Array
-    Losses are not calculated in detail but as a plain percentage
-    (this includes shading)
+    the function calculates the irradiation on the defined tilted PV-Array.
+    Losses are not calculated in detail but as a plain percentage with the
+    given Performance Ratio / system efficiency (this includes shading).
 
-    start_datetime : str
-        Blubb, (default: "2021-01-01 0:00")
-    tz : str
-        Blubb, (default: "Europe/Berlin")
-    direct_solar_wm2 :
-        Blubb
-    diffuse_solar_wm2 :
-        BlubbBlubb
+    For the calculations the sun position and therefore a datetime for each
+    timestep is needed. For this a start datetime is given for the first
+    datapoint of the weatherdata. The length of the resulting timeseries is
+    the automatically set to the length of the weatherdata.
+
+    start_datetime : str in datetime format
+        timestamp in , (default: "2021-01-01 0:00")
+    tz : str in datetime format
+        timezone, (default: "Europe/Berlin")
+    direct_solar_wm2 : array-like with hourly timestep
+        direct solar radiation on the horizontal plane in W/m²
+    diffuse_solar_wm2 : array-like with hourly timestep
+        diffuse solar radiation on the horizontal plane in W/m²
     tilt: numeric
         Tilt angle in degrees (0° is horizontal, 90° is vertical)
     azimuth: numeric
@@ -48,10 +53,10 @@ def create_pv_production_timeseries(
     mounting_type: string
         "fix tilt" for static systems with one orientation,
         "fix tilt two directions back to back" for an east-west like system
-        (only one orientation is given),
+        (only one orientation is given, the other one is set up automatically),
         "tracker" for 1-axis tracking systems
     albedo: numeric
-        Reflection fraction of sunligth (default: 0.25)
+        Reflection fraction of sunligth in the surrounding area (default: 0.25)
     max_angle: numeric
         Maximum tilt angle for tracking system (default: 60°). This value is
         only used for 'tracker' systems.
@@ -70,12 +75,17 @@ def create_pv_production_timeseries(
     ...     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
     ...     diffuse_irradiation_horizontal=weather_data.diffuse_solar_wm2,
     ...     azimuth=180,
-    ...     tilt=0,
+    ...     tilt=30.0,
     ...     system_eff=1,
     ...     mounting_type="fix tilt",
+    ...     start_datetime="2021-01-01 6:00",
+    ...     tz="Europe/Berlin",
+    ...     gcr=0.5,
+    ...     max_angle=60,
+    ...     albedo=0.25,
     ...     )
-    >>> float(pts.sum())
-    0.5
+    >>> round(float(pts.sum()),1)
+    1.2
     >>> production_timeseries_east_west=create_pv_production_timeseries(
     ...     latitude=weather_data.latitude,
     ...     longitude=weather_data.longitude,

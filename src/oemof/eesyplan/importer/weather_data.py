@@ -22,8 +22,10 @@ class WeatherData:
     wind_direction_deg : pd.Series or None
         Wind direction at 10 m above ground [degrees].
         Valid range: 0-360, 999 = variable.
-    wind_speed_ms : pd.Series or None
+    wind_speed_10m_ms : pd.Series or None
         Wind speed at 10 m above ground [m/s].
+    wind_speed_100m_ms : pd.Series or None
+        Wind speed at 100 m above ground [m/s].
     cloud_cover_oktas : pd.Series or None
         Cloud cover [oktas]. Valid range: 0-8, 9 = sky obscured.
     water_vapor_gkg : pd.Series or None
@@ -42,6 +44,10 @@ class WeatherData:
         Positive = downward.
     terrestrial_radiation_wm2 : pd.Series or None
         Terrestrial longwave radiation [W/m²]. Negative = upward.
+    roughness_length_m : pd.Series or None
+        Surface roughness length [m].
+    global_solar_wm2 : pd.Series or None
+        Global solar irradiance on horizontal plane [W/m²]. Negative = upward.
     quality_flag : pd.Series or None
         Quality flag regarding selection criteria.
 
@@ -53,10 +59,15 @@ class WeatherData:
     def __init__(self):
         self.latitude = None
         self.longitude = None
+        # TODO question: should we save the dt_index for netcdf files? Currently we drop it from the variable series and save it here once
+        self.dt_index = None
         self.air_temperature_c = None
         self.air_pressure_hpa = None
         self.wind_direction_deg = None
-        self.wind_speed_ms = None
+        self.wind_speed_10m_ms = None
+        self.wind_speed_100m_ms = (
+            None  # added because given by era5 and why not?
+        )
         self.cloud_cover_oktas = None
         self.water_vapor_gkg = None
         self.relative_humidity_percent = None
@@ -64,6 +75,12 @@ class WeatherData:
         self.diffuse_solar_wm2 = None
         self.atmospheric_radiation_wm2 = None
         self.terrestrial_radiation_wm2 = None
+        self.roughness_length_m = (
+            None  # added because required by windpowerlib modelchain
+        )
+        self.global_solar_wm2 = (
+            None  # added because required by pvlib modelchain
+        )
         self.quality_flag = None
 
     def __len__(self):
@@ -89,7 +106,6 @@ class WeatherData:
         wd = cls()
 
         table = try_file2df(path)
-
         wd.latitude, wd.longitude = lat_lon_from_lambert(
             table["RW"].iloc[0], table["HW"].iloc[0]
         )
@@ -97,7 +113,7 @@ class WeatherData:
         wd.air_temperature_c = table["t"]
         wd.air_pressure_hpa = table["p"]
         wd.wind_direction_deg = table["WR"]
-        wd.wind_speed_ms = table["WG"]
+        wd.wind_speed_10m_ms = table["WG"]
         wd.cloud_cover_oktas = table["N"]
         wd.water_vapor_gkg = table["x"]
         wd.relative_humidity_percent = table["RF"]

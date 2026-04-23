@@ -29,12 +29,12 @@ def create_pv_production_timeseries(
     For the calculations the sun position and therefore a datetime for each
     timestep is needed. For this a start datetime is given for the first
     datapoint of the weatherdata. The length of the resulting timeseries is
-    the automatically set to the length of the weatherdata.
+    then automatically set to the length of the weatherdata.
 
-    start_datetime : str in datetime format
-        timestamp in , (default: "2021-01-01 0:00")
-    tz : str in datetime format
-        timezone, (default: "Europe/Berlin")
+    start_datetime : str
+        timestamp in datetime format, (default: "2021-01-01 0:00")
+    tz : str
+        timezone in datetime format, (default: "Europe/Berlin")
     direct_solar_wm2 : array-like with hourly timestep
         direct solar radiation on the horizontal plane in W/m²
     diffuse_solar_wm2 : array-like with hourly timestep
@@ -69,7 +69,7 @@ def create_pv_production_timeseries(
     >>> weather_data.longitude = 13
     >>> weather_data.direct_solar_wm2=[100, 100, 100, 100, 100]
     >>> weather_data.diffuse_solar_wm2=[100, 100, 100, 100, 100]
-    >>> pts = create_pv_production_timeseries(
+    >>> production_timeseries_south = create_pv_production_timeseries(
     ...     latitude=weather_data.latitude,
     ...     longitude=weather_data.longitude,
     ...     direct_irradiation_horizontal=weather_data.direct_solar_wm2,
@@ -84,7 +84,7 @@ def create_pv_production_timeseries(
     ...     max_angle=60,
     ...     albedo=0.25,
     ...     )
-    >>> round(float(pts.sum()),1)
+    >>> round(float(production_timeseries_south.sum()),1)
     1.2
     >>> production_timeseries_east_west=create_pv_production_timeseries(
     ...     latitude=weather_data.latitude,

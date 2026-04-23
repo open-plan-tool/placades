@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+import requests
 from pyproj import Transformer
 
 
@@ -120,3 +121,74 @@ def try_file2df(file: Path):
     return pd.read_csv(
         filepath_or_buffer=file, skiprows=32, delimiter=r"\s+"
     ).iloc[1:, :]
+
+
+def __request_era5_df_from_api(api_host, lat, lon):
+    """
+    Request ERA5 weather data from the weather-data API.
+    """
+    session = requests.Session()
+
+    csrf_response = session.get(api_host + "get_csrf_token/")
+    csrf_token = csrf_response.json()["csrfToken"]
+
+    payload = {"latitude": lat, "longitude": lon}
+    headers = {
+        "X-CSRFToken": csrf_token,
+        "Referer": api_host,
+    }
+
+    post_response = session.post(api_host, data=payload, headers=headers)
+
+    if not post_response.ok:
+        raise RuntimeError("ERA5 weather data API fetch failed")
+
+    response_data = post_response.json()
+    era5_variables_df = pd.DataFrame(response_data["variables"])
+
+    dt_index = pd.date_range(**response_data["time"])
+    return era5_variables_df, dt_index
+
+
+def __rebuild_netcdf_file_from_df(
+    era5_variables_df, lat, lon, dt_index, tmpdirname
+):
+    era5_units = {
+        "d2m": {"units": "K", "long_name": "2 metre dewpoint temperature"},
+        "e": {"units": "m", "long_name": "Evaporation (water equivalent)"},
+        "fdir": {
+            "units": "J/m²",
+            "long_name": "Total sky direct solar radiation at surface",
+        },
+        "fsr": {"units": "1", "long_name": "Forecast surface roughness"},
+        "sp": {"units": "Pa", "long_name": "Surface pressure"},
+        "ssrd": {
+            "units": "J/m²",
+            "long_name": "Surface solar radiation downwards",
+        },
+        "t2m": {"units": "K", "long_name": "2 metre temperature"},
+        "tp": {"units": "m", "long_name": "Total precipitation"},
+        "u10": {"units": "m/s", "long_name": "10 metre U wind component"},
+        "u100": {"units": "m/s", "long_name": "100 metre U wind component"},
+        "v10": {"units": "m/s", "long_name": "10 metre V wind component"},
+        "v100": {"units": "m/s", "long_name": "100 metre V wind component"},
+    }
+
+    df = era5_variables_df.copy()
+    df.index = dt_index
+    df.index.name = "time"
+    ds = df.to_xarray()
+
+    # Attach scalar coords for the site
+    ds = ds.assign_coords(latitude=float(lat), longitude=float(lon))
+
+    # Assign ERA5 variable attributes to xarray dataset
+    for var, attrs in era5_units.items():
+        if var in ds:
+            ds[var] = ds[var].assign_attrs(attrs)
+
+    # export the rebuilt xarray to a temp nc file for creating the weatherdata object
+    filepath = Path(tmpdirname) / f"era5_vars_{lat}_{lon}.nc"
+    ds.to_netcdf(filepath)
+    ds.close()
+    return filepath

@@ -1,7 +1,10 @@
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import requests
+import xarray as xr
+from feedinlib import era5
 from pyproj import Transformer
 
 
@@ -122,6 +125,112 @@ class WeatherData:
         wd.atmospheric_radiation_wm2 = table["A"]
         wd.terrestrial_radiation_wm2 = table["E"]
         wd.quality_flag = table["IL"]
+
+        return wd
+
+    @classmethod
+    def from_era5_netcdf_file(cls, path, latitude, longitude):
+        """
+        Create WeatherData object from ERA5 NetCDF file.
+
+        Assumptions
+        -----------
+        - Standard ERA5 variable names are used.
+        - We use all-sky direct radiation ('fdir'), not clear-sky ('cdir').
+        - Diffuse shortwave is derived as global downward shortwave minus direct.
+        - Terrestrial longwave is derived from net thermal radiation and downward
+          thermal radiation, with negative = upward to match this class.
+        - ERA5 radiation variables are assumed to be accumulations in J/m² and are
+          converted to W/m² using the timestep length.
+        """
+        wd = cls()
+
+        with xr.open_dataset(path) as ds:
+            # select single area if era5 data has multiple grid points
+            if "latitude" in ds.dims and "longitude" in ds.dims:
+                ds = era5.select_area(ds, lat=latitude, lon=longitude)
+
+            wd.latitude = latitude
+            wd.longitude = longitude
+            wd.dt_index = pd.to_datetime(ds["time"].values)
+            dt_seconds = (wd.dt_index[1] - wd.dt_index[0]).total_seconds()
+
+            def rad_flux(name):
+                return ds[name] / dt_seconds
+
+            # adapt units to wd object convention
+            if "t2m" in ds:
+                wd.air_temperature_c = (
+                    (ds["t2m"] - 273.15).to_series().reset_index(drop=True)
+                )
+
+            if "sp" in ds:
+                wd.air_pressure_hpa = (
+                    (ds["sp"] / 100.0).to_series().reset_index(drop=True)
+                )
+
+            if "u10" in ds and "v10" in ds:
+                u = ds["u10"]
+                v = ds["v10"]
+                wd.wind_speed_10m_ms = (
+                    np.sqrt(u**2 + v**2)
+                    .to_series()
+                    .rename("wind_speed_10m_ms")
+                    .reset_index(drop=True)
+                )
+                wd.wind_direction_deg = (
+                    ((180.0 + np.degrees(np.arctan2(u, v))) % 360.0)
+                    .to_series()
+                    .rename("wind_direction_deg")
+                    .reset_index(drop=True)
+                )
+
+            if "u100" in ds and "v100" in ds:
+                wd.wind_speed_100m_ms = (
+                    np.sqrt(ds["u100"] ** 2 + ds["v100"] ** 2)
+                    .to_series()
+                    .rename("wind_speed_100m_ms")
+                    .reset_index(drop=True)
+                )
+
+            if "tcc" in ds:
+                wd.cloud_cover_oktas = (
+                    round(ds["tcc"] * 8.0).to_series().reset_index(drop=True)
+                )
+
+            if "fdir" in ds:
+                wd.direct_solar_wm2 = (
+                    rad_flux("fdir").to_series().reset_index(drop=True)
+                )
+
+            if "ssrd" in ds:
+                wd.global_solar_wm2 = (
+                    rad_flux("ssrd").to_series().reset_index(drop=True)
+                )
+
+            if "ssrd" in ds and "fdir" in ds:
+                wd.diffuse_solar_wm2 = (
+                    (rad_flux("ssrd") - rad_flux("fdir"))
+                    .to_series()
+                    .reset_index(drop=True)
+                )
+
+            if "strd" in ds:
+                wd.atmospheric_radiation_wm2 = (
+                    rad_flux("strd").to_series().reset_index(drop=True)
+                )
+
+            if "str" in ds and "strd" in ds:
+                wd.terrestrial_radiation_wm2 = (
+                    (rad_flux("str") - rad_flux("strd"))
+                    .to_series()
+                    .reset_index(drop=True)
+                )
+
+            if "fsr" in ds:
+                wd.roughness_length_m = (
+                    ds["fsr"].to_series().reset_index(drop=True)
+                )
 
         return wd
 

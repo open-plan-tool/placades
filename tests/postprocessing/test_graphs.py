@@ -1,7 +1,10 @@
+import json
+import warnings
 from pathlib import Path
 
 import pandas as pd
 
+from oemof.datapackage import datapackage  # noqa
 from oemof.eesyplan import CarrierBus
 from oemof.eesyplan import Demand
 from oemof.eesyplan import DsoElectricity
@@ -11,11 +14,12 @@ from oemof.eesyplan import Project
 from oemof.eesyplan import PvPlant
 from oemof.eesyplan import WindTurbine
 from oemof.eesyplan import optimise
-from oemof.eesyplan.postprocessing.balance import nodes_io
+from oemof.eesyplan.datapackage import energy_system as es
+from oemof.eesyplan.postprocessing.graphs import capacities_graph
 from oemof.eesyplan.postprocessing.graphs import sankey
-from oemof.tools.logger import define_logging
+from oemof.tools.debugging import ExperimentalFeatureWarning
 
-DATA_PATH = Path("data")
+DATA_PATH = Path("../test_data", "simple_script_data")
 
 DATA_FILES = {
     "pv": Path("pv_profile.csv"),
@@ -25,17 +29,17 @@ DATA_FILES = {
 }
 
 
-def simple_script():
+def simple_script(pv_installed_cap=1.0, optimize_battery=False):
     # Read data file
     data = {}
     for key, fn in DATA_FILES.items():
-        path = Path(DATA_PATH, fn)
+        path = Path(Path(__file__).parent, DATA_PATH, fn)
         data[key] = pd.read_csv(path, header=None).squeeze()
 
     project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
 
     # ####################### initialize the energy system ####################
-    energy_system = EnergySystem(2023, number=180)
+    energy_system = EnergySystem(2023, number=10)
 
     # ######################### create energysystem components ################
 
@@ -48,7 +52,7 @@ def simple_script():
         DsoElectricity(
             name="My_DSO",
             bus_electricity=bus_elec,
-            energy_price=0.1,
+            energy_price=5,
             feedin_tariff=0.04,
         )
     )
@@ -59,9 +63,9 @@ def simple_script():
             name="wind",
             bus_out_electricity=bus_elec,
             input_timeseries=data["wind"],
-            installed_capacity=6.63,
+            installed_capacity=0.25,
             project_data=project,
-            optimize_cap=False,
+            optimize_cap=True,
         )
     )
 
@@ -70,9 +74,10 @@ def simple_script():
             name="pv",
             bus_out_electricity=bus_elec,
             project_data=project,
-            installed_capacity=5.0,
+            capex_var=0.01,
+            installed_capacity=pv_installed_cap,
             input_timeseries=data["pv"],
-            optimize_cap=False,
+            optimize_cap=True,
         )
     )
 
@@ -81,12 +86,12 @@ def simple_script():
             name="Batterie",
             bus_in_electricity=bus_elec,
             age_installed=0,
-            installed_capacity=1000,
+            installed_capacity=10,
             capex_var=3.0,
             opex_fix=5.0,
             opex_var=0.0,
             lifetime=10.0,
-            optimize_cap=False,
+            optimize_cap=optimize_battery,
             soc_max=1,
             soc_min=0,
             crate=1.0,
@@ -107,9 +112,24 @@ def simple_script():
     return optimise(energy_system), energy_system
 
 
-if __name__ == "__main__":
-    define_logging()
+def test_graph_capacities():
     res, es = simple_script()
-    print(nodes_io(res).sum().sort_index())
-    fig = sankey(res["flow"], es=es)
-    fig.show()
+
+    capacities_graph(res["invest"], es)
+
+
+warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
+
+
+def test_sankey_diagram():
+    path = Path(Path(__file__).parent, "../test_data", "openPlan_package")
+    energy_system = es.create_energy_system_from_dp(path)
+    results = optimise(energy_system)
+
+    fig, _ = sankey(results["flow"], es=energy_system)
+    with Path(
+        Path(__file__).parent, "../test_data", "sankey_dict.json"
+    ).open() as fp:
+        saved_fig = json.load(fp)
+
+    assert fig.to_dict() == saved_fig

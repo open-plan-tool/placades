@@ -155,9 +155,7 @@ def sankey(
                         color = "red"
                     else:
                         color = "green"
-            else:
-                color = "yellow"
-            node_colors.append(color)
+                node_colors.append(color)
 
     fig = go.Figure(
         go.Sankey(

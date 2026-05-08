@@ -77,15 +77,13 @@ class ChpFixedRatio(Converter):
         project_data: project_data
             |project_data|
 
-
-
         Examples
         --------
         >>> from oemof.eesyplan import Project
-        >>> from oemof.solph import Bus
-        >>> gas_bus = Bus(label="gas_bus")
-        >>> heat_bus = Bus(label="heat_bus")
-        >>> el_bus = Bus(label="electricity_bus")
+        >>> from oemof.eesyplan import CarrierBus
+        >>> gas_bus = CarrierBus(label="gas_bus")
+        >>> heat_bus = CarrierBus(label="heat_bus")
+        >>> el_bus = CarrierBus(label="electricity_bus")
         >>> my_chp_fixed = ChpFixedRatio(
         ...     name="fixed_ratio_chp",
         ...     bus_in_fuel=gas_bus,

@@ -1,10 +1,10 @@
 import pandas as pd
-from oemof.solph import Bus
 
 from oemof.eesyplan import EnergySystem
 from oemof.eesyplan import HeatPump
 from oemof.eesyplan import Project
 from oemof.eesyplan import optimise
+from oemof.solph import Bus
 
 
 def test_heat_pump_dispatch():

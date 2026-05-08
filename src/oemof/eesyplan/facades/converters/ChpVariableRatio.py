@@ -84,9 +84,9 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         --------
         >>> from oemof.eesyplan import Project
         >>> from oemof.eesyplan import CarrierBus
-        >>> gas_bus = CarrierBus(label="gas_bus")
-        >>> heat_bus = CarrierBus(label="heat_bus")
-        >>> el_bus = CarrierBus(label="electricity_bus")
+        >>> gas_bus = CarrierBus(name="gas_bus")
+        >>> heat_bus = CarrierBus(name="heat_bus")
+        >>> el_bus = CarrierBus(name="electricity_bus")
         >>> my_chp_fixed = ChpVariableRatio(
         ...     name="variable_ratio_chp",
         ...     bus_in_fuel=gas_bus,

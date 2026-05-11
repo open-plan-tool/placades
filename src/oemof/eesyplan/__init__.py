@@ -45,6 +45,7 @@ from oemof.eesyplan.model import Results
 from oemof.eesyplan.model import optimise
 from oemof.eesyplan.project import Project
 from oemof.eesyplan.typemap import TYPEMAP
+from oemof.eesyplan.weather.weather_data import WeatherData
 
 __all__ = [
     "DSO",

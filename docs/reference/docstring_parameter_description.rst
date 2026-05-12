@@ -138,6 +138,5 @@
 .. |project_data| replace:: The framework of the project in which the asset is
     ought to be optimized.
 
-
 .. |<Parameter>| replace:: <Description> [<Unit>]
     (<Restriction>).

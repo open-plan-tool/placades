@@ -1,103 +1,66 @@
+[project]
+name = "oemof.eesyplan"
+description = "SHORT DESCRIPTION"
+readme = "README.rst"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Open Plan Community and oemof developer group", email = "contact@oemof.org" },
+]
+keywords = []
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Operating System :: Unix",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Utilities",
+]
+dependencies = [
+  "oemof-datapackage",
+  "oemof-network",
+  "oemof-solph",
+]
+dynamic = ["version"]
+
+[project.urls]
+Changelog = "https://oemof-eesyplan.readthedocs.io/en/latest/changelog.html"
+Documentation = "https://oemof-eesyplan.readthedocs.io/"
+Homepage = "https://github.com/oemof/oemof-eesyplan"
+"Issue Tracker" = "https://github.com/oemof/oemof-eesyplan/issues/"
+
+[project.optional-dependencies]
+docs = ["sphinx", "sphinx_rtd_theme"]
+dummy = ["oemof"]
+examples = []
+importer = ["pyproj"]
+test = [
+  "pytest",
+  "coverage",
+  "pvlib",
+  "demandlib",
+  "tox",
+  "oemof-visio",
+  "pyproj",
+  "mip",
+]
+
 [build-system]
 requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
-[tool.flit.sdist]
-include = [
-    ".coveragerc",
-    ".editorconfig",
-    ".readthedocs.yml",
-    ".pre-commit-config.yaml",
-    "tox.ini",
-    "AUTHORS.rst",
-    "CHANGELOG.rst",
-    "CONTRIBUTING.rst",
-    "LICENSE",
-    "README.rst",
-    "examples/",
-    "docs/",
-    "src/",
-    "tests/",
-    ".bumpversion.cfg",
-    ".cookiecutterrc",
-    ".taplo.toml",
-    "MANIFEST.in",
-    "ci/bootstrap.py",
-    "ci/requirements.txt",
-    "ci/templates/.github/workflows/github-actions.yml",
-    "pytest.ini",
-    "tests/test_data/TRY2015_39065002972500_Jahr.dat",
-]
-exclude = ["docs/_build", "**/*.egg-info"]
-
-[tool.flit.module]
-name = "oemof.eesyplan"
-
-[project]
-name = "oemof.eesyplan"
-dynamic = ["version"]
-description = "SHORT DESCRIPTION"
-readme = "README.rst"
-authors = [
-    { name = "Open Plan Community and oemof developer group", email = "contact@oemof.org" },
-]
-license = "MIT"
-license-files = ["LICENSE"]
-classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Developers",
-    "Operating System :: Unix",
-    "Operating System :: POSIX",
-    "Operating System :: Microsoft :: Windows",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
-    "Topic :: Utilities",
-]
-keywords = []
-requires-python = ">=3.10"
-dependencies = [
-    "oemof-network",
-    "oemof-solph",
-    "oemof-datapackage",
-]
-
-[project.optional-dependencies]
-test = [
-    "pytest",
-    "coverage",
-    "pvlib",
-    "demandlib",
-    "tox",
-    "oemof-visio",
-    "pyproj",
-    "mip",
-]
-dummy = ["oemof"]
-docs = ["sphinx", "sphinx_rtd_theme"]
-importer = ["pyproj"]
-examples = []
-
-[project.urls]
-Homepage = "https://github.com/oemof/oemof-eesyplan"
-Documentation = "https://oemof-eesyplan.readthedocs.io/"
-Changelog = "https://oemof-eesyplan.readthedocs.io/en/latest/changelog.html"
-"Issue Tracker" = "https://github.com/oemof/oemof-eesyplan/issues/"
-
-[tool.ruff]
-extend-exclude = ["static", "ci/templates"]
-line-length = 79
-src = ["src", "tests", "examples"]
-target-version = "py313"
-
 [tool.black]
 line-length = 79
-target-version = ['py311', 'py312', 'py313']
+target-version = ["py311", "py312", "py313"]
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -115,38 +78,75 @@ exclude = '''
 )/
 '''
 
-[tool.ruff.lint.per-file-ignores]
-"ci/*" = ["S"]
+[tool.flit.sdist]
+include = [
+  ".coveragerc",
+  ".editorconfig",
+  ".readthedocs.yml",
+  ".pre-commit-config.yaml",
+  "tox.ini",
+  "AUTHORS.rst",
+  "CHANGELOG.rst",
+  "CONTRIBUTING.rst",
+  "LICENSE",
+  "README.rst",
+  "examples/",
+  "docs/",
+  "src/",
+  "tests/",
+  ".bumpversion.cfg",
+  ".cookiecutterrc",
+  ".taplo.toml",
+  "MANIFEST.in",
+  "ci/bootstrap.py",
+  "ci/requirements.txt",
+  "ci/templates/.github/workflows/github-actions.yml",
+  "pytest.ini",
+  "tests/test_data/TRY2015_39065002972500_Jahr.dat",
+]
+exclude = ["docs/_build", "**/*.egg-info"]
+
+[tool.flit.module]
+name = "oemof.eesyplan"
+
+[tool.ruff]
+extend-exclude = ["static", "ci/templates"]
+line-length = 79
+src = ["src", "tests", "examples"]
+target-version = "py313"
 
 [tool.ruff.lint]
 ignore = [
-    "RUF001",
-    "S101",
-    "S308",
-    "S603",
-    "S607",
-    "E501",
+  "RUF001",
+  "S101",
+  "S308",
+  "S603",
+  "S607",
+  "E501",
 ]
 select = [
-    "B",
-    "C4",
-    "DTZ",
-    "E",
-    "EXE",
-    "F",
-    "I",
-    "INT",
-    "PIE",
-    "PLC",
-    "PLE",
-    "PT",
-    "PTH",
-    "RSE",
-    "RUF",
-    "S",
-    "UP",
-    "W",
+  "B",
+  "C4",
+  "DTZ",
+  "E",
+  "EXE",
+  "F",
+  "I",
+  "INT",
+  "PIE",
+  "PLC",
+  "PLE",
+  "PT",
+  "PTH",
+  "RSE",
+  "RUF",
+  "S",
+  "UP",
+  "W",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"ci/*" = ["S"]
 
 [tool.ruff.lint.flake8-pytest-style]
 fixture-parentheses = false

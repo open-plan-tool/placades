@@ -39,7 +39,6 @@ from oemof.eesyplan.facades.storages.ElectricalStorage import ElectricalStorage
 from oemof.eesyplan.facades.storages.FuelStorage import FuelStorage
 from oemof.eesyplan.facades.storages.HydrogenStorage import HydrogenStorage
 from oemof.eesyplan.facades.storages.ThermalStorage import ThermalStorage
-from oemof.eesyplan.importer.weather_data import WeatherData
 from oemof.eesyplan.model import EnergySystem
 from oemof.eesyplan.model import Results
 from oemof.eesyplan.model import optimise

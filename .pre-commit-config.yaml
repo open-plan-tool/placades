@@ -15,9 +15,7 @@ repos:
     rev: v0.11.1
     hooks:
       - id: tombi-format
-        args: ["--offline"]
       - id: tombi-lint
-        args: ["--offline"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:

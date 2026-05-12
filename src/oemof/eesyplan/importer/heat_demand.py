@@ -106,7 +106,7 @@ def create_heat_demand(
     Example:
 
     >>> from demandlib import bdew
-    >>> from oemof.eesyplan.importer.weather_data import WeatherData
+    >>> from oemof.eesyplan.weather.weather_data import WeatherData
     >>> weather_data = WeatherData.from_try_file("examples/simple_script/data/TRY2015.dat")
     >>> heat_demand = create_heat_demand(
     ...     outdoor_temperature=weather_data.air_temperature_c,

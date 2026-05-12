@@ -9,7 +9,7 @@ import pandas as pd
 import pytest
 
 from oemof.eesyplan.importer import heat_demand as heat
-from oemof.eesyplan.importer import weather_data as weather
+from oemof.eesyplan.weather import weather_data as weather
 
 
 def create_test_heat_demand_data(periods=48, seed=42):

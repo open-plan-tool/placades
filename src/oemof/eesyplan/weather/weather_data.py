@@ -89,7 +89,7 @@ class WeatherData:
 
         table = try_file2df(path)
 
-        wd.latitude, wd.longitude = lat_lon_from_lambert(
+        wd.longitude, wd.latitude = lon_lat_from_lambert(
             table["RW"].iloc[0], table["HW"].iloc[0]
         )
 
@@ -109,7 +109,7 @@ class WeatherData:
         return wd
 
 
-def lat_lon_from_lambert(right, height):
+def lon_lat_from_lambert(right, height):
     transformer = Transformer.from_crs(
         "EPSG:3034", "EPSG:4326", always_xy=True
     )

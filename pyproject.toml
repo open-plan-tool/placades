@@ -38,6 +38,9 @@ Documentation = "https://oemof-eesyplan.readthedocs.io/"
 Homepage = "https://github.com/oemof/oemof-eesyplan"
 "Issue Tracker" = "https://github.com/oemof/oemof-eesyplan/issues/"
 
+[project.scripts]
+solve_dp = "oemof.eesyplan.datapackage.energy_system:cli"
+
 [project.optional-dependencies]
 docs = ["sphinx", "sphinx_rtd_theme"]
 dummy = ["oemof"]

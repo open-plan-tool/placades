@@ -1,3 +1,5 @@
+import logging
+
 import pandas as pd
 from datapackage import Package
 
@@ -23,6 +25,58 @@ RAW_INPUTS = [
     "optimize_cap",
     "maximum_capacity",
 ]
+
+
+# Functions for results per component
+def compute_capacity_total(results_df):
+    """Calculates total capacity by adding existing capacity (capacity) to optimized capacity (investments)"""
+    investments = results_df.investments
+    if investments is None:
+        investments = 0
+
+    return results_df.installed_capacity + investments
+
+
+def compute_capacity_added(results_df):
+    """Calculates duplicate optimized capacity (investments) into a column with a better name"""
+    investments = results_df.investments
+    if investments is None:
+        investments = 0
+    return investments
+
+
+def compute_annuity_total(results_df):
+    """Calculates total annuity by multiplying the annuity by the optimized capacity"""
+    investments = results_df.investments
+    if investments is None:
+        investments = 0
+
+    return results_df.capex_var * investments
+
+
+CALCULATED_OUTPUTS = [
+    {
+        "column_name": "capacity_total",
+        "operation": compute_capacity_total,
+        "description": "The total capacity is calculated by adding the optimized capacity (investments) "
+        "to the existing capacity (capacity)",
+        "argument_names": ["investments", "capacity"],
+    },
+    {
+        "column_name": "capacity_added",
+        "operation": compute_capacity_added,
+        "description": "The optimized capacity column is duplicated with a better name than 'investments'",
+        "argument_names": ["investments"],
+    },
+    {
+        "column_name": "annuity_total",
+        "operation": compute_annuity_total,
+        "description": "Total annuity is calculated by multiplying the optimized capacity "
+        "by the capacity cost (annuity considering CAPEX, OPEX and WACC)",
+        "argument_names": ["investments", "capacity_cost"],
+    },
+]
+
 
 
 def construct_dataframe_from_results(results_path, es_dp_path):
@@ -174,6 +228,124 @@ def process_raw_inputs(
     return df_results.join(inputs_df.T.apply(pd.to_numeric, downcast="float"))
 
 
+def _validate_calculation(calculation):
+    """Check if the parameters of a calculation are there and of the right format"""
+    var_name = calculation.get("column_name", None)
+    fhandle = calculation.get("operation", None)
+
+    if var_name is None:
+        raise ValueError(
+            f"The 'column_name' under which the calculation should be saved in the results DataFrame is missing from the calculation dict: {calculation}. Please check your input or look at help(apply_calculations) for the formatting of the calculation dict"
+        )
+
+    if not callable(fhandle):
+        raise ValueError(
+            f"The provided function handle for calculation of column '{var_name}' is not callable"
+        )
+
+
+def _check_arguments(df, column_names, col_name):
+    """Check that all required argument are present in the DataFrame columns"""
+    for arg in column_names:
+        if arg not in df.columns:
+            raise AttributeError(
+                f"The column {arg} is not present within the results DataFrame and is required to compute '{col_name}', listed in the calculations to be executed"
+            )
+
+
+def apply_calculations(results_df, calculations=None):
+    """Apply calculation and populate the columns of the results_df
+
+    Parameters
+    ----------
+    df_results: pandas DataFrame
+        the outcome of process_raw_input()
+    calculations: list of dict
+        each dict should contain
+            "column_name" (the name of the new column within results_df),
+            "operation" (handle of a function which will be applied row-wise to results_df),
+            "description" (a string for documentation purposes)
+            and "argument_names" (list of columns needed within results_df)
+
+    Returns
+    -------
+
+    """
+    if calculations is None:
+        calculations = []
+
+    for calc in calculations:
+        _validate_calculation(calc)
+        var_name = calc.get("column_name")
+        argument_names = calc.get("argument_names", [])
+        func_handle = calc.get("operation")
+        try:
+            _check_arguments(
+                results_df, column_names=argument_names, col_name=var_name
+            )
+        except AttributeError as e:
+            logging.warning(e)
+            continue
+
+        results_df[var_name] = results_df.apply(
+            func_handle,
+            axis=1,
+        )
+        # ToDo: I've commented this out for now but decide if this or some form should be kept in
+        # # check if the new column contains all None values and remove it if so
+        # if results_df[var_name].isna().all():
+        #     results_df.drop(columns=[var_name], inplace=True)
+        #     logging.info(
+        #         f"Removed column '{var_name}' because it contains all None values."
+        #     )
+
+
+def apply_kpi_calculations(results_df, calculations=None):
+    """Apply calculation and return a new DataFrame with the KPIs.
+
+    Parameters
+    ----------
+    results_df : pd.DataFrame
+        The input DataFrame with raw data.
+    calculations : list of dict
+        List of calculations to be applied. Each calculation is a dictionary
+        with keys: "column_name", "argument_names", and "operation".
+
+    Returns
+    -------
+    pd.DataFrame
+        A new DataFrame containing the calculated KPI values with var_name as the index.
+    """
+
+    if calculations is None:
+        calculations = []
+
+    kpis = []
+
+    for calc in calculations:
+        _validate_calculation(calc)
+        var_name = calc.get("column_name")
+        argument_names = calc.get("argument_names", [])
+        func_handle = calc.get("operation")
+
+        try:
+            _check_arguments(
+                results_df, column_names=argument_names, col_name=var_name
+            )
+        except AttributeError as e:
+            logging.warning(e)
+            continue
+
+        kpi_value = func_handle(results_df)
+        kpis.append({"kpi": var_name, "value": kpi_value})
+
+    if kpis:
+        answer = pd.DataFrame(kpis).set_index("kpi")
+    else:
+        answer = None
+    return answer
+
+
 class Calculator:
     def __init__(self, results_path, es_dp_path):
         es_dp_path = es_dp_path / "datapackage.json"
@@ -185,6 +357,14 @@ class Calculator:
         self.df_results = process_raw_results(self.df_results)
         self.df_results = process_raw_inputs(self.df_results, es_dp_path)
         self.kpis = None
+
+    def apply_calculations(self, calculations):
+        apply_calculations(self.df_results, calculations=calculations)
+
+    def apply_kpi_calculations(self, calculations):
+        self.kpis = apply_kpi_calculations(
+            self.df_results, calculations=calculations
+        )
 
     def __scalars(self, scalar_category):
         """Ignore the flow data columns (by construction those are the first columns after the multi-index)"""

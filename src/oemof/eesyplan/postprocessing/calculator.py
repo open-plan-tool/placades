@@ -217,6 +217,34 @@ CALCULATED_KPIS = [
 ]
 
 
+def hide_and_rename(df, depth=0):
+    filtered = df[
+        [
+            column
+            for column in df.columns
+            if any(
+                level.depth == depth
+                for level in (
+                    column if isinstance(column, tuple) else (column,)
+                )
+            )
+        ]
+    ]
+
+    for n in range(df.columns.nlevels):
+        filtered.rename(
+            columns={
+                obj: obj.parent
+                for c in filtered.columns
+                for obj in [(c if isinstance(c, tuple) else (c,))[n]]
+                if obj.parent is not None
+            },
+            level=n,
+            inplace=True,
+        )
+    return filtered
+
+
 def construct_dataframe_from_results(results_path, es_dp_path):
     """
 
@@ -252,7 +280,8 @@ def construct_dataframe_from_results(results_path, es_dp_path):
             for asset in r.read(keyed=True):
                 asset_info[asset["name"]] = asset["type"]
 
-    df = results["flow"].T
+    df = hide_and_rename(results["flow"]).T
+
     # reformat the columns
     df.columns = list(df.columns)
 

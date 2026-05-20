@@ -274,7 +274,7 @@ def construct_dataframe_from_results(results_path, es_dp_path):
             idx = (bus, "out", asset)
 
         if asset in investments_df:
-            investments.append(investments_df[asset].iloc[0])
+            investments.append(investments_df[asset].iloc[0].values[0])
         else:
             investments.append(None)
 

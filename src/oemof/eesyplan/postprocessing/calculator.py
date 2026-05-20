@@ -8,6 +8,8 @@ from oemof.eesyplan import import_results
 from oemof.eesyplan.datapackage.energy_system import (
     create_energy_system_from_dp,
 )
+from oemof.eesyplan.investment import get_replacement_costs
+from oemof.eesyplan.project import Project
 from oemof.solph.buses import Bus
 
 RAW_OUTPUTS = ["investments"]
@@ -28,13 +30,6 @@ RAW_INPUTS = [
 
 
 # Functions for results per component
-def compute_capacity_total(results_df):
-    """Calculates total capacity by adding existing capacity (capacity) to optimized capacity (investments)"""
-    investments = results_df.investments
-    if investments is None:
-        investments = 0
-
-    return results_df.installed_capacity + investments
 
 
 def compute_capacity_added(results_df):
@@ -45,38 +40,181 @@ def compute_capacity_added(results_df):
     return investments
 
 
-def compute_annuity_total(results_df):
-    """Calculates total annuity by multiplying the annuity by the optimized capacity"""
+def compute_capacity_total(results_df):
+    """Calculates total capacity by adding existing capacity (capacity) to optimized capacity (investments)"""
     investments = results_df.investments
     if investments is None:
         investments = 0
 
-    return results_df.capex_var * investments
+    # if "storage" in results_df.name:
+    #     return results_df.storage_capacity + investments
+    # else:
+    return results_df.installed_capacity + investments
+
+
+def compute_upfront_investments_costs(results_df):
+    """Calculates upfront investments multiplying the annuity by the optimized capacity"""
+
+    return (
+        results_df.capex_var * results_df.optimized_capacity
+        + results_df.capex_fix
+    )
+
+
+def compute_operation_and_managment_costs(results_df):
+    """Calculates operation and managment costs by multiplying the opex_fix by the total capacity"""
+    return results_df.opex_fix * results_df.capacity_total
+
+
+def compute_variable_costs(results_df):
+    """Calculates variable costs by multiplying the opex_var by the aggregated flow"""
+    return results_df.opex_var * results_df.aggregated_flow
+
+
+def compute_replacement_costs(results_df, project_data):
+    """ """
+    # TODO make sure there is no nan values (artifact because of th DSO)
+
+    # if results_df.lifetime is not Nan and
+    project_life = project_data.lifetime
+    discount_factor = project_data.discount_factor
+    first_time_investment = results_df.capex_var * (1 + project_data.tax)
+    specific_replacement_costs_optimized = get_replacement_costs(
+        0,
+        project_life,
+        results_df.lifetime,
+        first_time_investment,
+        discount_factor,
+    )
+
+    specific_replacement_costs_installed = get_replacement_costs(
+        results_df.age_installed,
+        project_life,
+        results_df.lifetime,
+        first_time_investment,
+        discount_factor,
+    )
+
+    return (
+        results_df.installed_capacity * specific_replacement_costs_installed
+        + results_df.optimized_capacity * specific_replacement_costs_optimized
+    )
 
 
 CALCULATED_OUTPUTS = [
     {
-        "column_name": "capacity_total",
-        "operation": compute_capacity_total,
-        "description": "The total capacity is calculated by adding the optimized capacity (investments) "
-        "to the existing capacity (capacity)",
-        "argument_names": ["investments", "capacity"],
-    },
-    {
-        "column_name": "capacity_added",
+        "column_name": "optimized_capacity",
         "operation": compute_capacity_added,
         "description": "The optimized capacity column is duplicated with a better name than 'investments'",
         "argument_names": ["investments"],
     },
     {
-        "column_name": "annuity_total",
-        "operation": compute_annuity_total,
-        "description": "Total annuity is calculated by multiplying the optimized capacity "
-        "by the capacity cost (annuity considering CAPEX, OPEX and WACC)",
-        "argument_names": ["investments", "capacity_cost"],
+        "column_name": "capacity_total",
+        "operation": compute_capacity_total,
+        "description": "The total capacity is calculated by adding the optimized capacity (investments) "
+        "to the existing capacity (capacity)",
+        "argument_names": ["optimized_capacity", "installed_capacity"],
     },
+    {
+        "column_name": "upfront_investment_costs",
+        "operation": compute_upfront_investments_costs,
+        "description": "Upfront investment costs are calculated by multiplying the optimized capacity "
+        "by the CAPEX",
+        "argument_names": ["optimized_capacity", "capex_var", "capex_fix"],
+    },
+    {
+        "column_name": "operation_and_managment_costs",
+        "operation": compute_operation_and_managment_costs,
+        "description": "Operation and maintenance costs are calculated by multiplying the total capacity "
+        "by the OPEX",
+        "argument_names": ["capacity_total", "opex_fix"],
+    },
+    # {
+    #     "column_name": "opex_fix_costs_total",
+    #     "operation": compute_operation_and_managment_costs,
+    #     "description": "Operation and maintenance costs are calculated by multiplying the total capacity "
+    #     "by the OPEX",
+    #     "argument_names": ["aggregated_flow", "opex_fix"],
+    # },
+    {
+        "column_name": "variable_costs_total",
+        "operation": compute_variable_costs,
+        "description": "Variable costs are calculated by multiplying the total flow "
+        "by the marginal/carrier costs",
+        "argument_names": ["aggregated_flow", "capex_var"],
+    },
+    {
+        "column_name": "replacement_costs",
+        "operation": compute_replacement_costs,
+        "description": "The replacement costs for installed and optimized capacities are computed",
+        "argument_names": [
+            "installed_capacity",
+            "optimized_capacity",
+            "age_installed",
+            "capex_var",
+            "lifetime",
+            "project_data",
+        ],
+    },
+    # {
+    #     "column_name": "renewable_generation",
+    #     "operation": compute_renewable_generation,
+    #     "description": "The renewable generation for each component is computed from the flow and the "
+    #     "renewable factor.",
+    #     "argument_names": [
+    #         "aggregated_flow",
+    #         "renewable_factor",
+    #     ],
+    # },
+    # {
+    #     "column_name": "co2_emissions",
+    #     "operation": compute_co2_emissions,
+    #     "description": "CO2 emissions are calculated from the flow and the emission factor",
+    #     "argument_names": ["aggregated_flow", "emission_factor"],
+    # },
+    # {
+    #     "column_name": "ghg_emissions",
+    #     "operation": compute_ghg_emissions,
+    #     "description": "GHG emissions are calculated from the flow and the emission factor",
+    #     "argument_names": ["aggregated_flow", "ghg_emission_factor"],
+    # },
 ]
 
+CALCULATED_KPIS = [
+    # {
+    #     "column_name": "total_upfront_investments",
+    #     "operation": compute_system_upfront_investments_total,
+    #     "description": "The total upfront investments value is calculated by summing the upfront investment"
+    #     "costs for each component",
+    #     "argument_names": ["upfront_investment_costs"],
+    # },
+    # {
+    #     "column_name": "co2_emissions_total",
+    #     "operation": compute_system_co2_emissions_total,
+    #     "description": "The total emissions is calculated by summing the c02 emissions "
+    #     "for each component",
+    #     "argument_names": ["co2_emissions"],
+    # },
+    # {
+    #     "column_name": "renewable_share",
+    #     "operation": compute_renewable_share,
+    #     "description": "The renewable share is calculated by dividing the renewable generation by the total "
+    #     "generation",
+    #     "argument_names": ["renewable_factor", "aggregated_flow"],
+    # },
+    # {
+    #     "column_name": "ghg_emissions_total",
+    #     "operation": compute_ghg_emissions_total,
+    #     "description": "",
+    #     "argument_names": ["ghg_emissions"],
+    # },
+    # {
+    #     "column_name": "system_opex_total",
+    #     "operation": compute_system_opex_total,
+    #     "description": "",
+    #     "argument_names": ["opex_fix_costs_total", "variable_cost_moo"],
+    # },
+]
 
 
 def construct_dataframe_from_results(results_path, es_dp_path):
@@ -253,7 +391,7 @@ def _check_arguments(df, column_names, col_name):
             )
 
 
-def apply_calculations(results_df, calculations=None):
+def apply_calculations(results_df, calculations=None, project=None):
     """Apply calculation and populate the columns of the results_df
 
     Parameters
@@ -266,6 +404,7 @@ def apply_calculations(results_df, calculations=None):
             "operation" (handle of a function which will be applied row-wise to results_df),
             "description" (a string for documentation purposes)
             and "argument_names" (list of columns needed within results_df)
+    project: eesyplan.project.Project instance
 
     Returns
     -------
@@ -279,6 +418,19 @@ def apply_calculations(results_df, calculations=None):
         var_name = calc.get("column_name")
         argument_names = calc.get("argument_names", [])
         func_handle = calc.get("operation")
+
+        project_data = None
+        if "project_data" in argument_names:
+            project_data = argument_names.pop(
+                argument_names.index("project_data")
+            )
+            if project is not None:
+                project_data = project
+            else:
+                raise AttributeError(
+                    f"Project data is required for the computation of {var_name}, however no project was provided"
+                )
+
         try:
             _check_arguments(
                 results_df, column_names=argument_names, col_name=var_name
@@ -287,10 +439,15 @@ def apply_calculations(results_df, calculations=None):
             logging.warning(e)
             continue
 
-        results_df[var_name] = results_df.apply(
-            func_handle,
-            axis=1,
-        )
+        if project_data:
+            results_df[var_name] = results_df.apply(
+                func_handle, axis=1, args=(project_data,)
+            )
+        else:
+            results_df[var_name] = results_df.apply(
+                func_handle,
+                axis=1,
+            )
         # ToDo: I've commented this out for now but decide if this or some form should be kept in
         # # check if the new column contains all None values and remove it if so
         # if results_df[var_name].isna().all():
@@ -349,6 +506,13 @@ def apply_kpi_calculations(results_df, calculations=None):
 class Calculator:
     def __init__(self, results_path, es_dp_path):
         es_dp_path = es_dp_path / "datapackage.json"
+
+        # extract project information from the datapackage
+        p = Package(str(es_dp_path))
+        proj_kwargs = p.get_resource("project").read(keyed=True)[0]
+        proj_kwargs.pop("type")
+        self.project = Project(**proj_kwargs)
+
         self.df_results = construct_dataframe_from_results(
             results_path, es_dp_path
         )
@@ -359,7 +523,9 @@ class Calculator:
         self.kpis = None
 
     def apply_calculations(self, calculations):
-        apply_calculations(self.df_results, calculations=calculations)
+        apply_calculations(
+            self.df_results, calculations=calculations, project=self.project
+        )
 
     def apply_kpi_calculations(self, calculations):
         self.kpis = apply_kpi_calculations(

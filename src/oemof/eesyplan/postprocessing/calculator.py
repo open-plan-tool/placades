@@ -106,6 +106,17 @@ def compute_replacement_costs(results_df, project_data):
         return np.nan
 
 
+def compute_asset_total_costs(results_df):
+    """ """
+
+    return (
+        results_df.upfront_investment_costs
+        + results_df.replacement_costs
+        + results_df.operation_and_managment_costs
+        + results_df.variable_costs
+    )
+
+
 CALCULATED_OUTPUTS = [
     {
         "column_name": "optimized_capacity",
@@ -142,7 +153,7 @@ CALCULATED_OUTPUTS = [
     #     "argument_names": ["aggregated_flow", "opex_fix"],
     # },
     {
-        "column_name": "variable_costs_total",
+        "column_name": "variable_costs",
         "operation": compute_variable_costs,
         "description": "Variable costs are calculated by multiplying the total flow "
         "by the marginal/carrier costs",
@@ -159,6 +170,17 @@ CALCULATED_OUTPUTS = [
             "capex_var",
             "lifetime",
             "project_data",
+        ],
+    },
+    {
+        "column_name": "asset_total_costs",
+        "operation": compute_asset_total_costs,
+        "description": "All costs attributed to an asset",
+        "argument_names": [
+            "upfront_investment_costs",
+            "replacement_costs",
+            "operation_and_managment_costs",
+            "variable_costs",
         ],
     },
     # {

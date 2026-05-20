@@ -1,5 +1,6 @@
 import logging
 
+import numpy as np
 import pandas as pd
 from datapackage import Package
 
@@ -73,32 +74,36 @@ def compute_variable_costs(results_df):
 
 def compute_replacement_costs(results_df, project_data):
     """ """
-    # TODO make sure there is no nan values (artifact because of th DSO)
-
-    # if results_df.lifetime is not Nan and
-    project_life = project_data.lifetime
-    discount_factor = project_data.discount_factor
-    first_time_investment = results_df.capex_var * (1 + project_data.tax)
-    specific_replacement_costs_optimized = get_replacement_costs(
-        0,
-        project_life,
-        results_df.lifetime,
-        first_time_investment,
-        discount_factor,
-    )
-
-    specific_replacement_costs_installed = get_replacement_costs(
-        results_df.age_installed,
-        project_life,
-        results_df.lifetime,
-        first_time_investment,
-        discount_factor,
-    )
-
-    return (
-        results_df.installed_capacity * specific_replacement_costs_installed
-        + results_df.optimized_capacity * specific_replacement_costs_optimized
-    )
+    if (
+        not pd.isna(results_df.lifetime)
+        and not pd.isna(results_df.age_installed)
+        and not pd.isna(results_df.capex_var)
+    ):
+        project_life = project_data.lifetime
+        discount_factor = project_data.discount_factor
+        first_time_investment = results_df.capex_var * (1 + project_data.tax)
+        specific_replacement_costs_optimized = get_replacement_costs(
+            0,
+            project_life,
+            results_df.lifetime,
+            first_time_investment,
+            discount_factor,
+        )
+        specific_replacement_costs_installed = get_replacement_costs(
+            results_df.age_installed,
+            project_life,
+            results_df.lifetime,
+            first_time_investment,
+            discount_factor,
+        )
+        return (
+            results_df.installed_capacity
+            * specific_replacement_costs_installed
+            + results_df.optimized_capacity
+            * specific_replacement_costs_optimized
+        )
+    else:
+        return np.nan
 
 
 CALCULATED_OUTPUTS = [

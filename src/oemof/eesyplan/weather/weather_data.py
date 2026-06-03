@@ -1,7 +1,19 @@
+import logging
 from pathlib import Path
 
 import pandas as pd
-from pyproj import Transformer
+
+try:
+    from pyproj import Transformer
+except ModuleNotFoundError:
+
+    class Transformer:
+        def from_crs(self):
+            pass
+
+    logging.warning(
+        "If you want to use the WeatherData importer of oemof-eesyplan, you have to install extra dependencies `pip install oemoef-eesyplan[importer]` "
+    )
 
 
 class WeatherData:

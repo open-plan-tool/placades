@@ -84,3 +84,33 @@ available, the results have to be processed using the oemof-solph API. Go to
 the
 `oemof-solph documentation <https://oemof-solph.readthedocs.io/en/stable/reference/oemof.solph.results.html#oemof.solph._results.Results>`__
 for further information
+
+
+Datapackage
+===========
+
+It is possible to setup an eesyPlan model and solve it from a datapackage. One can do it via the terminal or via a python script. For example of datapackage please refer to our examples in `examples/simple_datapackage`
+
+To use the terminal interface you need to have oemof-eesyplan installed in your local virtual environment, then in a terminal where the environment is activated you can type
+
+.. code-block:: basic
+
+    solve_dp -f <path to a datapackage folder>
+
+To enquiry about the possible options simply use the `-h` option
+
+.. code-block:: basic
+
+    solve_dp -h
+
+If you prefer to use a python script
+
+.. code-block:: python
+
+    from pathlib import Path
+    from oemof.eesyplan.datapackage.energy_system import create_energy_system_from_dp
+
+    path = Path("path/to/your/datapackage")
+    energy_system = create_energy_system_from_dp(path)
+
+    results = optimise(energy_system)

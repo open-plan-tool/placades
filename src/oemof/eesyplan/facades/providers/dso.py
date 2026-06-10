@@ -1,6 +1,7 @@
 from oemof.network import Node
 from oemof.solph import Bus
 from oemof.solph import Flow
+from oemof.solph import sequence
 from oemof.solph.components import Converter
 from oemof.solph.components import Sink
 from oemof.solph.components import Source
@@ -11,8 +12,9 @@ class DSO(Node):
         self,
         name,
         bus,
-        energy_price,
-        feedin_tariff,
+        carrier=None,
+        energy_price=0,
+        feedin_tariff=0,
         peak_demand_pricing=0,
         peak_demand_pricing_period=1,
         renewable_share=0.44,
@@ -39,7 +41,7 @@ class DSO(Node):
             |name|
         energy_price : float, default=0.3
             |energy_prics|
-        feedin_tariff : float, default=0.1
+        feedin_tariff : float or array-like, default=0.1
             |feedin_tariff|
         peak_demand_pricing : float, default=0
             |peak_demand_pricing|
@@ -64,6 +66,7 @@ class DSO(Node):
         """
         self.name = name
         self.bus = bus
+        self.carrier = carrier,
         self.energy_price = energy_price
         self.feedin_tariff = feedin_tariff
         self.peak_demand_pricing = peak_demand_pricing

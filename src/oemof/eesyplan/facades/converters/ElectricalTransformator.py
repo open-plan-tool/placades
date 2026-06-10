@@ -1,6 +1,7 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Flow
 from oemof.solph.components import Converter
+
+from oemof.eesyplan.investment import _create_invest_if_wanted
 
 
 class ElectricalTransformator(Converter):
@@ -14,7 +15,6 @@ class ElectricalTransformator(Converter):
         age_installed=0,
         installed_capacity=0,
         capex_var=1000,
-        capex_fix=0,
         opex_fix=10,
         opex_var=0,
         lifetime=20,
@@ -48,9 +48,6 @@ class ElectricalTransformator(Converter):
             Number of years the asset has already been in operation.
         installed_capacity : float, default=0
             Already existing installed capacity.
-        capex_fix : float, default=1000
-            Specific investment costs of the asset related to the
-            installed capacity (CAPEX).
         capex_var : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
@@ -76,9 +73,9 @@ class ElectricalTransformator(Converter):
         --------
 
         >>> from oemof.eesyplan import Project
-        >>> from oemof.solph import Bus
-        >>> el_bus_in = Bus(label="el_bus_in")
-        >>> el_bus_out = Bus(label="el_bus_out")
+        >>> from oemof.eesyplan import CarrierBus
+        >>> el_bus_in = CarrierBus(name="el_bus_in")
+        >>> el_bus_out = CarrierBus(name="el_bus_out")
         >>> my_el_transformer = ElectricalTransformator(
         ...     name="ElectricalTransformator",
         ...     bus_in_electricity=el_bus_in,
@@ -121,7 +118,6 @@ class ElectricalTransformator(Converter):
         self.name = name
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_fix = capex_fix
         self.capex_var = capex_var
         self.opex_fix = opex_fix
         self.opex_var = opex_var

@@ -19,7 +19,8 @@ from oemof.eesyplan.facades.converters.ElectricalTransformator import (
 from oemof.eesyplan.facades.converters.Electrolyzer import Electrolyzer
 from oemof.eesyplan.facades.converters.FuelCell import FuelCell
 from oemof.eesyplan.facades.converters.HeatPump import HeatPump
-from oemof.eesyplan.facades.demand.electricity_demand import Demand
+from oemof.eesyplan.facades.demand.demand import Demand
+from oemof.eesyplan.facades.demand.electricity_demand import ElectricityDemand
 from oemof.eesyplan.facades.demand.fuel_demand import FuelDemand
 from oemof.eesyplan.facades.demand.heat_demand import HeatDemand
 from oemof.eesyplan.facades.demand.hydrogen_demand import H2Demand
@@ -62,6 +63,7 @@ __all__ = [
     "DsoHydrogen",
     "ElectricalStorage",
     "ElectricalTransformator",
+    "ElectricityDemand",
     "Electrolyzer",
     "EnergySystem",
     "Excess",

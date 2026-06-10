@@ -12,7 +12,6 @@ class FuelCell(Converter):
         age_installed=0,
         installed_capacity=0,
         capex_var=1000,
-        capex_fix=0,
         opex_fix=10,
         opex_var=0,
         lifetime=20,
@@ -45,9 +44,6 @@ class FuelCell(Converter):
             Number of years the asset has already been in operation.
         installed_capacity : float, default=0
             Already existing installed capacity.
-        capex_fix : float, default=1000
-            Specific investment costs of the asset related to the
-            installed capacity (CAPEX).
         capex_var : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
@@ -72,9 +68,9 @@ class FuelCell(Converter):
         Examples
         --------
         >>> from oemof.eesyplan import Project
-        >>> from oemof.solph import Bus
-        >>> h2_bus = Bus(label="hydrogen_bus")
-        >>> el_bus = Bus(label="electricity_bus")
+        >>> from oemof.eesyplan import CarrierBus
+        >>> h2_bus = CarrierBus(label="hydrogen_bus")
+        >>> el_bus = CarrierBus(label="electricity_bus")
         >>> my_fuel_cell = FuelCell(
         ...     name="hydrogen_fuel_cell",
         ...     bus_in_h2=h2_bus,
@@ -118,7 +114,6 @@ class FuelCell(Converter):
         self.name = name
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_fix = capex_fix
         self.capex_var = capex_var
         self.opex_fix = opex_fix
         self.opex_var = opex_var

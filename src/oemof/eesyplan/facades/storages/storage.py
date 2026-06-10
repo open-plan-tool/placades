@@ -122,9 +122,9 @@ class EnergyStorage(GenericStorage):
             self.crate_discharge = None
 
         if bus_out is None:
-            outputs = {}
-        else:
-            outputs = {
+            bus_out = bus_in
+
+        outputs = {
                     bus_out: Flow(nominal_capacity=self.capacity_discharge)
                 }
         self.bus_out = bus_out

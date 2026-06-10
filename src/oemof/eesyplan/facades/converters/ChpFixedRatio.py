@@ -16,7 +16,6 @@ class ChpFixedRatio(Converter):
         age_installed=0,
         installed_capacity=0,
         capex_var=1000,
-        capex_fix=0,
         opex_fix=10,
         opex_var=0,
         lifetime=20,

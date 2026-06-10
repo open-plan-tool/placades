@@ -6,6 +6,7 @@ class DsoElectricity(DSO):
         self,
         name,
         bus_electricity,
+        carrier="electricity",
         energy_price=0.3,
         feedin_tariff=0.1,
         peak_demand_pricing=0,
@@ -34,7 +35,7 @@ class DsoElectricity(DSO):
             |name|
         energy_price : float, default=0.3
             |energy_prics|
-        feedin_tariff : float, default=0.1
+        feedin_tariff : float or array-like, default=0.1
             |feedin_tariff|
         peak_demand_pricing : float, default=0
             |peak_demand_pricing|
@@ -62,6 +63,7 @@ class DsoElectricity(DSO):
         super().__init__(
             name=name,
             bus=bus_electricity,
+            carrier=carrier,
             energy_price=energy_price,
             feedin_tariff=feedin_tariff,
             peak_demand_pricing=peak_demand_pricing,

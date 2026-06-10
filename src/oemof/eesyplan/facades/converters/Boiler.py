@@ -14,7 +14,6 @@ class Boiler(Converter):
         age_installed=0,
         installed_capacity=0,
         capex_var=1000,
-        capex_fix=0,
         opex_fix=10,
         opex_var=0,
         lifetime=20,
@@ -49,9 +48,6 @@ class Boiler(Converter):
             Number of years the asset has already been in operation.
         installed_capacity : float, default=0
             Already existing installed capacity.
-        capex_fix : float, default=1000
-            Specific investment costs of the asset related to the
-            installed capacity (CAPEX).
         capex_var : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
@@ -122,7 +118,6 @@ class Boiler(Converter):
         self.name = name
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_fix = capex_fix
         self.capex_var = capex_var
         self.opex_fix = opex_fix
         self.opex_var = opex_var

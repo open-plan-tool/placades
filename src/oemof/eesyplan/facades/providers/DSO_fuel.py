@@ -6,6 +6,7 @@ class DsoFuel(DSO):
         self,
         name,
         bus_fuel,
+        carrier="fuel",
         energy_price=0.3,
         feedin_tariff=0.1,
         peak_demand_pricing=0,
@@ -60,6 +61,7 @@ class DsoFuel(DSO):
         super().__init__(
             name=name,
             bus=bus_fuel,
+            carrier=carrier,
             energy_price=energy_price,
             feedin_tariff=feedin_tariff,
             peak_demand_pricing=peak_demand_pricing,

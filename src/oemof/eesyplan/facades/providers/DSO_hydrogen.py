@@ -6,6 +6,7 @@ class DsoHydrogen(DSO):
         self,
         name,
         bus_h2,
+        carrier="hydrogen",
         energy_price=0.3,
         feedin_tariff=0.1,
         peak_demand_pricing=0,
@@ -60,6 +61,7 @@ class DsoHydrogen(DSO):
         super().__init__(
             name=name,
             bus=bus_h2,
+            carrier=carrier,
             energy_price=energy_price,
             feedin_tariff=feedin_tariff,
             peak_demand_pricing=peak_demand_pricing,

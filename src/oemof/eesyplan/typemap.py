@@ -1,3 +1,5 @@
+from oemof.solph.components import Source
+
 from oemof.eesyplan.facades.buses.carrier import CarrierBus
 from oemof.eesyplan.facades.converters.Boiler import Boiler
 from oemof.eesyplan.facades.converters.ChpFixedRatio import ChpFixedRatio
@@ -9,7 +11,7 @@ from oemof.eesyplan.facades.converters.ElectricalTransformator import (
 from oemof.eesyplan.facades.converters.Electrolyzer import Electrolyzer
 from oemof.eesyplan.facades.converters.FuelCell import FuelCell
 from oemof.eesyplan.facades.converters.HeatPump import HeatPump
-from oemof.eesyplan.facades.demand.electricity_demand import Demand
+from oemof.eesyplan.facades.demand.electricity_demand import ElectricityDemand
 from oemof.eesyplan.facades.demand.fuel_demand import FuelDemand
 from oemof.eesyplan.facades.demand.heat_demand import HeatDemand
 from oemof.eesyplan.facades.demand.hydrogen_demand import H2Demand
@@ -29,12 +31,11 @@ from oemof.eesyplan.facades.storages.FuelStorage import FuelStorage
 from oemof.eesyplan.facades.storages.HydrogenStorage import HydrogenStorage
 from oemof.eesyplan.facades.storages.ThermalStorage import ThermalStorage
 from oemof.eesyplan.project import Project
-from oemof.solph.components import Source
 
 TYPEMAP = {
     "Battery": ElectricalStorage,
     "CarrierBus": CarrierBus,
-    "demand": Demand,
+    "demand": ElectricityDemand,
     "Source": Source,
     "project": Project,
     "pv_plant": PvPlant,

@@ -1,9 +1,10 @@
-from oemof.solph import Flow
-from oemof.solph.components import Sink
+from oemof.eesyplan.facades.demand.demand import Demand
 
 
-class Demand(Sink):
-    def __init__(self, name, bus_in_electricity, input_timeseries):
+class ElectricityDemand(Demand):
+    def __init__(
+        self, name, bus_in_electricity, input_timeseries, carrier="electricity"
+    ):
         """
         Electricity demand/consumption component.
 
@@ -27,7 +28,7 @@ class Demand(Sink):
         --------
         >>> from oemof.eesyplan import CarrierBus as Bus
         >>> ebus = Bus(name="electricity_bus")
-        >>> my_demand = Demand(
+        >>> my_demand = ElectricityDemand(
         ...     name="office_demand",
         ...     bus_in_electricity=ebus,
         ...     input_timeseries="electricity_demand.csv",
@@ -35,15 +36,9 @@ class Demand(Sink):
 
         """
 
-        self.profile = input_timeseries
-        self.name = name
-
         super().__init__(
-            label=name,
-            inputs={
-                bus_in_electricity: Flow(
-                    fix=input_timeseries,
-                    nominal_capacity=1,
-                )
-            },
+            name=name,
+            bus_in=bus_in_electricity,
+            carrier=carrier,
+            input_timeseries=input_timeseries,
         )

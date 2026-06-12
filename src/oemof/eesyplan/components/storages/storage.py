@@ -1,8 +1,7 @@
+from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Flow
 from oemof.solph import Investment
 from oemof.solph.components import GenericStorage
-
-from oemof.eesyplan.investment import _create_invest_if_wanted
 
 
 class EnergyStorage(GenericStorage):
@@ -126,9 +125,7 @@ class EnergyStorage(GenericStorage):
         if bus_out is None:
             bus_out = bus_in
 
-        outputs = {
-                    bus_out: Flow(nominal_capacity=self.capacity_discharge)
-                }
+        outputs = {bus_out: Flow(nominal_capacity=self.capacity_discharge)}
         self.bus_out = bus_out
         self.bus_in = bus_in
 

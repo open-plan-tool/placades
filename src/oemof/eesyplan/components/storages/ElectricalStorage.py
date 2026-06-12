@@ -24,7 +24,6 @@ class ElectricalStorage(EnergyStorage):
         c_rate_discharge=None,
         maximum_capacity_investment=float("+inf"),
     ):
-
         """
         Battery Energy Storage System (BESS).
 

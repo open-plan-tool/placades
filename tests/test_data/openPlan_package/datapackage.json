@@ -204,7 +204,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "bus_in_electricity",
+                        "name": "bus_in",
                         "type": "string",
                         "format": "default"
                     }

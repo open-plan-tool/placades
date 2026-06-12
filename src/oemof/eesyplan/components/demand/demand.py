@@ -3,9 +3,7 @@ from oemof.solph.components import Sink
 
 
 class Demand(Sink):
-    def __init__(
-        self, name, bus_in, input_timeseries, carrier=None
-    ):
+    def __init__(self, name, bus_in, input_timeseries, carrier=None):
         """
         Demand/consumption component.
 
@@ -32,7 +30,7 @@ class Demand(Sink):
         >>> my_demand = Demand(
         ...     name="office_demand",
         ...     carrier="electricity",
-        ...     bus_in_electricity=ebus,
+        ...     bus_in=ebus,
         ...     input_timeseries="electricity_demand.csv",
         ... )
 

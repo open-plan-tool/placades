@@ -63,7 +63,9 @@ def solve_energy_system_from_dp(path, plot="graph", results_path=None):
     """
     if path.suffix == ".zip":
         ext_path = unzip_package(path)
-        json_files = list(Path(ext_path).rglob("*.json"))
+        json_files = list(
+            Path(ext_path.name, "openPlan_package").rglob("*json")
+        )
         # Check there are no more than one "datapackage.json" file
         if len(json_files) > 1:
             filenames = [file.name for file in Path(ext_path).rglob("*.json")]

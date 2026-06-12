@@ -27,3 +27,13 @@ def test_simple_datapackage():
     import_results(path=result_path, es=energy_system)
     shutil.rmtree(result_path)
     assert ~result_path.exists()
+
+
+def test_zip_datapackage():
+    dir_name = Path(Path(__file__).parent, "test_data", "openPlan_package")
+    filename = Path(Path(__file__).parent, "test_data", "openPlan_package")
+    shutil.make_archive(str(filename), "zip", dir_name)
+    with warnings.catch_warnings():
+        warnings.simplefilter(action="ignore", category=FutureWarning)
+        es.solve_energy_system_from_dp(filename)
+    filename.with_suffix(".zip").unlink()

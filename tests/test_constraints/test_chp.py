@@ -71,8 +71,6 @@ def test_chp_variable_dispatch():
         efficiency_electricity_full_condensation=0.55,
         efficiency_electricity_chp=0.32,
         efficiency_heat_chp=0.58,
-        conversion_factor_to_electricity=0.5,
-        conversion_factor_to_heat=0.3,
         opex_var=-1,
         optimize_cap=False,
         project_data=Project(

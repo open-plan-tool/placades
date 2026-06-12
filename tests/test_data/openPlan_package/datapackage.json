@@ -162,8 +162,8 @@
                         "format": "default"
                     },
                     {
-                        "name": "excess",
-                        "type": "boolean",
+                        "name": "shortage_cost",
+                        "type": "number",
                         "format": "default"
                     },
                     {

@@ -36,4 +36,5 @@ def test_zip_datapackage():
     with warnings.catch_warnings():
         warnings.simplefilter(action="ignore", category=FutureWarning)
         es.solve_energy_system_from_dp(filename)
+    Path(dir_name, "datapackage.graphml").unlink()
     filename.with_suffix(".zip").unlink()

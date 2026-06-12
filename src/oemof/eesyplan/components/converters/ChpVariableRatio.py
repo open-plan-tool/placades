@@ -61,7 +61,7 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         efficiency_heat_chp : float
             Thermal efficiency with maximal heat extraction
         optimize_cap : bool, default=True
-            |optimise_cap|
+            |optimize_cap|
         maximum_capacity : float or None, default=None
             |maximum_capacity|
         age_installed : int, default=0

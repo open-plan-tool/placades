@@ -6,8 +6,9 @@ class HydrogenStorage(EnergyStorage):
         self,
         name,
         project_data,
-        bus_in_hydrogen,
         installed_capacity,
+        bus_in_hydrogen,
+        bus_out_hydrogen=None,
         capex_var=0,
         opex_fix=0,
         opex_var=0,
@@ -17,11 +18,10 @@ class HydrogenStorage(EnergyStorage):
         soc_max=1.0,
         soc_min=1.0,
         c_rate_charge=1.0,
-        c_rate_discharge=1.0,
+        c_rate_discharge=None,
         efficiency_charge=1.0,
         efficiency_discharge=1.0,
         self_discharge=0.0,
-        bus_out_hydrogen=None,
         maximum_capacity_investment=float("+inf"),
     ):
         """

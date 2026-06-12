@@ -6,24 +6,25 @@ class ElectricalStorage(EnergyStorage):
         self,
         name,
         project_data,
-        bus_in_electricity,
         installed_capacity,
+        bus_in_electricity,
+        bus_out_electricity=None,
+        age_installed=0,
         capex_var=0,
         opex_fix=0,
         opex_var=0,
         lifetime=None,
-        age_installed=0,
         optimize_cap=False,
-        soc_max=1.0,
-        soc_min=1.0,
-        c_rate_charge=1.0,
-        c_rate_discharge=1.0,
+        soc_max=1,
+        soc_min=0,
+        self_discharge=0.0,
         efficiency_charge=1.0,
         efficiency_discharge=1.0,
-        self_discharge=0.0,
-        bus_out_electricity=None,
+        c_rate_charge=1.0,
+        c_rate_discharge=None,
         maximum_capacity_investment=float("+inf"),
     ):
+
         """
         Battery Energy Storage System (BESS).
 

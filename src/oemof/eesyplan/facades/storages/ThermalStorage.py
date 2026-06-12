@@ -23,7 +23,7 @@ class ThermalStorage(EnergyStorage):
         efficiency_charge=1.0,
         efficiency_discharge=1.0,
         theoretical_time_charge=1.0,  # hours
-        theoretical_time_discharge=1.0,  # hours
+        theoretical_time_discharge=None,  # hours
         maximum_capacity_investment=float("+inf"),
     ):
         """

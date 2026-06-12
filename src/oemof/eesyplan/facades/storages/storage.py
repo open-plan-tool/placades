@@ -27,7 +27,7 @@ class EnergyStorage(GenericStorage):
         efficiency_charge=1.0,
         efficiency_discharge=1.0,
         theoretical_time_charge=1.0,  # hours
-        theoretical_time_discharge=1.0,  # hours
+        theoretical_time_discharge=None,  # hours
         maximum_capacity_investment=float("+inf"),
     ):
         """
@@ -101,6 +101,8 @@ class EnergyStorage(GenericStorage):
             maximum_capacity=maximum_capacity_investment,
             project_data=project_data,
         )
+        if theoretical_time_discharge is None:
+            theoretical_time_discharge = theoretical_time_charge
 
         self.energy_losses_relative = energy_losses_relative
         self.energy_losses_absolute = energy_losses_absolute

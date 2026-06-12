@@ -63,7 +63,7 @@ class FuelStorage(EnergyStorage):
         ...     installed_capacity=10,
         ...     c_rate_charge=0.7,
         ...     c_rate_discharge=0.8,
-        ...     self_discharge=0.0001,
+        ...     energy_losses_relative=0.0001,
         ... )
         >>> my_invest_bess = FuelStorage(
         ...     name="gas storage tank extension",
@@ -82,7 +82,7 @@ class FuelStorage(EnergyStorage):
         ...     c_rate_discharge=0.8,
         ...     efficiency_charge=0.99,
         ...     project_data=my_project,
-        ...     self_discharge=0.0001,
+        ...     energy_losses_relative=0.0001,
         ... )
         """
         super().__init__(

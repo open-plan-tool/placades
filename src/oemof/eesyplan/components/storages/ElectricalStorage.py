@@ -22,7 +22,7 @@ class ElectricalStorage(EnergyStorage):
         efficiency_discharge=1.0,
         c_rate_charge=1.0,
         c_rate_discharge=None,
-        maximum_capacity_investment=float("+inf"),
+        maximum_capacity=float("+inf"),
     ):
         """
         Battery Energy Storage System (BESS).
@@ -104,5 +104,5 @@ class ElectricalStorage(EnergyStorage):
             efficiency_discharge=efficiency_discharge,
             theoretical_time_charge=c_rate_charge,  # hours
             theoretical_time_discharge=c_rate_discharge,  # hours
-            maximum_capacity_investment=maximum_capacity_investment,
+            maximum_capacity_investment=maximum_capacity,
         )

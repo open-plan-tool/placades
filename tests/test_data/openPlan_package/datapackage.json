@@ -38,11 +38,6 @@
                         "format": "default"
                     },
                     {
-                        "name": "capex_fix",
-                        "type": "number",
-                        "format": "default"
-                    },
-                    {
                         "name": "capex_var",
                         "type": "number",
                         "format": "default"
@@ -88,7 +83,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "crate",
+                        "name": "c_rate_charge",
                         "type": "number",
                         "format": "default"
                     },

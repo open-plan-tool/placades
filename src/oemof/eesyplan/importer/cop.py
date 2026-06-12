@@ -94,7 +94,7 @@ def calculate_cop_tespy(
         )
         raise ModuleNotFoundError(msg)
 
-    if isinstance(temperature_source, (float, int)):
+    if isinstance(temperature_source, (float | int)):
         temperature_source = [temperature_source]
         temperature_supply = [temperature_supply]
         length = 1

@@ -1,9 +1,8 @@
-from oemof.solph import Flow
-from oemof.solph.components import Sink
+from oemof.eesyplan.components.demand.demand import Demand
 
 
-class FuelDemand(Sink):
-    def __init__(self, name, bus_in_fuel, input_timeseries):
+class FuelDemand(Demand):
+    def __init__(self, name, bus_in_fuel, input_timeseries, carrier="fuel"):
         """
         Gas demand/consumption component.
 
@@ -35,15 +34,9 @@ class FuelDemand(Sink):
 
         """
 
-        self.profile = input_timeseries
-        self.name = name
-
         super().__init__(
-            label=name,
-            inputs={
-                bus_in_fuel: Flow(
-                    fix=input_timeseries,
-                    nominal_capacity=1,
-                )
-            },
+            name=name,
+            bus_in=bus_in_fuel,
+            carrier=carrier,
+            input_timeseries=input_timeseries,
         )

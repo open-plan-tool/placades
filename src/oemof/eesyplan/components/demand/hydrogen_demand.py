@@ -1,9 +1,10 @@
-from oemof.solph import Flow
-from oemof.solph.components import Sink
+from oemof.eesyplan.components.demand.demand import Demand
 
 
-class H2Demand(Sink):
-    def __init__(self, name, bus_in_hydrogen, input_timeseries):
+class H2Demand(Demand):
+    def __init__(
+        self, name, bus_in_hydrogen, input_timeseries, carrier="hydrogen"
+    ):
         """
         Hydrogen demand/consumption component.
 
@@ -35,15 +36,9 @@ class H2Demand(Sink):
 
         """
 
-        self.profile = input_timeseries
-        self.name = name
-
         super().__init__(
-            label=name,
-            inputs={
-                bus_in_hydrogen: Flow(
-                    fix=input_timeseries,
-                    nominal_capacity=1,
-                )
-            },
+            name=name,
+            bus_in=bus_in_hydrogen,
+            carrier=carrier,
+            input_timeseries=input_timeseries,
         )

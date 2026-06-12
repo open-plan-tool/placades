@@ -48,6 +48,7 @@ examples = []
 importer = ["pyproj"]
 test = [
   "pytest",
+  "tespy",
   "coverage",
   "pvlib",
   "demandlib",

@@ -81,6 +81,10 @@ def calculate_cop_tespy(
     >>> c = calculate_cop_tespy([10.0] * 3, [35, 45, 55], refrigerant="R134a")
     >>> [round(float(val), 2) for val in c]
     [6.42, 4.62, 3.59]
+    >>> round(calculate_cop_simple(10, 40, 0.5), 2)
+    5.22
+    >>> round(calculate_cop_tespy(10, 40), 2)
+    5.29
     """
 
     if Network is None:
@@ -89,6 +93,13 @@ def calculate_cop_tespy(
             "Please install the tespy package: 'pip install tespy'"
         )
         raise ModuleNotFoundError(msg)
+
+    if isinstance(temperature_source, (float, int)):
+        temperature_source = [temperature_source]
+        temperature_supply = [temperature_supply]
+        length = 1
+    else:
+        length = len(temperature_source)
 
     temperature_source = np.array(temperature_source)
     temperature_supply = np.array(temperature_supply)
@@ -100,6 +111,7 @@ def calculate_cop_tespy(
     my_plant.units.set_defaults(
         temperature="degC",
         pressure="bar",
+        pressure_difference="bar",
         enthalpy="kJ/kg",
         heat="kW",
         power="kW",
@@ -129,13 +141,14 @@ def calculate_cop_tespy(
     ev.set_attr(pr=pressure_loss_factor_hex)
     cp.set_attr(eta_s=eta_s)
 
-    cops = []
-    for n in range(len(temperature_source)):
-        c2.set_attr(T=temperature_source[n], x=1, fluid={refrigerant: 1})
-        c4.set_attr(T=temperature_supply[n], x=0)
+    def get_cop(c_src, c_sup, n):
+        c_src.set_attr(T=temperature_source[n], x=1, fluid={refrigerant: 1})
+        c_sup.set_attr(T=temperature_supply[n], x=0)
 
         my_plant.solve("design", print_results=False)
-        cops.append(abs(co.Q.val) / cp.P.val)
+        return abs(co.Q.val) / cp.P.val
+
+    cops = [get_cop(c2, c4, n) for n in range(length)]
 
     if len(cops) == 1:
         cops = float(cops[0])

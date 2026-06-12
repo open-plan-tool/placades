@@ -95,7 +95,6 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         ...     efficiency_electricity_full_condensation=0.3,
         ...     efficiency_electricity_chp=0.3,
         ...     efficiency_heat_chp=0.5,
-        ...     beta=0.5,
         ...     capex_var=1500,
         ...     opex_fix=15,
         ...     lifetime=20,

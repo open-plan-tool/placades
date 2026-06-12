@@ -9,13 +9,12 @@ class HeatPump(Converter):
     def __init__(
         self,
         name,
-        bus_in_heat,
+        project_data,
+        installed_capacity,
         bus_in_electricity,
         bus_out_heat,
-        project_data,
+        bus_in_heat=None,
         age_installed=0,
-        installed_capacity=0,
-        capex_fix=1000,
         capex_var=1000,
         opex_var=0.01,
         opex_fix=10,
@@ -50,9 +49,6 @@ class HeatPump(Converter):
             Number of years the asset has already been in operation.
         installed_capacity : float, default=0
             Already existing installed capacity.
-        capex_fix : float, default=1000
-            Specific investment costs of the asset related to the
-            installed capacity (CAPEX).
         capex_var : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
@@ -77,14 +73,13 @@ class HeatPump(Converter):
         Examples
         --------
         >>> from oemof.eesyplan import Project
-        >>> from oemof.solph import Bus
-        >>> el_bus = Bus(label="electricity_bus")
-        >>> ambient_heat_bus = Bus(label="ambient_heat_bus")
-        >>> heat_bus = Bus(label="heat_bus")
+        >>> from oemof.eesyplan import CarrierBus
+        >>> el_bus = CarrierBus(name="electricity_bus")
+        >>> ambient_heat_bus = CarrierBus(name="ambient_heat_bus")
+        >>> heat_bus = CarrierBus(name="heat_bus")
         >>> my_heat_pump = HeatPump(
         ...     name="air_source_heat_pump",
         ...     bus_in_electricity=el_bus,
-        ...     bus_in_heat=ambient_heat_bus,
         ...     bus_out_heat=heat_bus,
         ...     installed_capacity=15,
         ...     cop=3.5,
@@ -122,7 +117,7 @@ class HeatPump(Converter):
             project_data=project_data,
         )
 
-        inputs = {bus_in_heat: Flow(), bus_in_electricity: Flow()}
+        inputs = {bus_in_electricity: Flow()}
 
         outputs = {
             bus_out_heat: Flow(
@@ -133,8 +128,11 @@ class HeatPump(Converter):
 
         conversion_factors = {
             bus_in_electricity: 1 / cop,
-            bus_in_heat: (cop - 1) / cop,
         }
+
+        if bus_in_heat is not None:
+            conversion_factors[bus_in_heat] = (cop - 1) / cop
+            inputs[bus_in_heat] = Flow()
 
         super().__init__(
             label=name,
@@ -146,7 +144,6 @@ class HeatPump(Converter):
         self.name = name
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_fix = capex_fix
         self.capex_var = capex_var
         self.opex_var = opex_var
         self.opex_fix = opex_fix

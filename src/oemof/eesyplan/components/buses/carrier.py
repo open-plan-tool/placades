@@ -37,18 +37,20 @@ class CarrierBus(Bus):  # todo add shortage source and excess sink with costs
         >>> electricity_bus = CarrierBus(name="grid", carrier="electricity",
         ...                      excess_cost=2)
         >>> electricity_bus.excess_cost
-        2
+        2.0
         >>> heat_bus = CarrierBus(name="heating", carrier="heat")
         >>> heat_bus
         <CarrierBus 'heating', carrier='heat', shortage: None, excess: None>
-        >>> h2_bus = CarrierBus(name="h2_network", carrier="hydrogen",
+        >>> h2_bus = CarrierBus(name="h2_net", carrier="hydrogen",
         ...                     excess_cost=0, shortage_cost=99)
         >>> h2_bus
-        <CarrierBus 'h2_network', carrier='hydrogen', shortage: 99, excess: 0>
+        <CarrierBus 'h2_net', carrier='hydrogen', shortage: 99, excess: 0.0>
         """
         super().__init__(label=name, balanced=balanced)
         self.carrier = carrier
         self.name = name
+        if excess_cost is not None:
+            excess_cost = float(excess_cost)
         self.excess_cost = excess_cost
         self.shortage_cost = shortage_cost
 

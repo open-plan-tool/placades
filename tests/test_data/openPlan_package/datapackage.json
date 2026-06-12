@@ -167,14 +167,12 @@
                         "format": "default"
                     },
                     {
-                        "name": "excess_costs",
+                        "name": "excess_cost",
                         "type": "number",
                         "format": "default"
                     }
                 ],
-                "missingValues": [
-                    ""
-                ],
+                "missingValues": ["", "None", "null", "NaN"],
                 "primaryKey": "name",
                 "foreignKeys": []
             }

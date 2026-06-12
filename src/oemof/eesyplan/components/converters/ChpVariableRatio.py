@@ -13,8 +13,6 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         efficiency_electricity_full_condensation,
         efficiency_electricity_chp,
         efficiency_heat_chp,
-        conversion_factor_to_electricity,
-        conversion_factor_to_heat,
         project_data,
         age_installed=0,
         installed_capacity=0,
@@ -56,9 +54,11 @@ class ChpVariableRatio(ExtractionTurbineCHP):
             |bus_out_electricity|
         bus_out_heat:  bus-object
             |bus_out_heat|
-        conversion_factor_to_electricity : float
+        efficiency_electricity_full_condensation : float
             Electrical efficiency with no heat extraction
-        conversion_factor_to_heat : float
+        efficiency_electricity_chp : float
+            Electrical efficiency with maximal heat extraction
+        efficiency_heat_chp : float
             Thermal efficiency with maximal heat extraction
         optimize_cap : bool, default=True
             |optimise_cap|
@@ -92,8 +92,9 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         ...     bus_out_heat=heat_bus,
         ...     bus_out_electricity=el_bus,
         ...     installed_capacity=300,
-        ...     conversion_factor_to_electricity=0.3,
-        ...     conversion_factor_to_heat=0.5,
+        ...     efficiency_electricity_full_condensation=0.3,
+        ...     efficiency_electricity_chp=0.3,
+        ...     efficiency_heat_chp=0.5,
         ...     beta=0.5,
         ...     capex_var=1500,
         ...     opex_fix=15,
@@ -107,7 +108,7 @@ class ChpVariableRatio(ExtractionTurbineCHP):
 
         """
 
-        if conversion_factor_to_electricity + conversion_factor_to_heat >= 1.0:
+        if efficiency_electricity_chp + efficiency_heat_chp >= 1.0:
             raise ValueError("Total efficiency is above 100%.")
 
         nv = _create_invest_if_wanted(

@@ -1,4 +1,4 @@
-from oemof.eesyplan.facades.providers.dso import DSO
+from oemof.eesyplan.components.providers.dso import DSO
 
 
 class DsoHeat(DSO):

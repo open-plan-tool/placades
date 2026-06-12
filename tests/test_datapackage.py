@@ -15,7 +15,10 @@ warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 def test_simple_datapackage():
     path = Path(Path(__file__).parent, "test_data", "openPlan_package")
     energy_system = es.create_energy_system_from_dp(path)
+
     results = optimise(energy_system)
+    assert Path(path, "datapackage.graphml").exists()
+    Path(path, "datapackage.graphml").unlink()
     result_path = Path(Path.home(), ".oemof", "test_eesyplan_567263FG")
     result_path.mkdir(parents=True, exist_ok=True)
     with warnings.catch_warnings():

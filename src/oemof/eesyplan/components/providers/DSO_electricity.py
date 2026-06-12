@@ -1,11 +1,11 @@
-from oemof.eesyplan.facades.providers.dso import DSO
+from oemof.eesyplan.components.providers.dso import DSO
 
 
-class DsoFuel(DSO):
+class DsoElectricity(DSO):
     def __init__(
         self,
         name,
-        bus_fuel,
+        bus_electricity,
         energy_price=0.3,
         feedin_tariff=0.1,
         peak_demand_pricing=0,
@@ -26,7 +26,7 @@ class DsoFuel(DSO):
 
         :Structure:
           *input* & *output*
-            bus : Fuel
+            bus : Electricity
 
         Parameters
         ----------
@@ -48,18 +48,20 @@ class DsoFuel(DSO):
         Examples
         --------
         >>> from oemof.eesyplan import CarrierBus
-        >>> gbus = CarrierBus(name="gas_bus")
-        >>> my_dso = DsoFuel(
+        >>> ebus = CarrierBus(name="electricity_bus")
+        >>> my_dso = DsoElectricity(
         ...     name="main_grid",
-        ...     bus_fuel=gbus,
+        ...     bus_electricity=ebus,
         ...     energy_price=0.25,
         ...     feedin_tariff=0.08,
         ... )
+        >>> my_dso.name
+        'main_grid'
 
         """
         super().__init__(
             name=name,
-            bus=bus_fuel,
+            bus=bus_electricity,
             energy_price=energy_price,
             feedin_tariff=feedin_tariff,
             peak_demand_pricing=peak_demand_pricing,

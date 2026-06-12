@@ -16,11 +16,13 @@ from oemof.eesyplan import HeatPump
 from oemof.eesyplan import Project
 from oemof.eesyplan import ThermalStorage
 from oemof.eesyplan import optimise
-from oemof.eesyplan.components.converters.AuxiliaryHeat import AuxiliaryHeatSplit
+from oemof.eesyplan.components.converters.AuxiliaryHeat import (
+    AuxiliaryHeatSplit,
+)
 from oemof.eesyplan.components.production.commodity import Commodity
 from oemof.eesyplan.components.transport.heat import HeatingNetwork
 from oemof.eesyplan.components.transport.heat import HeatingPipe
-from oemof.eesyplan.importer import calculate_cop_simple
+from oemof.eesyplan.importer.cop import calculate_cop_simple
 from oemof.eesyplan.postprocessing.balance import nodes_io
 from oemof.eesyplan.postprocessing.graphs import sankey
 

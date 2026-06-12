@@ -1,32 +1,28 @@
-from math import sqrt
-
-from oemof.eesyplan.investment import _create_invest_if_wanted
-from oemof.solph import Flow
-from oemof.solph import Investment
-from oemof.solph.components import GenericStorage
+from oemof.eesyplan.components.storages.storage import EnergyStorage
 
 
-class HydrogenStorage(GenericStorage):
+class HydrogenStorage(EnergyStorage):
     def __init__(
         self,
         name,
-        bus_in_h2,
-        age_installed,
-        installed_capacity,
-        capex_var,
-        opex_fix,
-        opex_var,
-        lifetime,
-        optimize_cap,
-        soc_max,
-        soc_min,
-        crate,  # ToDo: Distinguish input and output and change to c_rate
-        efficiency,  # ToDo: Distinguish input and output
         project_data,
-        capex_fix=0.0,
+        installed_capacity,
+        bus_in_hydrogen,
+        bus_out_hydrogen=None,
+        capex_var=0,
+        opex_fix=0,
+        opex_var=0,
+        lifetime=None,
+        age_installed=0,
+        optimize_cap=False,
+        soc_max=1.0,
+        soc_min=1.0,
+        c_rate_charge=1.0,
+        c_rate_discharge=None,
+        efficiency_charge=1.0,
+        efficiency_discharge=1.0,
         self_discharge=0.0,
-        bus_out_h2=None,
-        maximum_capacity=float("+inf"),
+        maximum_capacity_investment=float("+inf"),
     ):
         """
         Hydrogen Energy Storage System (H2ESS).
@@ -62,88 +58,51 @@ class HydrogenStorage(GenericStorage):
         >>> h2_bus = CarrierBus(name="my_h2_bus")
         >>> my_storage = HydrogenStorage(
         ...     name="hydrogen_storage_system",
-        ...     bus_in_h2=h2_bus,
-        ...     age_installed=0,
-        ...     installed_capacity=10,
-        ...     capex_var=3,
-        ...     opex_fix=5,
-        ...     opex_var=0.,
-        ...     lifetime=10,
-        ...     optimize_cap=False,
-        ...     soc_max=1,
-        ...     soc_min=0,
-        ...     crate=1,
-        ...     efficiency=0.99,
         ...     project_data=my_project,
+        ...     bus_in_hydrogen=h2_bus,
+        ...     installed_capacity=10,
+        ...     c_rate_charge=0.7,
+        ...     c_rate_discharge=0.8,
         ...     self_discharge=0.0001,
         ... )
         >>> my_invest_storage = HydrogenStorage(
         ...     name="hydrogen_storage_system_extension",
-        ...     bus_in_h2=h2_bus,
-        ...     bus_out_h2=h2_bus,
+        ...     bus_in_hydrogen=h2_bus,
+        ...     bus_out_hydrogen=h2_bus,
         ...     age_installed=0,
-        ...     installed_capacity=10,
+        ...     installed_capacity=0,
         ...     capex_var=3,
         ...     opex_fix=5,
-        ...     opex_var=0.,
+        ...     opex_var=0,
         ...     lifetime=10,
         ...     optimize_cap=True,
         ...     soc_max=1,
         ...     soc_min=0,
-        ...     crate=1,
-        ...     efficiency=0.99,
+        ...     c_rate_charge=0.7,
+        ...     c_rate_discharge=0.8,
+        ...     efficiency_charge=0.99,
         ...     project_data=my_project,
         ...     self_discharge=0.0001,
         ... )
         """
-
-        nv = _create_invest_if_wanted(
-            optimise_cap=optimize_cap,
+        super().__init__(
+            name,
+            project_data=project_data,
+            installed_capacity=installed_capacity,
+            bus_in=bus_in_hydrogen,
+            bus_out=bus_out_hydrogen,
+            age_installed=age_installed,
             capex_var=capex_var,
             opex_fix=opex_fix,
+            opex_var=opex_var,
             lifetime=lifetime,
-            age_installed=age_installed,
-            existing_capacity=installed_capacity,
-            maximum_capacity=maximum_capacity,
-            project_data=project_data,
-        )
-
-        self.self_discharge = self_discharge
-        self.efficiency = sqrt(efficiency)
-
-        if optimize_cap:
-            self.capacity_charge = Investment()
-            self.capacity_discharge = Investment()
-            self.crate_charge = crate
-            self.crate_discharge = crate
-        else:
-            self.capacity_charge = nv * crate
-            self.capacity_discharge = nv * crate
-            self.crate_charge = None
-            self.crate_discharge = None
-
-        if bus_out_h2 is None:
-            bus_out_h2 = bus_in_h2
-
-        super().__init__(
-            label=name,
-            nominal_capacity=nv,
-            inputs={
-                bus_in_h2: Flow(
-                    nominal_capacity=self.capacity_charge,
-                    variable_costs=opex_var,
-                )
-            },
-            outputs={
-                bus_out_h2: Flow(nominal_capacity=self.capacity_discharge)
-            },
-            loss_rate=self.self_discharge,
-            min_storage_level=soc_min,
-            max_storage_level=soc_max,
-            balanced=True,
-            initial_storage_level=None,
-            inflow_conversion_factor=self.efficiency,
-            outflow_conversion_factor=self.efficiency,
-            invest_relation_input_capacity=self.crate_charge,
-            invest_relation_output_capacity=self.crate_charge,
+            optimize_cap=optimize_cap,
+            soc_max=soc_max,
+            soc_min=soc_min,
+            energy_losses_relative=self_discharge,
+            efficiency_charge=efficiency_charge,
+            efficiency_discharge=efficiency_discharge,
+            theoretical_time_charge=c_rate_charge,  # hours
+            theoretical_time_discharge=c_rate_discharge,  # hours
+            maximum_capacity_investment=maximum_capacity_investment,
         )

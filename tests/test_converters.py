@@ -1,7 +1,7 @@
 import pytest
 
 from oemof.eesyplan import Project
-from oemof.eesyplan.facades.converters.ChpVariableRatio import ChpVariableRatio
+from oemof.eesyplan.components.converters.ChpVariableRatio import ChpVariableRatio
 from oemof.solph import Bus
 
 

@@ -1,11 +1,11 @@
-from oemof.eesyplan.facades.providers.dso import DSO
+from oemof.eesyplan.components.providers.dso import DSO
 
 
-class DsoHydrogen(DSO):
+class DsoFuel(DSO):
     def __init__(
         self,
         name,
-        bus_h2,
+        bus_fuel,
         energy_price=0.3,
         feedin_tariff=0.1,
         peak_demand_pricing=0,
@@ -14,10 +14,10 @@ class DsoHydrogen(DSO):
         feedin_cap=None,
     ):
         """
-        Energy provider for hydrogen distribution.
+        Energy provider for electricity distribution.
 
         This class represents a distribution system operator (DSO) that
-        provides hydrogen from the utility grid with pricing and
+        provides electricity from the utility grid with pricing and
         feedin capabilities.
 
         .. important ::
@@ -26,7 +26,7 @@ class DsoHydrogen(DSO):
 
         :Structure:
           *input* & *output*
-            bus : bus_h2
+            bus : Fuel
 
         Parameters
         ----------
@@ -48,10 +48,10 @@ class DsoHydrogen(DSO):
         Examples
         --------
         >>> from oemof.eesyplan import CarrierBus
-        >>> h2bus = CarrierBus(name="h2_bus")
-        >>> my_dso = DsoHydrogen(
+        >>> gbus = CarrierBus(name="gas_bus")
+        >>> my_dso = DsoFuel(
         ...     name="main_grid",
-        ...     bus_h2=h2bus,
+        ...     bus_fuel=gbus,
         ...     energy_price=0.25,
         ...     feedin_tariff=0.08,
         ... )
@@ -59,7 +59,7 @@ class DsoHydrogen(DSO):
         """
         super().__init__(
             name=name,
-            bus=bus_h2,
+            bus=bus_fuel,
             energy_price=energy_price,
             feedin_tariff=feedin_tariff,
             peak_demand_pricing=peak_demand_pricing,

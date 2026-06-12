@@ -1,6 +1,7 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Flow
 from oemof.solph.components import ExtractionTurbineCHP
+
+from oemof.eesyplan.investment import _create_invest_if_wanted
 
 
 class ChpVariableRatio(ExtractionTurbineCHP):
@@ -10,18 +11,19 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         bus_in_fuel,
         bus_out_electricity,
         bus_out_heat,
+        efficiency_electricity_full_condensation,
+        efficiency_electricity_chp,
+        efficiency_heat_chp,
         conversion_factor_to_electricity,
         conversion_factor_to_heat,
-        beta,
         project_data,
         age_installed=0,
         installed_capacity=0,
         capex_var=1000,
-        capex_fix=0,
         opex_fix=10,
         opex_var=0,
         lifetime=20,
-        optimize_cap=True,
+        optimize_cap=False,
         maximum_capacity=float("+inf"),
     ):
         """
@@ -32,7 +34,7 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         single fuel source.
 
         .. important ::
-            CHP systems achieve higher overall efficiency by utilizing
+            CHP systems achieve higher overall efficiency by utilising
             waste heat for useful purposes.
 
         :Structure:
@@ -59,10 +61,8 @@ class ChpVariableRatio(ExtractionTurbineCHP):
             Electrical efficiency with no heat extraction
         conversion_factor_to_heat : float
             Thermal efficiency with maximal heat extraction
-        beta: float
-            Power loss index
         optimize_cap : bool, default=True
-            |optimize_cap|
+            |optimise_cap|
         maximum_capacity : float or None, default=None
             |maximum_capacity|
         age_installed : int, default=0
@@ -131,20 +131,6 @@ class ChpVariableRatio(ExtractionTurbineCHP):
             ),
             bus_out_heat: Flow(),
         }
-        efficiency_el_wo_heat_extraction = conversion_factor_to_electricity
-        efficiency_th_max_heat_extraction = conversion_factor_to_heat
-        efficiency_el_max_heat_extraction = (
-            efficiency_el_wo_heat_extraction
-            - beta * efficiency_th_max_heat_extraction
-        )
-        efficiency_full_condensation = {
-            bus_out_electricity: efficiency_el_wo_heat_extraction
-        }
-
-        conversion_factors = {
-            bus_out_electricity: efficiency_el_max_heat_extraction,
-            bus_out_heat: efficiency_th_max_heat_extraction,
-        }
 
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
@@ -154,15 +140,20 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         self.lifetime = lifetime
         self.optimize_cap = optimize_cap
         self.maximum_capacity = maximum_capacity
-        self.conversion_factor_to_electricity = (
-            conversion_factor_to_electricity
+        self.efficiency_electricity_chp = efficiency_electricity_chp
+        self.efficiency_heat_chp = efficiency_heat_chp
+        self.efficiency_electricity_full_condensation = (
+            efficiency_electricity_full_condensation
         )
-        self.conversion_factor_to_heat = conversion_factor_to_heat
-        self.beta = beta
         super().__init__(
             label=name,
             outputs=outputs,
             inputs=inputs,
-            conversion_factors=conversion_factors,
-            conversion_factor_full_condensation=efficiency_full_condensation,
+            conversion_factors={
+                bus_out_electricity: efficiency_electricity_chp,
+                bus_out_heat: efficiency_heat_chp,
+            },
+            conversion_factor_full_condensation={
+                bus_out_electricity: efficiency_electricity_full_condensation
+            },
         )

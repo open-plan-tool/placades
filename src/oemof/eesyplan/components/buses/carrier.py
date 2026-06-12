@@ -5,7 +5,7 @@ class CarrierBus(Bus):  # todo add shortage source and excess sink with costs
     """Bus mit Medium-Attribut"""
 
     def __init__(
-        self, name, carrier=None, balanced=None, excess=None, excess_costs=None
+        self, name, carrier=None, balanced=True, excess=None, excess_costs=None
     ):
         """
         Bus mit Energieträger-Information
@@ -29,7 +29,7 @@ class CarrierBus(Bus):  # todo add shortage source and excess sink with costs
         >>> h2_bus
         <CarrierBus 'h2_network' carrier='hydrogen'>
         """
-        super().__init__(label=name)
+        super().__init__(label=name, balanced=balanced)
         self.carrier = carrier
         self.name = name
 

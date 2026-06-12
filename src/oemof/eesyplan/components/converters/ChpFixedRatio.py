@@ -1,6 +1,7 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Flow
 from oemof.solph.components import Converter
+
+from oemof.eesyplan.investment import _create_invest_if_wanted
 
 
 class ChpFixedRatio(Converter):
@@ -10,13 +11,12 @@ class ChpFixedRatio(Converter):
         bus_in_fuel,
         bus_out_electricity,
         bus_out_heat,
-        conversion_factor_to_electricity,
-        conversion_factor_to_heat,
+        efficiency_electricity_chp,
+        efficiency_heat_chp,
         project_data,
         age_installed=0,
         installed_capacity=0,
         capex_var=1000,
-        capex_fix=0,
         opex_fix=10,
         opex_var=0,
         lifetime=20,
@@ -54,9 +54,9 @@ class ChpFixedRatio(Converter):
             |bus_out_electricity|
         bus_out_heat:  bus-object
             |bus_out_heat|
-        conversion_factor_to_electricity : float
+        efficiency_electricity_chp : float
             conversion_factor_to_electricity
-        conversion_factor_to_heat : float
+        efficiency_heat_chp : float
             conversion_factor_to_heat
         optimize_cap : bool, default=True
             |optimize_cap|
@@ -126,8 +126,8 @@ class ChpFixedRatio(Converter):
         }
 
         conversion_factors = {
-            bus_out_electricity: conversion_factor_to_electricity,
-            bus_out_heat: conversion_factor_to_heat,
+            bus_out_electricity: efficiency_electricity_chp,
+            bus_out_heat: efficiency_heat_chp,
         }
 
         self.age_installed = age_installed
@@ -138,10 +138,8 @@ class ChpFixedRatio(Converter):
         self.lifetime = lifetime
         self.optimize_cap = optimize_cap
         self.maximum_capacity = maximum_capacity
-        self.conversion_factor_to_electricity = (
-            conversion_factor_to_electricity
-        )
-        self.conversion_factor_to_heat = conversion_factor_to_heat
+        self.efficiency_electricity_chp = efficiency_electricity_chp
+        self.efficiency_heat_chp = efficiency_heat_chp
         super().__init__(
             label=name,
             outputs=outputs,

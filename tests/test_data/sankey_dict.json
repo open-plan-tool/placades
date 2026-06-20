@@ -4,7 +4,7 @@
             "link": {
                 "customdata": {
                     "dtype": "f8",
-                    "bdata": "AAAAAAAAAADm2mFdJpQNQNN5fXuRwkBAX5lmozs03T9JAH88qavsPxgynNrlBFpAAAAAAAAAAACY3Ciy1jgYQMImPZy47WJAMISYagaBcb1QEKdZwUvrPz6vSqCpl0BAAAAAAAAAAACPwvUoXI8IQCv2l92Tb0dAAAAAAAAAAACF61G4HoUaQMHT1ogAH2pAAAAAAAAAAACY3Ciy1jgYQMImPZy47WJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACY3Ciy1jgYQMImPZy47WJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "bdata": "AAAAAAAAAADm2mFdJpQNQNN5fXuRwkBAX5lmozs03T9JAH88qavsPxgynNrlBFpAAAAAAAAAAACY3Ciy1jgYQMImPZy47WJAEeotgZmXcb1QEKdZwUvrPyavSqCpl0BAAAAAAAAAAACPwvUoXI8IQCv2l92Tb0dAAAAAAAAAAACF61G4HoUaQMHT1ogAH2pAAAAAAAAAAACY3Ciy1jgYQMImPZy47WJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACY3Ciy1jgYQMImPZy47WJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                     "shape": "11, 3"
                 },
                 "hovertemplate": "Source: %{source.label}<br>Target: %{target.label}<br>Plotted value: %{value}<br>Min: %{customdata[0]}<br>Max: %{customdata[1]}<br>Aggregate: %{customdata[2]}<extra></extra>",
@@ -38,7 +38,7 @@
                     33.52006477,
                     104.07652917150006,
                     151.42878543800003,
-                    33.18486407896715,
+                    33.18486407896698,
                     46.8717,
                     208.9688152500003,
                     151.42878543800003,

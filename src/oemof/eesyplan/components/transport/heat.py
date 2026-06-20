@@ -1,9 +1,8 @@
+from oemof.eesyplan import CarrierBus
 from oemof.network import Node
 from oemof.solph import Flow
 from oemof.solph.components import Converter
 from oemof.solph.components import Sink
-
-from oemof.eesyplan import CarrierBus
 
 
 class HeatingNetwork(CarrierBus):
@@ -12,7 +11,6 @@ class HeatingNetwork(CarrierBus):
         name,
         absolute_losses=None,  # ToDo: wie werden die angegeben: pro timestep?
     ):
-
         self.name = name
 
         super().__init__(name=self.name, carrier="heat")
@@ -35,7 +33,6 @@ class HeatingPipe(Node):
         relative_losses=0,
         return_pipe=True,
     ):
-
         self.name = name
 
         super().__init__(label=self.name)

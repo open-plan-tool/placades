@@ -21,6 +21,7 @@ class HeatingNetwork(CarrierBus):
         Examples
         --------
         >>> HeatingNetwork(name="District Heating Network", absolute_losses=5)
+        <CarrierBus 'District Heating Network' carrier='heat'>
         """
         self.name = name
 

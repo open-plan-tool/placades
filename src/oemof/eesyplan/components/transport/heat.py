@@ -20,8 +20,7 @@ class HeatingNetwork(CarrierBus):
 
         Examples
         --------
-        >>> HeatingNetwork(name="District Heating Network", absolute_losses=5)
-        <CarrierBus 'District Heating Network' carrier='heat'>
+        >>> hn = HeatingNetwork(name="Heating Network", absolute_losses=5)
         """
         self.name = name
 
@@ -59,7 +58,7 @@ class HeatingPipe(Node):
         Examples
         --------
         >>> w = HeatingNetwork(name="Heating Network West", absolute_losses=5)
-        >>> e = HeatingNetwork(name="Heating Network East", absolute_losses=5)
+        >>> e = HeatingNetwork(name="Heating Network East")
         >>> pipe1 =HeatingPipe(name="pipe1", bus_1_heat=w, bus_2_heat=e,
         ...                    relative_losses=0.1, return_pipe=True)
         >>> pipe2 =HeatingPipe(name="pipe1", bus_1_heat=w, bus_2_heat=e,

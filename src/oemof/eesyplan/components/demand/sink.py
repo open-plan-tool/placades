@@ -11,7 +11,7 @@ class Sink(SolphSink):
         bus_in,
         optimize_cap=False,
         age_installed=0,
-        installed_capacity=0,
+        installed_capacity=None,
         maximum_capacity=float("inf"),
         capex_var=1000,
         opex_fix=10,

@@ -129,11 +129,11 @@ def _create_invest_if_wanted(
             minimum=minimum_capacity,
         )
     else:
-        if existing_capacity <= 0:
+        if existing_capacity is not None and existing_capacity <= 0:
             raise ValueError(
-                f"An installed of {existing_capacity} is not valid for "
-                f"dispatch mode. Increase the capacity or set 'optimise_cap' "
-                f"to True."
+                f"An installed capacity of {existing_capacity} is not valid "
+                f"for dispatch mode. Increase the capacity or set "
+                f"'optimise_cap' to True."
             )
         return existing_capacity
 

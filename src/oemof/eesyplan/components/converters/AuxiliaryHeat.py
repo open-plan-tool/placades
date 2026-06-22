@@ -56,6 +56,7 @@ class AuxiliaryHeatSplit(Converter):
         ...     bus_in_heat=heat_bus,
         ...     bus_in_heat_auxiliary=heat_bus_aux,
         ...     bus_out_heat=heat_supply,
+        ...     installed_capacity=5,
         ...     project_data=Project(
         ...         name="Project_X", lifetime=20, tax=0,
         ...         discount_factor=0.01),

@@ -210,7 +210,7 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "bus_in_electricity",
+                        "fields": "bus_in",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"

@@ -1,17 +1,17 @@
 import numpy as np
-from oemof.solph import Flow
-from oemof.solph.components import Converter
 
 from oemof.eesyplan.investment import _create_invest_if_wanted
+from oemof.solph import Flow
+from oemof.solph.components import Converter
 
 
 class AuxiliaryHeatSplit(Converter):
     def __init__(
         self,
         name,
-        node_in_heat,
-        node_in_heat_auxiliary,
-        node_out_heat,
+        bus_in_heat,
+        bus_in_heat_auxiliary,
+        bus_out_heat,
         project_data,
         temp_in_low,
         temp_out_low,
@@ -22,25 +22,47 @@ class AuxiliaryHeatSplit(Converter):
         opex_fix=10,
         opex_var=0,
         lifetime=20,
-        optimize_cap=True,
+        optimize_cap=False,
         maximum_capacity=float("+inf"),
     ):
         """
-                self,
-        name,
-        bus_in_fuel,
-        bus_out_electricity,
-        project_data,
-        efficiency=0.3,
-        age_installed=0,
-        installed_capacity=0,
-        capex_var=1000,
-        capex_fix=0,
-        opex_fix=10,
-        opex_var=0,
-        lifetime=20,
-        optimize_cap=True,
-        maximum_capacity=float("+inf"),
+        Parameters
+        ----------
+        name
+        bus_in_heat
+        bus_in_heat_auxiliary
+        bus_out_heat
+        project_data
+        efficiency (default: 0.3)
+        age_installed (default: 0)
+        installed_capacity (default: 0)
+        capex_var (default: 1000)
+        capex_fix (default: 0)
+        opex_fix (default: 10)
+        opex_var (default: 0)
+        lifetime (default: 20)
+        optimize_cap (default: True)
+        maximum_capacity (default: float("+inf"))
+
+        Examples
+        --------
+        >>> from oemof.eesyplan import Project
+        >>> from oemof.eesyplan import CarrierBus
+        >>> heat_bus = CarrierBus(name="heat_bus")
+        >>> heat_bus_aux = CarrierBus(name="heat_bus_auxiliary")
+        >>> heat_supply = CarrierBus(name="heat_supply")
+        >>> my_top_up_heater = AuxiliaryHeatSplit(
+        ...     name="top_heat",
+        ...     bus_in_heat=heat_bus,
+        ...     bus_in_heat_auxiliary=heat_bus_aux,
+        ...     bus_out_heat=heat_supply,
+        ...     project_data=Project(
+        ...         name="Project_X", lifetime=20, tax=0,
+        ...         discount_factor=0.01),
+        ...     temp_in_low=60,
+        ...     temp_out_low=20,
+        ...     temp_supply=80,
+        ...     )
         """
         nv = _create_invest_if_wanted(
             optimise_cap=optimize_cap,
@@ -53,11 +75,11 @@ class AuxiliaryHeatSplit(Converter):
             project_data=project_data,
         )
         inputs = {
-            node_in_heat: Flow(),
-            node_in_heat_auxiliary: Flow(),
+            bus_in_heat: Flow(),
+            bus_in_heat_auxiliary: Flow(),
         }
         outputs = {
-            node_out_heat: Flow(
+            bus_out_heat: Flow(
                 nominal_capacity=nv,
                 variable_costs=opex_var,
             )
@@ -77,7 +99,7 @@ class AuxiliaryHeatSplit(Converter):
             inputs=inputs,
             outputs=outputs,
             conversion_factors={
-                node_in_heat: 1 / energy_total,
-                node_in_heat_auxiliary: energy_top / energy_total,
+                bus_in_heat: 1 / energy_total,
+                bus_in_heat_auxiliary: energy_top / energy_total,
             },
         )

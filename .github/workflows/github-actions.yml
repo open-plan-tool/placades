@@ -114,10 +114,3 @@ jobs:
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Upload coverage to Coveralls
-
-        uses: coverallsapp/github-action@v2
-        with:
-          format: cobertura
-          file: coverage.xml

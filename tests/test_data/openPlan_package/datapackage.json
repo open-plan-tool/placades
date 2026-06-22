@@ -68,7 +68,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "efficiency",
+                        "name": "efficiency_charge",
                         "type": "number",
                         "format": "default"
                     },

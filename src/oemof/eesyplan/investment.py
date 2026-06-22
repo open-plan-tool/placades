@@ -121,6 +121,7 @@ def _create_invest_if_wanted(
             )
             + opex_fix
         )
+
         return Investment(
             ep_costs=epc,
             existing=existing_capacity,
@@ -128,6 +129,12 @@ def _create_invest_if_wanted(
             minimum=minimum_capacity,
         )
     else:
+        if existing_capacity <= 0:
+            raise ValueError(
+                f"An installed of {existing_capacity} is not valid for "
+                f"dispatch mode. Increase the capacity or set 'optimise_cap' "
+                f"to True."
+            )
         return existing_capacity
 
 

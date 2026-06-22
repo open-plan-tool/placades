@@ -1,11 +1,6 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from oemof.network import graph
-from oemof.solph import Flow
-from oemof.solph.components import Sink
-from oemof.solph.components import Source
-from oemof.tools.logger import define_logging
 
 from oemof.eesyplan import CarrierBus
 from oemof.eesyplan import Demand
@@ -14,14 +9,20 @@ from oemof.eesyplan import HeatPump
 from oemof.eesyplan import Project
 from oemof.eesyplan import ThermalStorage
 from oemof.eesyplan import optimise
-from oemof.eesyplan.components.converters.AuxiliaryHeat import \
-    AuxiliaryHeatSplit
+from oemof.eesyplan.components.converters.AuxiliaryHeat import (
+    AuxiliaryHeatSplit,
+)
 from oemof.eesyplan.components.production.commodity import Commodity
 from oemof.eesyplan.components.transport.heat import HeatingNetwork
 from oemof.eesyplan.components.transport.heat import HeatingPipe
 from oemof.eesyplan.importer.cop import calculate_cop_simple
 from oemof.eesyplan.postprocessing.balance import nodes_io
 from oemof.eesyplan.postprocessing.graphs import sankey
+from oemof.network import graph
+from oemof.solph import Flow
+from oemof.solph.components import Sink
+from oemof.solph.components import Source
+from oemof.tools.logger import define_logging
 
 
 def simple_script():
@@ -38,7 +39,11 @@ def simple_script():
     bus_electricity = CarrierBus(
         name="electricity bus", carrier="electricity", balanced=True
     )
-    energy_system.add(bus_electricity)
+    low_temperature_bus = CarrierBus(
+        name="low_temperature_bus", carrier="heat"
+    )
+
+    energy_system.add(bus_electricity, low_temperature_bus)
 
     energy_system.add(
         Commodity(
@@ -54,13 +59,10 @@ def simple_script():
 
     ht_west = HeatingNetwork(name="HeatingNetwork - West")
     energy_system.add(ht_east, ht_west)
-    # bus_storage_heat = Bus(label="bus_storage_heat")
-
-    # energy_system.add(bus_heat)
 
     # sources
     energy_system.add(
-        Source(label="Source", outputs={ht_west: Flow(variable_costs=1000)})
+        Source(label="Source", outputs={ht_west: Flow(variable_costs=999)})
     )
 
     energy_system.add(
@@ -77,22 +79,33 @@ def simple_script():
     )
 
     energy_system.add(
-        Sink(label="Sink", inputs={ht_west: Flow(variable_costs=1)})
+        Sink(label="Sink", inputs={ht_west: Flow(variable_costs=999)})
     )
 
     energy_system.add(
         HeatingPipe(
-            name="HeatPipe",
+            name="HeatPipe w-e",
             bus_1_heat=ht_west,
             bus_2_heat=ht_east,
-            # absolute_losses=0,
-            relative_losses=0.0,
+            return_pipe=False,
+            absolute_losses=0,
+        )
+    )
+
+    energy_system.add(
+        HeatingPipe(
+            name="HeatPipe e-w",
+            bus_1_heat=ht_east,
+            bus_2_heat=ht_west,
+            return_pipe=False,
+            absolute_losses=0,
         )
     )
 
     my_storage = ThermalStorage(
         name="HeatStorage",
         bus_in_heat=ht_east,
+        bus_out_heat=low_temperature_bus,
         age_installed=0,
         installed_capacity=1000,
         capex_var=3.0,
@@ -114,20 +127,23 @@ def simple_script():
     energy_system.add(my_storage)
 
     t_in = [10] * len(heat)
-    t_out = [90] * len(heat)
+    t_out = [80] * len(heat)
     t_supply = [100] * len(heat)
 
     topheatbus = CarrierBus(name="TopHeatBus", carrier="heat_supply")
     energy_system.add(topheatbus)
 
-    # top_pipe = HeatingPipe(
-    #     name="HeatPipeWP",
-    #     bus_1_heat=topheatbus,
-    #     bus_2_heat=ht_east,
-    #     relative_losses=0.0,
-    #     return_pipe=False
-    # )
-    # energy_system.add(top_pipe)
+    energy_system.add(
+        Source(
+            label="Irgendein Wärmeerzeuger mit hoher Temperatur",
+            outputs={
+                topheatbus: Flow(
+                    nominal_capacity=2,
+                    variable_costs=1,
+                )
+            },
+        )
+    )
 
     heat_pump = HeatPump(
         name="HeatPump",
@@ -147,10 +163,11 @@ def simple_script():
 
     energy_system.add(
         AuxiliaryHeatSplit(
-            name="HeatSplit",
-            node_in_heat=my_storage,
-            node_in_heat_auxiliary=topheatbus,
-            node_out_heat=ht_east,
+            name="AuxiliaryHeatSplit",
+            installed_capacity=10000,
+            bus_in_heat=low_temperature_bus,
+            bus_in_heat_auxiliary=topheatbus,
+            bus_out_heat=ht_east,
             project_data=project,
             temp_in_low=t_in,
             temp_out_low=t_out,
@@ -161,9 +178,16 @@ def simple_script():
     # demands (electricity/heat)
     energy_system.add(
         Demand(
-            name="demand_heat",
+            name="demand_heat_west",
             bus_in=ht_west,
-            input_timeseries=np.roll(heat, 2) * 2,
+            input_timeseries=np.roll(heat, 2),
+        )
+    )
+    energy_system.add(
+        Demand(
+            name="demand_heat_east",
+            bus_in=ht_east,
+            input_timeseries=np.roll(heat, 2),
         )
     )
 
@@ -211,4 +235,5 @@ if __name__ == "__main__":
     print(flows)
     flows.loc[:, (flows.sum() > 0.1)].plot()
     fig = sankey(flows, es=es)
+    fig[0].show()
     plt.show()

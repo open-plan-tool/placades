@@ -3,6 +3,11 @@
     replacement costs of the asset will be taken into account in a (Natural
     number).
 
+.. |balanced| replace:: Text is missing
+
+.. |carrier| replace:: Energieträger/Medium like 'electricity', 'gas', 'heat',
+    'hydrogen' [-] (string)
+
 .. |crate| replace:: Maximum permissible power at which the storage can be
     charged or discharged relative to the nominal capacity of the storage. The
     C rate indicates the reciprocal of the time for which a battery of the
@@ -27,6 +32,8 @@
 
 .. |energy_prics| replace:: Price of the energy carrier sourced from the
     utility grid. Can be also a timeseries in €/kWh.
+
+.. |excess_cost| replace:: Text is missing.
 
 .. |feedin_cap| replace:: Maximum flow for feeding electricity into the grid
     at any given timestep in kW (Acceptable values are either a positive real
@@ -80,6 +87,8 @@
 .. |renewable_share| replace:: Share of renewables in the generation mix of
     the energy supplied by the DSO utility. [Factor] (Real number between 0
     and 1).
+
+.. |shortage_cost| replace:: Text is missing
 
 .. |sco_max| replace:: The maximum permissible level of charge of the storage
     as a factor of the nominal capacity. When the battery is filled to its

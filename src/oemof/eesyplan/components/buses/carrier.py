@@ -21,16 +21,15 @@ class CarrierBus(Bus):  # todo add shortage source and excess sink with costs
         Parameters
         ----------
         name : str or tuple
-            Eindeutige Bezeichnung des Bus
+            |name|
         carrier : str
-            Energieträger/Medium (z.B. 'electricity', 'gas', 'heat',
-            'hydrogen')
+            |carrier|
         balanced : bool
-            Text
+            |balanced|
         excess_cost : float
-            Text
+            |excess_cost|
         shortage_cost: float
-            Text
+            |shortage_cost|
 
         Examples
         --------

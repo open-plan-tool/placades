@@ -1,15 +1,16 @@
 from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Flow
-from oemof.solph.components import Converter
+from oemof.solph.components import ExtractionTurbineCHP
 
 
-class ChpFixedRatio(Converter):
+class ChpVariableRatio(ExtractionTurbineCHP):
     def __init__(
         self,
         name,
         bus_in_fuel,
         bus_out_electricity,
         bus_out_heat,
+        efficiency_electricity_full_condensation,
         efficiency_electricity_chp,
         efficiency_heat_chp,
         project_data,
@@ -19,26 +20,26 @@ class ChpFixedRatio(Converter):
         opex_fix=10,
         opex_var=0,
         lifetime=20,
-        optimize_cap=True,
+        optimize_cap=False,
         maximum_capacity=float("+inf"),
     ):
         """
-        Combined Heat and Power plant with fixed heat-to-power ratio.
+        Combined Heat and Power (CHP) plant.
 
-        This class represents a CHP plant that operates with a fixed
-        ratio between heat and electricity generation, providing less
-        operational flexibility but simpler control.
+        This class represents a combined heat and power plant that
+        simultaneously generates electricity and useful heat from a
+        single fuel source.
 
         .. important ::
-            The fixed ratio constraint limits operational flexibility
-            but ensures consistent heat-to-power ratios.
+            CHP systems achieve higher overall efficiency by utilising
+            waste heat for useful purposes.
 
         :Structure:
           *input*
-            1. fuel : Gas
+            1. bus_in_fuel : Gas
           *output*
-            1. heat_bus : Heat
-            2. electricity_bus : Electricity
+            1. bus_out_heat : Heat
+            2. bus_out_electricity : Electricity
 
         :Optimization:
           The characteristic quantity of the optimization is the
@@ -53,10 +54,12 @@ class ChpFixedRatio(Converter):
             |bus_out_electricity|
         bus_out_heat:  bus-object
             |bus_out_heat|
+        efficiency_electricity_full_condensation : float
+            |efficiency_electricity_full_condensation|
         efficiency_electricity_chp : float
-            conversion_factor_to_electricity
+            |efficiency_electricity_chp|
         efficiency_heat_chp : float
-            conversion_factor_to_heat
+            |efficiency_heat_chp|
         optimize_cap : bool, default=True
             |optimize_cap|
         maximum_capacity : float or None, default=None
@@ -83,12 +86,13 @@ class ChpFixedRatio(Converter):
         >>> gas_bus = CarrierBus(name="gas_bus")
         >>> heat_bus = CarrierBus(name="heat_bus")
         >>> el_bus = CarrierBus(name="electricity_bus")
-        >>> my_chp_fixed = ChpFixedRatio(
-        ...     name="fixed_ratio_chp",
+        >>> my_chp_fixed = ChpVariableRatio(
+        ...     name="variable_ratio_chp",
         ...     bus_in_fuel=gas_bus,
         ...     bus_out_heat=heat_bus,
         ...     bus_out_electricity=el_bus,
         ...     installed_capacity=300,
+        ...     efficiency_electricity_full_condensation=0.3,
         ...     efficiency_electricity_chp=0.3,
         ...     efficiency_heat_chp=0.5,
         ...     capex_var=1500,
@@ -102,6 +106,9 @@ class ChpFixedRatio(Converter):
         ... )
 
         """
+
+        if efficiency_electricity_chp + efficiency_heat_chp >= 1.0:
+            raise ValueError("Total efficiency is above 100%.")
 
         nv = _create_invest_if_wanted(
             optimise_cap=optimize_cap,
@@ -124,11 +131,6 @@ class ChpFixedRatio(Converter):
             bus_out_heat: Flow(),
         }
 
-        conversion_factors = {
-            bus_out_electricity: efficiency_electricity_chp,
-            bus_out_heat: efficiency_heat_chp,
-        }
-
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
         self.capex_var = capex_var
@@ -139,9 +141,18 @@ class ChpFixedRatio(Converter):
         self.maximum_capacity = maximum_capacity
         self.efficiency_electricity_chp = efficiency_electricity_chp
         self.efficiency_heat_chp = efficiency_heat_chp
+        self.efficiency_electricity_full_condensation = (
+            efficiency_electricity_full_condensation
+        )
         super().__init__(
             label=name,
             outputs=outputs,
             inputs=inputs,
-            conversion_factors=conversion_factors,
+            conversion_factors={
+                bus_out_electricity: efficiency_electricity_chp,
+                bus_out_heat: efficiency_heat_chp,
+            },
+            conversion_factor_full_condensation={
+                bus_out_electricity: efficiency_electricity_full_condensation
+            },
         )

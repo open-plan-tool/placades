@@ -1,16 +1,15 @@
 from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Flow
-from oemof.solph.components import ExtractionTurbineCHP
+from oemof.solph.components import Converter
 
 
-class ChpVariableRatio(ExtractionTurbineCHP):
+class ChpFixedRatio(Converter):
     def __init__(
         self,
         name,
         bus_in_fuel,
         bus_out_electricity,
         bus_out_heat,
-        efficiency_electricity_full_condensation,
         efficiency_electricity_chp,
         efficiency_heat_chp,
         project_data,
@@ -20,26 +19,26 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         opex_fix=10,
         opex_var=0,
         lifetime=20,
-        optimize_cap=False,
+        optimize_cap=True,
         maximum_capacity=float("+inf"),
     ):
         """
-        Combined Heat and Power (CHP) plant.
+        Combined Heat and Power plant with fixed heat-to-power ratio.
 
-        This class represents a combined heat and power plant that
-        simultaneously generates electricity and useful heat from a
-        single fuel source.
+        This class represents a CHP plant that operates with a fixed
+        ratio between heat and electricity generation, providing less
+        operational flexibility but simpler control.
 
         .. important ::
-            CHP systems achieve higher overall efficiency by utilising
-            waste heat for useful purposes.
+            The fixed ratio constraint limits operational flexibility
+            but ensures consistent heat-to-power ratios.
 
         :Structure:
           *input*
-            1. bus_in_fuel : Gas
+            1. fuel : Gas
           *output*
-            1. bus_out_heat : Heat
-            2. bus_out_electricity : Electricity
+            1. heat_bus : Heat
+            2. electricity_bus : Electricity
 
         :Optimization:
           The characteristic quantity of the optimization is the
@@ -54,12 +53,10 @@ class ChpVariableRatio(ExtractionTurbineCHP):
             |bus_out_electricity|
         bus_out_heat:  bus-object
             |bus_out_heat|
-        efficiency_electricity_full_condensation : float
-            Electrical efficiency with no heat extraction
         efficiency_electricity_chp : float
-            Electrical efficiency with maximal heat extraction
+            |efficiency_electricity_chp|
         efficiency_heat_chp : float
-            Thermal efficiency with maximal heat extraction
+            |efficiency_heat_chp|
         optimize_cap : bool, default=True
             |optimize_cap|
         maximum_capacity : float or None, default=None
@@ -86,13 +83,12 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         >>> gas_bus = CarrierBus(name="gas_bus")
         >>> heat_bus = CarrierBus(name="heat_bus")
         >>> el_bus = CarrierBus(name="electricity_bus")
-        >>> my_chp_fixed = ChpVariableRatio(
-        ...     name="variable_ratio_chp",
+        >>> my_chp_fixed = ChpFixedRatio(
+        ...     name="fixed_ratio_chp",
         ...     bus_in_fuel=gas_bus,
         ...     bus_out_heat=heat_bus,
         ...     bus_out_electricity=el_bus,
         ...     installed_capacity=300,
-        ...     efficiency_electricity_full_condensation=0.3,
         ...     efficiency_electricity_chp=0.3,
         ...     efficiency_heat_chp=0.5,
         ...     capex_var=1500,
@@ -106,9 +102,6 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         ... )
 
         """
-
-        if efficiency_electricity_chp + efficiency_heat_chp >= 1.0:
-            raise ValueError("Total efficiency is above 100%.")
 
         nv = _create_invest_if_wanted(
             optimise_cap=optimize_cap,
@@ -131,6 +124,11 @@ class ChpVariableRatio(ExtractionTurbineCHP):
             bus_out_heat: Flow(),
         }
 
+        conversion_factors = {
+            bus_out_electricity: efficiency_electricity_chp,
+            bus_out_heat: efficiency_heat_chp,
+        }
+
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
         self.capex_var = capex_var
@@ -141,18 +139,9 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         self.maximum_capacity = maximum_capacity
         self.efficiency_electricity_chp = efficiency_electricity_chp
         self.efficiency_heat_chp = efficiency_heat_chp
-        self.efficiency_electricity_full_condensation = (
-            efficiency_electricity_full_condensation
-        )
         super().__init__(
             label=name,
             outputs=outputs,
             inputs=inputs,
-            conversion_factors={
-                bus_out_electricity: efficiency_electricity_chp,
-                bus_out_heat: efficiency_heat_chp,
-            },
-            conversion_factor_full_condensation={
-                bus_out_electricity: efficiency_electricity_full_condensation
-            },
+            conversion_factors=conversion_factors,
         )

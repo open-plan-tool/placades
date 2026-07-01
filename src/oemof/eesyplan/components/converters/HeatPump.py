@@ -10,18 +10,18 @@ class HeatPump(Converter):
         self,
         name,
         project_data,
-        installed_capacity,
+        cop,
         bus_in_electricity,
         bus_out_heat,
         bus_in_heat=None,
+        installed_capacity=0,
         age_installed=0,
-        capex_var=1000,
-        opex_var=0.01,
-        opex_fix=10,
+        capex_var=0.0,
+        opex_var=0.0,
+        opex_fix=0.0,
         lifetime=20,
         optimize_cap=False,
         maximum_capacity=None,
-        cop=3,
     ):
         """
         Heat pump for efficient heat generation.
@@ -44,31 +44,25 @@ class HeatPump(Converter):
         Parameters
         ----------
         name : str
-            Name of the asset.
+            |name|
         age_installed : int, default=0
-            Number of years the asset has already been in operation.
+            |age_installed|
         installed_capacity : float, default=0
-            Already existing installed capacity.
-        capex_var : float, default=1000
-            Specific investment costs of the asset related to the
-            installed capacity (CAPEX).
-        opex_var : float, default=0.01
-            Costs associated with a flow through/from the asset
-            (OPEX_var or fuel costs).
-        opex_fix : float, default=10
-            Specific operational and maintenance costs of the asset
-            related to the installed capacity (OPEX_fix).
+             |installed_capacity|
+        capex_var : float, default=0
+            |capex_var|
+        opex_var : float, default=0
+            |opex_var|
+        opex_fix : float, default=0
+            |opex_fix|
         lifetime : int, default=20
-            Number of operational years of the asset until it has to
-            be replaced.
+            |lifetime|
         optimize_cap : bool, default=False
-            Choose if capacity optimization should be performed for
-            this asset.
+            |optimize_cap|
         maximum_capacity : float or None, default=None
-            Maximum total capacity of an asset that can be installed
-            at the project site.
+            |maximum_capacity|
         cop : float or list-like, default=0.8
-            Ratio of energy output to energy input.
+            |cop|
 
         Examples
         --------

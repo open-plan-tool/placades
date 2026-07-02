@@ -27,4 +27,6 @@ recursive-include examples *.json
 recursive-include examples *.png
 recursive-include examples *.py
 
+recursive-exclude examples *.graphml
+
 global-exclude *.py[cod] __pycache__/* *.so *.dylib

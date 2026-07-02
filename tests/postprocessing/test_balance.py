@@ -57,5 +57,8 @@ def test_node_io_balance():
         )
     )
     results = optimise(energy_system)
-    io = nodes_io(results["flow"]).sum()
+    io = nodes_io(results["flow"], aggregate=True).sum()
     assert io.loc[:, "in"].sum() == io.loc[:, "out"].sum()
+
+    io2 = nodes_io(results["flow"]).sum()
+    assert io.index.nlevels + 1 == io2.index.nlevels

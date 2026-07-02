@@ -1,3 +1,6 @@
+import importlib
+import logging
+import sys
 from pathlib import Path
 
 from oemof.eesyplan.weather import weather_data
@@ -17,3 +20,18 @@ def test_weather_file_import():
 def test_weather_object():
     wd = weather_data.WeatherData()
     assert isinstance(wd, weather_data.WeatherData)
+
+
+def test_import_without_pyproj(monkeypatch, caplog):
+    weather_module = "oemof.eesyplan.weather.weather_data"
+    monkeypatch.setitem(sys.modules, "pyproj", None)
+
+    # force re-import so module-level try/except runs again
+    sys.modules.pop(weather_module, None)
+
+    with caplog.at_level(logging.WARNING):
+        module = importlib.import_module("oemof.eesyplan.weather.weather_data")
+
+    assert hasattr(module, "Transformer")
+    assert module.Transformer.__module__ == weather_module
+    assert "have to install extra dependencies" in caplog.text

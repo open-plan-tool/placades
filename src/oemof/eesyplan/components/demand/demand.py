@@ -22,6 +22,8 @@ class Demand(Sink):
             |bus_in_electricity|
         input_timeseries : array-like
             |input_timeseries|
+        carrier : str
+            |carrier|
 
         Examples
         --------

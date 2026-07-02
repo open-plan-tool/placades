@@ -138,5 +138,43 @@
 .. |project_data| replace:: The framework of the project in which the asset is
     ought to be optimized.
 
+.. |custom_properties| replace:: Additional custom properties attached to the
+    component. [-] (dict or None).
+
+.. |custom_properties_flow| replace:: Additional custom properties attached
+    to  the flow definition of the component. [-] (dict or None).
+
+.. |fix| replace:: Fixed operation profile of the flow. Can be given as a
+    scalar or timeseries relative to the nominal capacity [-]
+    (Acceptable values are either a real number, an iterable, or None).
+
+.. |full_load_time_max| replace:: Maximum allowed annual full load hours of
+    the asset [-] (Acceptable values are either a non-negative real number or
+    None).
+
+.. |full_load_time_min| replace:: Minimum required annual full load hours of
+    the asset [-] (Acceptable values are either a non-negative real number or
+    None).
+
+.. |integer| replace:: Choose if the investment decision variable of the asset
+    should be restricted to integer values. [-] (Acceptable values are either
+    True or False).
+
+.. |maximum| replace:: Maximum operation level of the flow as a factor of the
+    nominal capacity [-] (Acceptable values are either a real number between
+    0 and 1, or None).
+
+.. |minimum| replace:: Minimum operation level of the flow as a factor of the
+    nominal capacity [-] (Acceptable values are either a real number between
+    0 and 1, or None).
+
+.. |negative_gradient_limit| replace:: Maximum allowed decrease of the flow
+    between two consecutive timesteps as a factor of the nominal capacity [-]
+    (Acceptable values are either a non-negative real number or None).
+
+.. |positive_gradient_limit| replace:: Maximum allowed increase of the flow
+    between two consecutive timesteps as a factor of the nominal capacity [-]
+    (Acceptable values are either a non-negative real number or None).
+
 .. |<Parameter>| replace:: <Description> [<Unit>]
     (<Restriction>).

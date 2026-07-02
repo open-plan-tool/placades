@@ -32,27 +32,48 @@ class Sink(SolphSink):
 
         Parameters
         ----------
-        name
-        project_data
-        bus_in
-        optimize_cap
-        age_installed
-        installed_capacity
-        maximum_capacity
-        capex_var
-        opex_fix
-        opex_var
-        lifetime
-        minimum
-        maximum
-        fix
-        positive_gradient_limit
-        negative_gradient_limit
-        full_load_time_max
-        full_load_time_min
-        integer
-        custom_properties_flow
-        custom_properties
+        name : string
+            |name|
+        project_data : Project object
+            |project_data|
+        bus_in : Node object
+            |bus_in|
+        optimize_cap : bool, optional (default: False)
+            |optimize_cap|
+        age_installed : float or int, optional (default: 0)
+            |age_installed|
+        installed_capacity : float
+            |installed_capacity|
+        maximum_capacity : float, optional (default: float("+inf"))
+            |maximum_capacity|
+        capex_var : float, optional (default: 0)
+            |capex_var|
+        opex_fix : float, optional (default: 0)
+            |opex_fix|
+        opex_var : float, optional (default: 0)
+            |opex_var|
+        lifetime : int, optional (default: None)
+            |lifetime|
+        minimum : float, optional
+            |minimum|
+        maximum : float, optional
+            |maximum|
+        fix : float or iterable, optional
+            |fix|
+        positive_gradient_limit : float, optional
+            |positive_gradient_limit|
+        negative_gradient_limit : float, optional
+            |negative_gradient_limit|
+        full_load_time_max : float, optional
+            |full_load_time_max|
+        full_load_time_min : float, optional
+            |full_load_time_min|
+        integer : bool, optional
+            |integer|
+        custom_properties_flow : dict, optional
+            |custom_properties_flow|
+        custom_properties : dict, optional
+            |custom_properties|
 
         Examples
         --------

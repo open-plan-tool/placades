@@ -1,7 +1,11 @@
+.. |absolute_losses| replace:: Absolute heat losses of the device per
+    timestep [:unit:] (Acceptable values are either a non-negative real
+    number or None).
+
 .. |age_installed| replace:: Number of years the asset has already been
-    in operation. If the project lasts longer than its remaining lifetime, the
-    replacement costs of the asset will be taken into account in a (Natural
-    number).
+    in operation. If the project lasts longer than its remaining
+    lifetime, the replacement costs of the asset will be taken into
+    account in a (Natural number).
 
 .. |asset_type| replace:: Type of the component. [-] ().
 
@@ -10,6 +14,12 @@
 
 .. |beta| replace:: Power loss index for CHPs, usually known as beta
     coefficient [-] (Between 0 and 1).
+
+.. |bus_1_heat| replace:: Connected Bus component for the first heat
+    connection of the pipe. [object].
+
+.. |bus_2_heat| replace:: Connected Bus component for the second heat
+    connection of the pipe. [object].
 
 .. |bus_in| replace:: Connected Bus component for an input flow.
     [object].
@@ -217,6 +227,10 @@
     mix of the energy supplied by the DSO utility. [Factor] (Real
     number between 0 and 1).
 
+.. |return_pipe| replace:: Specifies whether the return pipe is included
+    in the representation of the heating pipe [-] (Acceptable values are
+    either Yes or No).
+
 .. |self_discharge| replace:: Relative energy losses of the storage
     between two consecutive timesteps. [-] (Real number between 0 and 1).
 
@@ -252,6 +266,9 @@
 
 .. |thermal_loss_rate| replace:: Definition of thermal loss rate. [-]
     (numeric).
+
+.. |variable_cost| replace:: Variable operating costs of the component
+    in €/[:unit:] (non-negative real number).
 
 .. |<Parameter>| replace:: <Description> [<Unit>]
     (<Restriction>).

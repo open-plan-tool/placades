@@ -15,8 +15,10 @@ class HeatingNetwork(CarrierBus):
 
         Parameters
         ----------
-        name
-        absolute_losses
+        name : string
+            |name|
+        absolute_losses : float, optional
+            |absolute_losses|
 
         Examples
         --------
@@ -48,12 +50,18 @@ class HeatingPipe(Node):
 
         Parameters
         ----------
-        name
-        bus_1_heat
-        bus_2_heat
-        absolute_losses
-        relative_losses
-        return_pipe
+        name : string
+            |name|
+        bus_1_heat : Node object
+            |bus_1_heat|
+        bus_2_heat : Node object
+            |bus_2_heat|
+        absolute_losses : float, optional (default: None)
+            |absolute_losses|
+        relative_losses : float, optional (default: 0.0)
+            |relative_losses|
+        return_pipe : bool, optional (default: True)
+            |return_pipe|
 
         Examples
         --------

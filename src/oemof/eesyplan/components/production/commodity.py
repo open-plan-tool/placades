@@ -16,12 +16,18 @@ class Commodity(Source):
 
         Parameters
         ----------
-        name
-        bus_out
-        commodity
-        capacity
-        full_load_hours_max
-        variable_cost
+        name : string
+            |name|
+        bus_out : Node object
+            |bus_out|
+        commodity : string
+            |commodity|
+        capacity : float
+            |capacity|
+        full_load_hours_max : float, optional
+            |full_load_hours_max|
+        variable_cost : float, optional
+            |variable_cost|
 
         Examples
         --------

@@ -1,6 +1,3 @@
-.. |<Parameter>| replace:: <Description> [<Unit>]
-    (<Restriction>).
-
 .. |age_installed| replace:: Number of years the asset has already been
     in operation. If the project lasts longer than its remaining
     lifetime, the replacement costs of the asset will be taken into
@@ -8,7 +5,8 @@
 
 .. |asset_type| replace:: Type of the component. [-] ().
 
-.. |balanced| replace:: Text is missing
+.. |balanced| replace:: Defines whether the storage has balanced operation
+    over the optimization period. [-] (Boolean).
 
 .. |beta| replace:: Power loss index for CHPs, usually known as beta
     coefficient [-] (Between 0 and 1).
@@ -42,7 +40,6 @@
 
 .. |bus_out_hydrogen| replace:: Connected Bus component for the
     hydrogen output flow. [object].
-    (optimized) capacities of the assets in € (Positive real number).
 
 .. |capex_fix| replace:: Planning and development costs. This could be
     planning and development costs which do not depend on the
@@ -53,6 +50,9 @@
 
 .. |carrier| replace:: Energieträger/Medium like 'electricity', 'gas',
     'heat', 'hydrogen' [-] (string)
+
+.. |cop| replace:: Coefficient of performance Ratio of energy output to
+    energy input.
 
 .. |crate| replace:: Maximum permissible power at which the storage can
     be charged or discharged relative to the nominal capacity of the
@@ -69,6 +69,14 @@
     battery to the energy put into the battery [-] (Positive real
     number).
 
+.. |efficiency_charge| replace:: Efficiency of the charging process of the
+    storage. It is used as inflow conversion factor [-] (Positive real
+    number).
+
+.. |efficiency_discharge| replace:: Efficiency of the discharging process of
+    the storage. It is used as outflow conversion factor [-] (Positive real
+    number).
+
 .. |efficiency_electricity_chp| replace:: Electrical efficiency with
     maximal heat extraction [-] (Positive real number).
 
@@ -77,6 +85,17 @@
 
 .. |efficiency_heat_chp| replace:: Thermal efficiency with maximal heat
     extraction [-] (Positive real number).
+
+.. |energy_losses_absolute| replace:: Absolute fixed energy losses of the
+    storage between two consecutive timesteps. [in :unit:] (Positive real
+    number).
+
+.. |energy_losses_absolute_investment| replace:: Fixed energy losses of the
+    storage relative to the invested nominal capacity between two consecutive
+    timesteps. [-] (Positive real number).
+
+.. |energy_losses_relative| replace:: Relative energy losses of the storage
+    between two consecutive timesteps. [-] (Real number between 0 and 1).
 
 .. |energy_prics| replace:: Price of the energy carrier sourced from the
     utility grid. Can be also a timeseries in €/kWh.
@@ -101,7 +120,6 @@
 
 .. |input_timeseries| replace:: Timeseries. Timeseries in :unit:.
 
-
 .. |installed_capacity| replace:: Already existing installed capacity.
     If the project lasts longer than its remaining lifetime, the
     replacement costs of the asset will be taken into account in
@@ -117,6 +135,11 @@
     whereas the installed capacity is already 10 kW. The optimization
     would only be allowed to add 40 kW PV at maximum in :unit:
     (Acceptable values are either a positive real number or None.).
+
+.. |maximum_capacity_investment| replace:: Maximum additional storage
+    capacity that may be invested in at the project site in :unit:
+    (Acceptable values are either a positive real number or
+    float("+inf")).
 
 .. |name| replace:: Name of the asset. [-] (Input the names in a
     computer friendly format, preferably with underscores instead of
@@ -155,17 +178,32 @@
     mix of the energy supplied by the DSO utility. [Factor] (Real
     number between 0 and 1).
 
-.. |shortage_cost| replace:: Text is missing
-
 .. |sco_max| replace:: The maximum permissible level of charge of the
     storage as a factor of the nominal capacity. When the battery is
     filled to its nominal capacity the state of charge is represented by
     the value 1 [-] (Real number between 0 and 1).
+
+.. |shortage_cost| replace:: Text is missing
+
+.. |soc_max| replace:: The maximum permissible level of charge of the storage
+    as a factor of the nominal capacity. When the storage is filled to its
+    nominal capacity the state of charge is represented by the value 1 [-]
+    (Real number between 0 and 1).
 
 .. |soc_min| replace:: The minimum permissible level of charge of the
     storage as a factor of the nominal capacity. When the battery is
     fully discharged the state of charge is represented by the value 0
     [-] (Real number between 0 and 1).
 
+.. |theoretical_time_charge| replace:: Theoretical charging time of the
+    storage at nominal charging power. [h] (Positive real number).
+
+.. |theoretical_time_discharge| replace:: Theoretical discharging time of the
+    storage at nominal discharging power. If not specified, it is set equal
+    to theoretical_time_charge. [h] (Positive real number or None).
+
 .. |thermal_loss_rate| replace:: Definition of thermal loss rate. [-]
     (numeric).
+
+.. |<Parameter>| replace:: <Description> [<Unit>]
+    (<Restriction>).

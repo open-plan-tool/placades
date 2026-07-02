@@ -26,23 +26,43 @@ class AuxiliaryHeatSplit(Converter):
         maximum_capacity=float("+inf"),
     ):
         """
+        This component can be used for heat sources whose temperature is too
+        low for the target heat flow. Consequently, additional energy is
+        required to heat the flow to the required temperature. By definition,
+        the auxiliary flow must have at least the flow temperature.
+
         Parameters
         ----------
-        name
-        bus_in_heat
-        bus_in_heat_auxiliary
-        bus_out_heat
-        project_data
-        efficiency (default: 0.3)
-        age_installed (default: 0)
-        installed_capacity (default: 0)
-        capex_var (default: 1000)
-        capex_fix (default: 0)
-        opex_fix (default: 10)
-        opex_var (default: 0)
-        lifetime (default: 20)
-        optimize_cap (default: True)
-        maximum_capacity (default: float("+inf"))
+        name : string
+            |name|
+        bus_in_heat : Node object
+            |bus_in_heat|
+        bus_in_heat_auxiliary : Node object
+            |bus_in_heat_auxiliary|
+        bus_out_heat : Node object
+            |bus_out_heat|
+        project_data : Project object
+            |project_data|
+        efficiency : float, optional (default: 0.3)
+            |efficiency|
+        age_installed : float or int, optional (default: 0)
+            |age_installed|
+        installed_capacity : float, optional (default: 0)
+            |installed_capacity|
+        capex_var : float, optional (default: 1000)
+            |capex_var|
+        capex_fix : float, optional (default: 0)
+            |capex_fix|
+        opex_fix : float, optional (default: 10)
+            |opex_fix|
+        opex_var : float, optional (default: 0)
+            |opex_var|
+        lifetime : int, optional (default: 20)
+            |lifetime|
+        optimize_cap : bool, optional (default: True)
+            |optimize_cap|
+        maximum_capacity : float, optional (default: float("+inf"))
+            |maximum_capacity|
 
         Examples
         --------

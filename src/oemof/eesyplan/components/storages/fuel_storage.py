@@ -42,8 +42,44 @@ class FuelStorage(EnergyStorage):
 
         Parameters
         ----------
-        name : str
-           Name of the asset.
+        name : string
+            |name|
+        project_data : Project object
+            |project_data|
+        installed_capacity : float
+            |installed_capacity|
+        bus_in_fuel : Node object
+            |bus_in_fuel|
+        bus_out_fuel : Node object, optional (default: None)
+            |bus_out_fuel|
+        age_installed : float or int, optional (default: 0)
+            |age_installed|
+        capex_var : float, optional (default: 0)
+            |capex_var|
+        opex_fix : float, optional (default: 0)
+            |opex_fix|
+        opex_var : float, optional (default: 0)
+            |opex_var|
+        lifetime : int, optional (default: None)
+            |lifetime|
+        optimize_cap : bool, optional (default: False)
+            |optimize_cap|
+        soc_max : float, optional (default: 1)
+            |soc_max|
+        soc_min : float, optional (default: 0)
+            |soc_min|
+        c_rate_charge : float, optional (default: 1.0)
+            |crate|
+        c_rate_discharge : float, optional (default: None)
+            |crate|
+        efficiency_charge : float, optional (default: 1.0)
+            |efficiency_charge|
+        efficiency_discharge : float, optional (default: 1.0)
+            |efficiency_discharge|
+        energy_losses_relative : float, optional (default: 0.0)
+            |energy_losses_relative|
+        maximum_capacity_investment : float, optional (default: float("+inf"))
+            |maximum_capacity_investment|
 
         Examples
         --------

@@ -44,8 +44,48 @@ class ThermalStorage(EnergyStorage):
 
         Parameters
         ----------
-        name : str
-           Name of the asset.
+        name : string
+            |name|
+        project_data : Project object
+            |project_data|
+        installed_capacity : float
+            |installed_capacity|
+        bus_in_heat : Node object
+            |bus_in_heat|
+        bus_out_heat : Node object, optional (default: None)
+            |bus_out_heat|
+        age_installed : float or int, optional (default: 0)
+            |age_installed|
+        capex_var : float, optional (default: 0.0)
+            |capex_var|
+        opex_fix : float, optional (default: 0.0)
+            |opex_fix|
+        opex_var : float, optional (default: 0.0)
+            |opex_var|
+        lifetime : int, optional (default: None)
+            |lifetime|
+        optimize_cap : bool, optional (default: False)
+            |optimize_cap|
+        soc_max : float, optional (default: 1.0)
+            |soc_max|
+        soc_min : float, optional (default: 0.0)
+            |soc_min|
+        thermal_losses_relative : float, optional (default: 0.0)
+            |fixed_thermal_losses_relative|
+        thermal_losses_absolute : float, optional (default: 0.0)
+            |fixed_thermal_losses_absolute|
+        thermal_losses_absolute_investment : float, optional (default: 0)
+            |energy_losses_absolute_investment|
+        efficiency_charge : float, optional (default: 1.0)
+            |efficiency_charge|
+        efficiency_discharge : float, optional (default: 1.0)
+            |efficiency_discharge|
+        theoretical_time_charge : float, optional (default: 1.0)
+            |theoretical_time_charge|
+        theoretical_time_discharge : float, optional (default: None)
+            |theoretical_time_discharge|
+        maximum_capacity_investment : float, optional (default: float("+inf"))
+            |maximum_capacity_investment|
 
         Examples
         --------

@@ -23,16 +23,37 @@ warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 
 def create_energy_system_from_dp(path):
     """create energy system object from the datapackage"""
-
     path = Path(path)
-    if path.suffix != ".json":
-        path = path / "datapackage.json"
 
-    return EnergySystem.from_datapackage(
-        path,
-        attributemap={},
-        typemap=TYPEMAP,
-    )
+    if path.suffix == ".zip":
+        ext_path = unzip_package(path)
+        json_files = list(Path(ext_path).rglob("*.json"))
+        # Check there are no more than one "datapackage.json" file
+        if len(json_files) > 1:
+            filenames = [file.name for file in Path(ext_path).rglob("*.json")]
+            filenames_str = ",".join(filenames)
+            raise ValueError(
+                f"To many json files ({filenames_str}) found in zip-Package:\n"
+                f" {path}"
+            )
+        else:
+            path = json_files[0]
+        es = EnergySystem.from_datapackage(
+            path,
+            attributemap={},
+            typemap=TYPEMAP,
+        )
+        ext_path.cleanup()
+    else:
+        if path.suffix != ".json":
+            path = path / "datapackage.json"
+        es = EnergySystem.from_datapackage(
+            path,
+            attributemap={},
+            typemap=TYPEMAP,
+        )
+
+    return es
 
 
 def es_to_graphml(es, path):
@@ -92,29 +113,15 @@ def solve_energy_system_from_dp(path, plot=None, results_path=None):
        Full path to .json-file.
     plot : str
         Either "graph" or "visio.
+    results_path : path-Object or str
+        Path
 
 
     Returns
     -------
 
     """
-    if path.suffix == ".zip":
-        ext_path = unzip_package(path)
-        json_files = list(Path(ext_path).rglob("*.json"))
-        # Check there are no more than one "datapackage.json" file
-        if len(json_files) > 1:
-            filenames = [file.name for file in Path(ext_path).rglob("*.json")]
-            filenames_str = ",".join(filenames)
-            raise ValueError(
-                f"To many json files ({filenames_str}) found in zip-Package:\n"
-                f" {path}"
-            )
-        else:
-            path = json_files[0]
-        es = create_energy_system_from_dp(path)
-        ext_path.cleanup()
-    else:
-        es = create_energy_system_from_dp(path)
+    es = create_energy_system_from_dp(path)
     if plot == "graph":
         es_to_graphml(es, path)
     elif plot == "visio":
@@ -125,6 +132,7 @@ def solve_energy_system_from_dp(path, plot=None, results_path=None):
         results_path = Path(Path.home(), "openplan", "openPlan_results")
     results_path.mkdir(parents=True, exist_ok=True)
     export_results(results, path=results_path)
+    return results_path
 
 
 def cli():

@@ -50,7 +50,7 @@ test = [
   "pytest",
   "coverage",
   "pvlib",
-  "demandlib",
+  "oemof-demand",
   "tox",
   "oemof-visio",
   "pyproj",

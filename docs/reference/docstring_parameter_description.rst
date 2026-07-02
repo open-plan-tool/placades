@@ -41,6 +41,17 @@
 .. |bus_out_hydrogen| replace:: Connected Bus component for the
     hydrogen output flow. [object].
 
+.. |c_rate_charge| replace:: Maximum permissible charging power relative
+    to the nominal storage capacity. It represents the reciprocal of the
+    theoretical charging time. A value of 1 means the storage can be fully
+    charged within one timestep or hour, depending on the model setup. [-]
+    (Positive real number).
+
+.. |c_rate_discharge| replace:: Maximum permissible discharging power
+    relative to the nominal storage capacity. It represents the reciprocal
+    of the theoretical discharging time. If not specified, it is set equal
+    to c_rate_charge. [-] (Positive real number or None).
+
 .. |capex_fix| replace:: Planning and development costs. This could be
     planning and development costs which do not depend on the
     (optimized) capacities of the assets in € (Positive real number).
@@ -54,15 +65,11 @@
 .. |cop| replace:: Coefficient of performance Ratio of energy output to
     energy input.
 
-.. |crate| replace:: Maximum permissible power at which the storage can
-    be charged or discharged relative to the nominal capacity of the
-    storage. The C rate indicates the reciprocal of the time for which a
-    battery of the specified capacity can be charged or discharged with
-    the maximum charge or discharge current. A C-rate of 1 implies that
-    the battery can be fully charged or discharged completely in a
-    single timestep. A C-rate of 0.5 implies that the battery needs at
-    least 2 timesteps to be fully charged or discharged [-] (Real
-    number between 0 and 1).
+.. |custom_properties| replace:: Additional custom properties attached to the
+    component. [-] (dict or None).
+
+.. |custom_properties_flow| replace:: Additional custom properties attached
+    to the flow definition of the component. [-] (dict or None).
 
 .. |efficiency| replace:: Ratio of energy output to energy input. The
     battery efficiency is the ratio of the energy taken out from the
@@ -97,7 +104,7 @@
 .. |energy_losses_relative| replace:: Relative energy losses of the storage
     between two consecutive timesteps. [-] (Real number between 0 and 1).
 
-.. |energy_prics| replace:: Price of the energy carrier sourced from the
+.. |energy_prices| replace:: Price of the energy carrier sourced from the
     utility grid. Can be also a timeseries in €/kWh.
 
 .. |excess_cost| replace:: Text is missing.
@@ -109,6 +116,10 @@
 .. |feedin_tariff| replace:: Price received for feeding electricity into
     the grid. Can be also a timeseries in €/kWh.
 
+.. |fix| replace:: Fixed operation profile of the flow. Can be given as a
+    scalar or timeseries relative to the nominal capacity [-]
+    (Acceptable values are either a real number, an iterable, or None).
+
 .. |fixed_thermal_losses_absolute| replace:: Thermal losses of the
     storage independent of the state of charge and independent of
     nominal storage capacity between two consecutive timesteps [-]
@@ -118,6 +129,14 @@
     independent of state of charge between two consecutive timesteps
     relative to nominal storage capacity [-] (Between 0 and 1).
 
+.. |full_load_time_max| replace:: Maximum allowed annual full load hours of
+    the asset [-] (Acceptable values are either a non-negative real number or
+    None).
+
+.. |full_load_time_min| replace:: Minimum required annual full load hours of
+    the asset [-] (Acceptable values are either a non-negative real number or
+    None).
+
 .. |input_timeseries| replace:: Timeseries. Timeseries in :unit:.
 
 .. |installed_capacity| replace:: Already existing installed capacity.
@@ -125,8 +144,16 @@
     replacement costs of the asset will be taken into account in
     :unit:.
 
+.. |integer| replace:: Choose if the investment decision variable of the asset
+    should be restricted to integer values. [-] (Acceptable values are either
+    True or False).
+
 .. |lifetime| replace:: Number of operational years of the asset until
     it has to be replaced in a (Natural number).
+
+.. |maximum| replace:: Maximum operation level of the flow as a factor of the
+    nominal capacity [-] (Acceptable values are either a real number between
+    0 and 1, or None).
 
 .. |maximum_capacity| replace:: Maximum total capacity of an asset that
     can be installed at the project site. This includes the already
@@ -141,9 +168,17 @@
     (Acceptable values are either a positive real number or
     float("+inf")).
 
+.. |minimum| replace:: Minimum operation level of the flow as a factor of the
+    nominal capacity [-] (Acceptable values are either a real number between
+    0 and 1, or None).
+
 .. |name| replace:: Name of the asset. [-] (Input the names in a
     computer friendly format, preferably with underscores instead of
     spaces, and avoiding special characters).
+
+.. |negative_gradient_limit| replace:: Maximum allowed decrease of the flow
+    between two consecutive timesteps as a factor of the nominal capacity [-]
+    (Acceptable values are either a non-negative real number or None).
 
 .. |opex_fix| replace:: Specific operational and maintenance costs of
     the asset related to the installed capacity (OPEX_fix) in
@@ -166,6 +201,10 @@
 .. |peak_demand_pricing| replace:: Grid fee to be paid based on the
     peak demand of a given period in €/kW.
 
+.. |positive_gradient_limit| replace:: Maximum allowed increase of the flow
+    between two consecutive timesteps as a factor of the nominal capacity [-]
+    (Acceptable values are either a non-negative real number or None).
+
 .. |project_data| replace:: The framework of the project in which the
     asset is ought to be optimized.
 
@@ -178,10 +217,8 @@
     mix of the energy supplied by the DSO utility. [Factor] (Real
     number between 0 and 1).
 
-.. |sco_max| replace:: The maximum permissible level of charge of the
-    storage as a factor of the nominal capacity. When the battery is
-    filled to its nominal capacity the state of charge is represented by
-    the value 1 [-] (Real number between 0 and 1).
+.. |self_discharge| replace:: Relative energy losses of the storage
+    between two consecutive timesteps. [-] (Real number between 0 and 1).
 
 .. |shortage_cost| replace:: Text is missing
 
@@ -201,6 +238,17 @@
 .. |theoretical_time_discharge| replace:: Theoretical discharging time of the
     storage at nominal discharging power. If not specified, it is set equal
     to theoretical_time_charge. [h] (Positive real number or None).
+
+.. |thermal_losses_absolute| replace:: Absolute thermal losses of the
+    storage between two consecutive timesteps. [in :unit:] (Positive real
+    number).
+
+.. |thermal_losses_absolute_investment| replace:: Fixed thermal losses of the
+    storage relative to the invested nominal capacity between two consecutive
+    timesteps. [-] (Positive real number).
+
+.. |thermal_losses_relative| replace:: Relative thermal losses of the storage
+    between two consecutive timesteps. [-] (Real number between 0 and 1).
 
 .. |thermal_loss_rate| replace:: Definition of thermal loss rate. [-]
     (numeric).

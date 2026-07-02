@@ -1,7 +1,7 @@
 .. |age_installed| replace:: Number of years the asset has already been
-    in operation. If the project lasts longer than its remaining
-    lifetime, the replacement costs of the asset will be taken into
-    account in a (Natural number).
+    in operation. If the project lasts longer than its remaining lifetime, the
+    replacement costs of the asset will be taken into account in a (Natural
+    number).
 
 .. |asset_type| replace:: Type of the component. [-] ().
 

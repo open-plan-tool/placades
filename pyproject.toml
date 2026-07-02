@@ -51,7 +51,7 @@ test = [
   "tespy",
   "coverage",
   "pvlib",
-  "demandlib",
+  "oemof-demand",
   "tox",
   "oemof-visio",
   "pyproj",

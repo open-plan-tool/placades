@@ -113,9 +113,9 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
 
 
 def test_graph_capacities():
-    res, es = simple_script()
+    res, esys = simple_script()
 
-    capacities_graph(res["invest"], es)
+    capacities_graph(res["invest"], esys)
 
 
 warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
@@ -127,6 +127,7 @@ def test_sankey_diagram():
     results = optimise(energy_system)
 
     fig, _ = sankey(results["flow"], es=energy_system)
+
     with Path(
         Path(__file__).parent, "../test_data", "sankey_dict.json"
     ).open() as fp:

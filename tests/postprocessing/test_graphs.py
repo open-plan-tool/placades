@@ -231,19 +231,23 @@ def test_sankey_drop_zero_links():
 # --------------------------------------------------------------------------- #
 def test_sankey_requires_multiindex():
     df = pd.DataFrame({"a": [1, 2]})
-    with pytest.raises(TypeError):
+    with pytest.raises(
+        TypeError, match=r"flows.columns must be a pandas MultiIndex."
+    ):
         sankey(df)
 
 
 def test_sankey_rejects_empty():
     cols = pd.MultiIndex.from_tuples([("a", "b")])
     df = pd.DataFrame(columns=cols)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"Input DataFrame is empty."):
         sankey(df)
 
 
 def test_sankey_invalid_agg():
     cols = pd.MultiIndex.from_tuples([("a", "b")])
     df = pd.DataFrame([[1.0]], columns=cols)
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match="agg must be one of: 'sum', 'mean', or 'max'"
+    ):
         sankey(df, agg="median")

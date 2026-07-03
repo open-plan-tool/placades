@@ -28,5 +28,6 @@ recursive-include examples *.png
 recursive-include examples *.py
 
 recursive-exclude examples *.graphml
+recursive-exclude tests *.graphml
 
 global-exclude *.py[cod] __pycache__/* *.so *.dylib

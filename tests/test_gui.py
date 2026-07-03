@@ -156,5 +156,4 @@ def test_gui_module_sets_tk_and_ttk_to_none_when_tkinter_import_fails():
             gui.select_value(["Option 1"])
     finally:
         sys.modules.pop("oemof.eesyplan.gui", None)
-        if original_module is not None:
-            sys.modules["oemof.eesyplan.gui"] = original_module
+        sys.modules["oemof.eesyplan.gui"] = original_module

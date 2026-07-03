@@ -1,3 +1,6 @@
+import builtins
+import importlib
+import sys
 from unittest.mock import ANY
 from unittest.mock import MagicMock
 from unittest.mock import patch
@@ -125,3 +128,33 @@ class TestSelectValue:
             match=r"Tkinter not installed. Try 'pip install tkinter'",
         ):
             select_value(["Option 1"])
+
+
+def test_gui_module_sets_tk_and_ttk_to_none_when_tkinter_import_fails():
+    """Test module import fallback when tkinter import fails."""
+    original_import = builtins.__import__
+    original_module = sys.modules.get("oemof.eesyplan.gui")
+
+    def mocked_import(name, *args, **kwargs):
+        if name == "tkinter":
+            raise ImportError("No module named tkinter")
+        return original_import(name, *args, **kwargs)
+
+    try:
+        sys.modules.pop("oemof.eesyplan.gui", None)
+
+        with patch("builtins.__import__", side_effect=mocked_import):
+            gui = importlib.import_module("oemof.eesyplan.gui")
+
+        assert gui.tk is None
+        assert gui.ttk is None
+
+        with pytest.raises(
+            ImportError,
+            match=r"Tkinter not installed. Try 'pip install tkinter'",
+        ):
+            gui.select_value(["Option 1"])
+    finally:
+        sys.modules.pop("oemof.eesyplan.gui", None)
+        if original_module is not None:
+            sys.modules["oemof.eesyplan.gui"] = original_module

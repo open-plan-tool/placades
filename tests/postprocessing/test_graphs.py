@@ -1,8 +1,8 @@
-import json
 import warnings
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from oemof.datapackage import datapackage  # noqa
 from oemof.eesyplan import CarrierBus
@@ -19,6 +19,8 @@ from oemof.eesyplan.postprocessing.graphs import capacities_graph
 from oemof.eesyplan.postprocessing.graphs import sankey
 from oemof.tools.debugging import ExperimentalFeatureWarning
 
+warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
+
 DATA_PATH = Path("../test_data", "simple_script_data")
 
 DATA_FILES = {
@@ -30,24 +32,16 @@ DATA_FILES = {
 
 
 def simple_script(pv_installed_cap=1.0, optimize_battery=False):
-    # Read data file
+    # ... unverändert ...
     data = {}
     for key, fn in DATA_FILES.items():
         path = Path(Path(__file__).parent, DATA_PATH, fn)
         data[key] = pd.read_csv(path, header=None).squeeze()
 
     project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
-
-    # ####################### initialize the energy system ####################
     energy_system = EnergySystem(2023, number=10)
-
-    # ######################### create energysystem components ################
-
-    # carrier
     bus_elec = CarrierBus(name="electricity")
-
     energy_system.add(bus_elec)
-
     energy_system.add(
         DsoElectricity(
             name="My_DSO",
@@ -56,8 +50,6 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             feedin_tariff=0.04,
         )
     )
-
-    # sources
     energy_system.add(
         WindTurbine(
             name="wind",
@@ -68,7 +60,6 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             optimize_cap=True,
         )
     )
-
     energy_system.add(
         PvPlant(
             name="pv",
@@ -80,7 +71,6 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             optimize_cap=True,
         )
     )
-
     energy_system.add(
         ElectricalStorage(
             name="Batterie",
@@ -100,8 +90,6 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             self_discharge=0.000,
         )
     )
-
-    # demands (electricity/heat)
     energy_system.add(
         Demand(
             name="demand_el",
@@ -114,23 +102,148 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
 
 def test_graph_capacities():
     res, esys = simple_script()
-
     capacities_graph(res["invest"], esys)
 
 
-warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
+# --------------------------------------------------------------------------- #
+# Sankey-Tests
+# --------------------------------------------------------------------------- #
+@pytest.fixture(scope="module")
+def sankey_result():
+    """Baut das Energiesystem einmal und liefert (fig, links_df)."""
+    path = Path(Path(__file__).parent, "../test_data", "openPlan_package")
+    energy_system = es.create_energy_system_from_dp(path)
+    results = optimise(energy_system)
+    fig, links_df = sankey(results["flow"], es=energy_system)
+    return fig, links_df
 
 
-def test_sankey_diagram():
+def test_sankey_returns_figure_and_df(sankey_result):
+    fig, links_df = sankey_result
+    assert fig.data[0].type == "sankey"
+    assert list(links_df.columns) == [
+        "source",
+        "target",
+        "value",
+        "min",
+        "max",
+        "aggregate",
+    ]
+
+
+def test_sankey_nodes(sankey_result):
+    """Alle erwarteten Knoten sind vorhanden."""
+    fig, _ = sankey_result
+    labels = list(fig.data[0].node.label)
+
+    expected = {
+        "electricity",
+        "lithium_battery_system",
+        "pv",
+        "wind",
+        "('internal_bus', 'My_DSO')",
+        "('feedin_converter', 'My_DSO')",
+        "('consumption_converter', 'My_DSO')",
+        "('consumption_source', 'My_DSO')",
+        "('excess', 'electricity')",
+        "demand_el",
+        "('feedin_sink', 'My_DSO')",
+    }
+    assert set(labels) == expected
+
+
+def test_sankey_node_colors(sankey_result):
+    """Farb-Logik: Bus=grey, Source=blue, Sink=red, sonst green."""
+    fig, _ = sankey_result
+    node = fig.data[0].node
+    color_by_label = dict(zip(node.label, node.color, strict=False))
+
+    assert color_by_label["electricity"] == "grey"  # CarrierBus
+    assert color_by_label["pv"] == "blue"  # nur outputs
+    assert color_by_label["wind"] == "blue"
+    assert color_by_label["demand_el"] == "red"  # nur inputs
+    assert color_by_label["('excess', 'electricity')"] == "red"
+    assert color_by_label["lithium_battery_system"] == "green"
+
+
+def test_sankey_link_structure(sankey_result):
+    """Jede Link-ID zeigt auf einen gültigen Knoten, Längen passen."""
+    fig, links_df = sankey_result
+    link = fig.data[0].link
+    n_nodes = len(fig.data[0].node.label)
+
+    assert len(link.source) == len(link.target) == len(link.value)
+    assert len(link.value) == len(links_df)
+    assert all(0 <= i < n_nodes for i in link.source)
+    assert all(0 <= i < n_nodes for i in link.target)
+
+
+def test_sankey_values(sankey_result):
+    """Prüft die aggregierten Flow-Werte gegen erwartete Zahlen."""
+    _, links_df = sankey_result
+
+    def value(src, tgt):
+        mask = (links_df["source"] == src) & (links_df["target"] == tgt)
+        return links_df.loc[mask, "value"].iloc[0]
+
+    # pv speist ins electricity-Bus ein
+    assert value("pv", "electricity") == pytest.approx(46.8717, rel=1e-4)
+
+    # electricity deckt den Bedarf demand_el
+    assert value("electricity", "demand_el") == pytest.approx(
+        104.0765, rel=1e-4
+    )
+
+    # electricity -> feedin_converter des DSO
+    assert value(
+        "electricity", "('feedin_converter', 'My_DSO')"
+    ) == pytest.approx(151.4288, rel=1e-4)
+
+    # consumption_converter speist ins electricity-Bus
+    assert value(
+        "('consumption_converter', 'My_DSO')", "electricity"
+    ) == pytest.approx(1e-09, rel=1e-4)
+
+
+def test_sankey_zero_links_replaced(sankey_result):
+    """Ohne drop_zero_links werden 0-Werte durch 1e-9 ersetzt."""
+    _, links_df = sankey_result
+    assert (links_df["value"] > 0).all()
+
+
+def test_sankey_drop_zero_links():
+    """Mit drop_zero_links werden 0-Flows entfernt."""
     path = Path(Path(__file__).parent, "../test_data", "openPlan_package")
     energy_system = es.create_energy_system_from_dp(path)
     results = optimise(energy_system)
 
-    fig, _ = sankey(results["flow"], es=energy_system)
+    _, full = sankey(results["flow"], es=energy_system)
+    _, dropped = sankey(
+        results["flow"], es=energy_system, drop_zero_links=True
+    )
+    # es gibt echte 0-Flows -> weniger Links
+    assert len(dropped) < len(full)
+    assert (dropped["value"] != 0).all()
 
-    with Path(
-        Path(__file__).parent, "../test_data", "sankey_dict.json"
-    ).open() as fp:
-        saved_fig = json.load(fp)
 
-    assert fig.to_dict() == saved_fig
+# --------------------------------------------------------------------------- #
+# Fehler-/Randfälle
+# --------------------------------------------------------------------------- #
+def test_sankey_requires_multiindex():
+    df = pd.DataFrame({"a": [1, 2]})
+    with pytest.raises(TypeError):
+        sankey(df)
+
+
+def test_sankey_rejects_empty():
+    cols = pd.MultiIndex.from_tuples([("a", "b")])
+    df = pd.DataFrame(columns=cols)
+    with pytest.raises(ValueError):
+        sankey(df)
+
+
+def test_sankey_invalid_agg():
+    cols = pd.MultiIndex.from_tuples([("a", "b")])
+    df = pd.DataFrame([[1.0]], columns=cols)
+    with pytest.raises(ValueError):
+        sankey(df, agg="median")

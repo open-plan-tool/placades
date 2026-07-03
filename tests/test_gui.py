@@ -2,15 +2,17 @@ from unittest.mock import ANY
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
+import pytest
+
 from oemof.eesyplan.gui import select_value
 
 
 class TestSelectValue:
     """Tests for the select_value function."""
 
-    @patch("oemof.eesyplan.gui.tk")
     @patch("oemof.eesyplan.gui.ttk")
-    def test_select_value_with_selection(self, mock_ttk, mock_tk):
+    @patch("oemof.eesyplan.gui.tk")
+    def test_select_value_with_selection(self, mock_tk, mock_ttk):
         """Test select_value when user makes a selection."""
         mock_root = MagicMock()
         mock_tk.Tk.return_value = mock_root
@@ -30,9 +32,9 @@ class TestSelectValue:
         assert result == "Option 2"
         mock_root.destroy.assert_called_once()
 
-    @patch("oemof.eesyplan.gui.tk")
     @patch("oemof.eesyplan.gui.ttk")
-    def test_select_value_no_selection(self, mock_ttk, mock_tk):
+    @patch("oemof.eesyplan.gui.tk")
+    def test_select_value_no_selection(self, mock_tk, mock_ttk):
         """Test select_value when user closes window without selection."""
         mock_root = MagicMock()
         mock_tk.Tk.return_value = mock_root
@@ -45,9 +47,9 @@ class TestSelectValue:
 
         assert result == "None"
 
-    @patch("oemof.eesyplan.gui.tk")
     @patch("oemof.eesyplan.gui.ttk")
-    def test_select_value_window_properties(self, mock_ttk, mock_tk):
+    @patch("oemof.eesyplan.gui.tk")
+    def test_select_value_window_properties(self, mock_tk, mock_ttk):
         """Test that window is created with correct properties."""
         mock_root = MagicMock()
         mock_tk.Tk.return_value = mock_root
@@ -60,12 +62,13 @@ class TestSelectValue:
         mock_root.geometry.assert_called_once_with("450x80")
         mock_root.mainloop.assert_called_once()
 
-    @patch("oemof.eesyplan.gui.tk")
     @patch("oemof.eesyplan.gui.ttk")
-    def test_select_value_combobox_configuration(self, mock_ttk, mock_tk):
+    @patch("oemof.eesyplan.gui.tk")
+    def test_select_value_combobox_configuration(self, mock_tk, mock_ttk):
         """Test that combobox is configured correctly."""
         mock_root = MagicMock()
         mock_tk.Tk.return_value = mock_root
+
         mock_combo = MagicMock()
         mock_ttk.Combobox.return_value = mock_combo
         mock_ttk.Label.return_value = MagicMock()
@@ -80,9 +83,9 @@ class TestSelectValue:
         mock_combo.pack.assert_called_once()
         mock_combo.bind.assert_called_once_with("<<ComboboxSelected>>", ANY)
 
-    @patch("oemof.eesyplan.gui.tk")
     @patch("oemof.eesyplan.gui.ttk")
-    def test_select_value_empty_choices(self, mock_ttk, mock_tk):
+    @patch("oemof.eesyplan.gui.tk")
+    def test_select_value_empty_choices(self, mock_tk, mock_ttk):
         """Test select_value with empty choices list."""
         mock_root = MagicMock()
         mock_tk.Tk.return_value = mock_root
@@ -93,9 +96,9 @@ class TestSelectValue:
 
         assert result == "None"
 
-    @patch("oemof.eesyplan.gui.tk")
     @patch("oemof.eesyplan.gui.ttk")
-    def test_select_value_single_choice(self, mock_ttk, mock_tk):
+    @patch("oemof.eesyplan.gui.tk")
+    def test_select_value_single_choice(self, mock_tk, mock_ttk):
         """Test select_value with a single choice."""
         mock_root = MagicMock()
         mock_tk.Tk.return_value = mock_root
@@ -113,3 +116,12 @@ class TestSelectValue:
         result = select_value(["Only Option"])
 
         assert result == "Only Option"
+
+    @patch("oemof.eesyplan.gui.tk", None)
+    def test_select_value_raises_import_error_when_tkinter_missing(self):
+        """Test select_value raises ImportError if tkinter is unavailable."""
+        with pytest.raises(
+            ImportError,
+            match=r"Tkinter not installed. Try 'pip install tkinter'",
+        ):
+            select_value(["Option 1"])

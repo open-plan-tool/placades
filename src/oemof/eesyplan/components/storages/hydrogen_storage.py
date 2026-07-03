@@ -69,9 +69,9 @@ class HydrogenStorage(EnergyStorage):
         soc_min : float, optional (default: 1.0)
             |soc_min|
         c_rate_charge : float, optional (default: 1.0)
-            |crate|
+            |c_rate_charge|
         c_rate_discharge : float, optional (default: None)
-            |crate|
+            |c_rate_discharge|
         efficiency_charge : float, optional (default: 1.0)
             |efficiency_charge|
         efficiency_discharge : float, optional (default: 1.0)

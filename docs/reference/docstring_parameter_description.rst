@@ -114,7 +114,7 @@
 .. |energy_losses_relative| replace:: Relative energy losses of the storage
     between two consecutive timesteps. [-] (Real number between 0 and 1).
 
-.. |energy_prices| replace:: Price of the energy carrier sourced from the
+.. |energy_price| replace:: Price of the energy carrier sourced from the
     utility grid. Can be also a timeseries in €/kWh.
 
 .. |excess_cost| replace:: Text is missing.

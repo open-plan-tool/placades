@@ -19,7 +19,7 @@ class Shortage(Source):
     bus_out : oemof.solph.Bus or placade.CarrierBus
         |bus_in|
     cost : float or array-like
-        |energy_prics|
+        |energy_price|
 
     Examples
     --------

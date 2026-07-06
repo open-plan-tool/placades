@@ -131,10 +131,11 @@ def solve_energy_system_from_dp(path, plot=None, results_path=None):
 
     results = optimise(es)
     if results_path is None:
-        results_path = Path(Path.home(), "openplan", "openPlan_results")
-    results_path.mkdir(parents=True, exist_ok=True)
-    export_results(results, path=results_path)
-    return results_path
+        return results
+    else:
+        results_path.mkdir(parents=True, exist_ok=True)
+        export_results(results, path=results_path)
+        return results_path
 
 
 def cli():

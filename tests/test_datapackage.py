@@ -16,13 +16,15 @@ warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 
 def test_simple_datapackage():
     path = Path(Path(__file__).parent, "test_data", "openPlan_package")
+    results_path = Path(Path.home(), "openplan")
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=FutureWarning)
-        result_path = es.solve_energy_system_from_dp(path, plot="graph")
+        result_path = es.solve_energy_system_from_dp(
+            path, plot="graph", results_path=results_path
+        )
 
     assert Path(path.parent, "openPlan_package.graphml").exists()
     Path(path.parent, "openPlan_package.graphml").unlink()
-    result_path.mkdir(parents=True, exist_ok=True)
     import_results(path=result_path, es=es.create_energy_system_from_dp(path))
     shutil.rmtree(result_path)
     assert not result_path.exists()

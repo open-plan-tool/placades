@@ -2,6 +2,7 @@ import shutil
 import warnings
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -24,7 +25,18 @@ def test_simple_datapackage():
     result_path.mkdir(parents=True, exist_ok=True)
     import_results(path=result_path, es=es.create_energy_system_from_dp(path))
     shutil.rmtree(result_path)
-    assert ~result_path.exists()
+    assert not result_path.exists()
+
+
+@patch("oemof.eesyplan.datapackage.energy_system.ESGraphRenderer", None)
+def test_visio_not_installed_trigger_helpful_error_message():
+    dir_name = Path(Path(__file__).parent, "test_data", "openPlan_package")
+    dummy_es = None
+    with pytest.raises(
+        ModuleNotFoundError,
+        match="To use the plot function 'oemof-viso' must be installed",
+    ):
+        es.plot_es(dummy_es, dir_name)
 
 
 def test_zip_datapackage():

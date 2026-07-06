@@ -55,6 +55,7 @@ test = [
   "oemof-visio",
   "pyproj",
   "mip",
+  "mock"
 ]
 
 [build-system]

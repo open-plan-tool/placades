@@ -95,7 +95,7 @@ def plot_es(es, path):
         )
         raise ModuleNotFoundError(msg)
     path = Path(path)
-    energy_system_graph = path.with_suffix(".png")
+    energy_system_graph = path / "energy_system_graph.png"
     es_graph = ESGraphRenderer(
         es,
         legend=False,

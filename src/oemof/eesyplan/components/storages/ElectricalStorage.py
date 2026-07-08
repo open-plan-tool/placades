@@ -1,10 +1,9 @@
 from math import sqrt
 
+from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Flow
 from oemof.solph import Investment
 from oemof.solph.components import GenericStorage
-
-from oemof.eesyplan.investment import _create_invest_if_wanted
 
 
 class ElectricalStorage(GenericStorage):

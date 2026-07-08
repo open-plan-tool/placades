@@ -1,7 +1,6 @@
-from oemof.tools.economics import annuity
-
 from oemof.eesyplan.investment import calculate_annuity_mvs
 from oemof.eesyplan.type_checks import check_parameter
+from oemof.tools.economics import annuity
 
 
 class Project:

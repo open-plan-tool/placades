@@ -5,6 +5,9 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
+
+from oemof.eesyplan import Project
+from oemof.eesyplan.components.converters.waste_heat import WasteHeatDirect
 from oemof.solph import Bus
 from oemof.solph import EnergySystem
 from oemof.solph import Flow
@@ -12,9 +15,6 @@ from oemof.solph import Investment
 from oemof.solph import Model
 from oemof.solph.components import Sink
 from oemof.solph.components import Source
-
-from oemof.eesyplan import Project
-from oemof.eesyplan.components.converters.waste_heat import WasteHeatDirect
 
 
 def _nominal_capacity(flow: Flow) -> Any:

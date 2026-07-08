@@ -5,11 +5,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from oemof.datapackage import datapackage  # noqa
-from oemof.tools.debugging import ExperimentalFeatureWarning
 
+from oemof.datapackage import datapackage  # noqa
 from oemof.eesyplan import import_results
 from oemof.eesyplan.datapackage import energy_system as es
+from oemof.tools.debugging import ExperimentalFeatureWarning
 
 warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 

@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import pytest
-from oemof.datapackage import datapackage  # noqa
 
+from oemof.datapackage import datapackage  # noqa
 from oemof.eesyplan import CarrierBus
 from oemof.eesyplan import Demand
 from oemof.eesyplan import DsoElectricity

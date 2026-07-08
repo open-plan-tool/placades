@@ -5,13 +5,6 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-from oemof.solph import Bus
-from oemof.solph import EnergySystem as SolphEnergySystem
-from oemof.solph import Flow
-from oemof.solph import Model
-from oemof.solph import processing
-from oemof.solph.components import Sink
-from oemof.solph.components import Source
 from pyomo.environ import SolverFactory
 from pyomo.environ import value as pyomo_value
 
@@ -19,6 +12,13 @@ from oemof.eesyplan import EnergySystem as EesyplanEnergySystem
 from oemof.eesyplan import Project
 from oemof.eesyplan import optimise
 from oemof.eesyplan.components.converters.waste_heat import WasteHeatDirect
+from oemof.solph import Bus
+from oemof.solph import EnergySystem as SolphEnergySystem
+from oemof.solph import Flow
+from oemof.solph import Model
+from oemof.solph import processing
+from oemof.solph.components import Sink
+from oemof.solph.components import Source
 
 
 def _eesyplan_solver_termination_condition(results: Any) -> str:

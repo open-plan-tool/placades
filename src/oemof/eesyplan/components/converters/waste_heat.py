@@ -6,11 +6,10 @@ import math
 from collections.abc import Iterable
 from typing import Any
 
+from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Bus
 from oemof.solph import Flow
 from oemof.solph.components import Converter
-
-from oemof.eesyplan.investment import _create_invest_if_wanted
 
 
 class WasteHeatDirect(Converter):

@@ -4,15 +4,14 @@ import warnings
 from pathlib import Path
 
 from oemof.datapackage import datapackage  # noqa
-from oemof.network import graph
-from oemof.solph import EnergySystem
-from oemof.tools.debugging import ExperimentalFeatureWarning
-from oemof.tools.logger import define_logging
-
 from oemof.eesyplan import TYPEMAP
 from oemof.eesyplan import export_results
 from oemof.eesyplan.io import unzip_package
 from oemof.eesyplan.model import optimise
+from oemof.network import graph
+from oemof.solph import EnergySystem
+from oemof.tools.debugging import ExperimentalFeatureWarning
+from oemof.tools.logger import define_logging
 
 try:
     from oemof.visio import ESGraphRenderer

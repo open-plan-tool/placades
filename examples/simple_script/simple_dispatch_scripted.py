@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pandas as pd
-from oemof.tools.logger import define_logging
 
 from oemof.eesyplan import CarrierBus
 from oemof.eesyplan import Demand
@@ -14,6 +13,7 @@ from oemof.eesyplan import WindTurbine
 from oemof.eesyplan import optimise
 from oemof.eesyplan.postprocessing.balance import nodes_io
 from oemof.eesyplan.postprocessing.graphs import sankey
+from oemof.tools.logger import define_logging
 
 DATA_PATH = Path("data")
 

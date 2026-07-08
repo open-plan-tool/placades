@@ -45,16 +45,17 @@ solve_dp = "oemof.eesyplan.datapackage.energy_system:cli"
 docs = ["sphinx", "sphinx_rtd_theme"]
 dummy = ["oemof"]
 examples = []
-importer = ["pyproj"]
+importer = ["pyproj", "oemof-demand"]
 test = [
   "pytest",
   "coverage",
   "pvlib",
-  "demandlib",
+  "oemof-demand",
   "tox",
   "oemof-visio",
   "pyproj",
   "mip",
+  "mock"
 ]
 
 [build-system]

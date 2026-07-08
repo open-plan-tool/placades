@@ -2,8 +2,8 @@ import datetime
 from pathlib import Path
 
 import pandas as pd
-
 from oemof.demand import bdew
+
 from oemof.eesyplan.gui import select_value
 from oemof.eesyplan.io import unzip_package
 

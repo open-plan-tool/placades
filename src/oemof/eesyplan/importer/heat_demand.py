@@ -2,9 +2,9 @@ import datetime
 from pathlib import Path
 
 import pandas as pd
-from demandlib import bdew
 
-from oemof.eesyplan.io import select_value
+from oemof.demand import bdew
+from oemof.eesyplan.gui import select_value
 from oemof.eesyplan.io import unzip_package
 
 
@@ -105,11 +105,9 @@ def create_heat_demand(
 
     Example:
 
-    >>> from demandlib import bdew
-    >>> from oemof.eesyplan.weather.weather_data import WeatherData
-    >>> weather_data = WeatherData.from_try_file("examples/simple_script/data/TRY2015.dat")
+    >>> from oemof.demand import bdew
     >>> heat_demand = create_heat_demand(
-    ...     outdoor_temperature=weather_data.air_temperature_c,
+    ...     outdoor_temperature=[3] * 8760,
     ...     profile_type="Single-family house",
     ...     annual_heat_demand=231,
     ...     building_year=1992,

@@ -1,7 +1,6 @@
 import warnings
 
 import pandas as pd
-
 from oemof.solph import Investment
 
 

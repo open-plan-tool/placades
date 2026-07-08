@@ -3,6 +3,9 @@ import warnings
 from pathlib import Path
 
 from oemof.datapackage import datapackage  # noqa
+from oemof.tools.debugging import ExperimentalFeatureWarning
+from oemof.tools.logger import define_logging
+
 from oemof.eesyplan import export_results
 from oemof.eesyplan import import_results
 from oemof.eesyplan.datapackage.energy_system import (
@@ -11,8 +14,6 @@ from oemof.eesyplan.datapackage.energy_system import (
 from oemof.eesyplan.datapackage.energy_system import (
     solve_energy_system_from_dp,
 )
-from oemof.tools.debugging import ExperimentalFeatureWarning
-from oemof.tools.logger import define_logging
 
 warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 

@@ -1,3 +1,5 @@
+from oemof.solph.components import Source
+
 from oemof.eesyplan.components.buses.carrier import CarrierBus
 from oemof.eesyplan.components.converters.Boiler import Boiler
 from oemof.eesyplan.components.converters.ChpFixedRatio import ChpFixedRatio
@@ -37,7 +39,6 @@ from oemof.eesyplan.components.storages.FuelStorage import FuelStorage
 from oemof.eesyplan.components.storages.HydrogenStorage import HydrogenStorage
 from oemof.eesyplan.components.storages.ThermalStorage import ThermalStorage
 from oemof.eesyplan.project import Project
-from oemof.solph.components import Source
 
 TYPEMAP = {
     "Battery": ElectricalStorage,

@@ -240,7 +240,9 @@ def test_component_compiles_in_minimal_solph_model(
 
 def test_validate_bus_rejects_non_bus() -> None:
     """_validate_bus must reject objects that are no solph Bus."""
-    with pytest.raises(TypeError, match="bus_in_heat must be an oemof.solph.Bus."):
+    with pytest.raises(
+        TypeError, match="bus_in_heat must be an oemof.solph.Bus."
+    ):
         WasteHeatDirect._validate_bus("bus_in_heat", "not-a-bus")
 
 
@@ -250,13 +252,29 @@ def test_validate_bus_rejects_non_bus() -> None:
         (None, ValueError, "heat_profile must be provided."),
         ("abc", TypeError, "heat_profile must be a numeric time series."),
         (b"abc", TypeError, "heat_profile must be a numeric time series."),
-        (123, TypeError, "heat_profile must be an iterable of numeric values."),
+        (
+            123,
+            TypeError,
+            "heat_profile must be an iterable of numeric values.",
+        ),
         ([], ValueError, "heat_profile must not be empty."),
-        ([0.0, 0.0], ValueError, "heat_profile must contain at least one positive value."),
-        ([1.0, -1.0], ValueError, "heat_profile must only contain values >= 0."),
+        (
+            [0.0, 0.0],
+            ValueError,
+            "heat_profile must contain at least one positive value.",
+        ),
+        (
+            [1.0, -1.0],
+            ValueError,
+            "heat_profile must only contain values >= 0.",
+        ),
         ([1.0, float("inf")], ValueError, "heat_profile must be finite."),
         ([1.0, float("nan")], ValueError, "heat_profile must be finite."),
-        ([1.0, True], TypeError, "heat_profile must be an iterable of numeric values."),
+        (
+            [1.0, True],
+            TypeError,
+            "heat_profile must be an iterable of numeric values.",
+        ),
     ],
 )
 def test_validate_heat_profile_rejects_invalid_inputs(
@@ -304,9 +322,24 @@ def test_validate_efficiency_accepts_valid_value() -> None:
 @pytest.mark.parametrize(
     ("name", "value", "error_type", "match"),
     [
-        ("installed_capacity", -1.0, ValueError, "installed_capacity must be >= 0."),
-        ("installed_capacity", "abc", TypeError, "installed_capacity must be numeric."),
-        ("installed_capacity", float("inf"), ValueError, "installed_capacity must be finite."),
+        (
+            "installed_capacity",
+            -1.0,
+            ValueError,
+            "installed_capacity must be >= 0.",
+        ),
+        (
+            "installed_capacity",
+            "abc",
+            TypeError,
+            "installed_capacity must be numeric.",
+        ),
+        (
+            "installed_capacity",
+            float("inf"),
+            ValueError,
+            "installed_capacity must be finite.",
+        ),
     ],
 )
 def test_validate_non_negative_float_rejects_invalid_inputs(
@@ -332,9 +365,7 @@ def test_validate_optional_non_negative_float_accepts_none() -> None:
 
 def test_validate_optional_non_negative_float_rejects_negative_value() -> None:
     """_validate_optional_non_negative_float must reject negative values."""
-    with pytest.raises(
-        ValueError, match="maximum_capacity must be >= 0."
-    ):
+    with pytest.raises(ValueError, match="maximum_capacity must be >= 0."):
         WasteHeatDirect._validate_optional_non_negative_float(
             "maximum_capacity", -1.0
         )

@@ -42,7 +42,9 @@ def _termination_condition_from_runtime_error(error: RuntimeError) -> str:
 
 
 def _eesyplan_solver_termination_condition(results: Any) -> str:
-    return str(results._solver_results["Solver"][0]["Termination condition"]).lower()
+    return str(
+        results._solver_results["Solver"][0]["Termination condition"]
+    ).lower()
 
 
 def _eesyplan_objective(results: Any) -> float:
@@ -80,7 +82,9 @@ def _result_flow(
             f"got {len(values)} values: {values!r}"
         )
     if any(_is_nan(value) for value in values):
-        raise AssertionError(f"Flow contains NaN inside optimisation horizon: {values!r}")
+        raise AssertionError(
+            f"Flow contains NaN inside optimisation horizon: {values!r}"
+        )
 
     return [float(value) for value in values]
 
@@ -104,7 +108,9 @@ def _value_as_float(value: Any) -> float:
     if hasattr(value, "dropna") and hasattr(value, "iloc"):
         non_empty = value.dropna()
         if len(non_empty) == 0:
-            raise TypeError(f"Cannot convert empty pandas object to float: {value!r}")
+            raise TypeError(
+                f"Cannot convert empty pandas object to float: {value!r}"
+            )
         return float(non_empty.iloc[0])
     if hasattr(value, "iloc"):
         return float(value.iloc[0])
@@ -130,7 +136,9 @@ def _require_non_empty_profile(name: str, profile: list[float]) -> None:
 def _require_non_negative_profile(name: str, profile: list[float]) -> None:
     negative_values = [value for value in profile if value < 0]
     if negative_values:
-        raise ValueError(f"{name} must not contain negative values. Found: {negative_values!r}")
+        raise ValueError(
+            f"{name} must not contain negative values. Found: {negative_values!r}"
+        )
 
 
 def _require_same_profile_length(
@@ -146,7 +154,9 @@ def _require_same_profile_length(
         )
 
 
-def _nominal_and_normalised_profile(profile: list[float]) -> tuple[float, list[float]]:
+def _nominal_and_normalised_profile(
+    profile: list[float],
+) -> tuple[float, list[float]]:
     nominal_capacity = max(max(profile), 1.0)
     return nominal_capacity, [value / nominal_capacity for value in profile]
 
@@ -212,8 +222,12 @@ def _build_solph_dispatch_system(
     efficiency_hex = 0.8
     demand_profile = [8.0, 16.0, 24.0]
 
-    timeindex = pd.date_range("2026-01-01", periods=len(raw_heat_profile), freq="h")
-    energy_system = SolphEnergySystem(timeindex=timeindex, infer_last_interval=True)
+    timeindex = pd.date_range(
+        "2026-01-01", periods=len(raw_heat_profile), freq="h"
+    )
+    energy_system = SolphEnergySystem(
+        timeindex=timeindex, infer_last_interval=True
+    )
 
     raw_heat_bus = Bus(label="raw_waste_heat")
     heat_bus = Bus(label="heat")
@@ -238,7 +252,9 @@ def _build_solph_dispatch_system(
 
     heat_demand = _build_fixed_sink(heat_bus, "heat_demand", demand_profile)
 
-    energy_system.add(raw_heat_bus, heat_bus, raw_heat_source, waste_heat, heat_demand)
+    energy_system.add(
+        raw_heat_bus, heat_bus, raw_heat_source, waste_heat, heat_demand
+    )
     return (
         energy_system,
         waste_heat,
@@ -257,12 +273,16 @@ def _build_eesyplan_system(
     demand_profile: list[float],
     installed_capacity: float,
     capex_var: float,
-) -> tuple[EesyplanEnergySystem, WasteHeatDirect, list[float], list[float], float]:
+) -> tuple[
+    EesyplanEnergySystem, WasteHeatDirect, list[float], list[float], float
+]:
     _require_non_empty_profile("demand_profile", demand_profile)
     _require_non_negative_profile("demand_profile", demand_profile)
 
     efficiency_hex = 0.8
-    raw_heat_profile = [max(value / efficiency_hex, 1.0) for value in demand_profile]
+    raw_heat_profile = [
+        max(value / efficiency_hex, 1.0) for value in demand_profile
+    ]
 
     energy_system = EesyplanEnergySystem(2026, number=len(demand_profile))
     raw_heat_bus = Bus(label="raw_waste_heat")
@@ -295,8 +315,16 @@ def _build_eesyplan_system(
 
     heat_demand = _build_fixed_sink(heat_bus, "heat_demand", demand_profile)
 
-    energy_system.add(raw_heat_bus, heat_bus, raw_heat_source, waste_heat, heat_demand)
-    return energy_system, waste_heat, raw_heat_profile, demand_profile, efficiency_hex
+    energy_system.add(
+        raw_heat_bus, heat_bus, raw_heat_source, waste_heat, heat_demand
+    )
+    return (
+        energy_system,
+        waste_heat,
+        raw_heat_profile,
+        demand_profile,
+        efficiency_hex,
+    )
 
 
 def _build_waste_heat_reality_system(
@@ -316,7 +344,9 @@ def _build_waste_heat_reality_system(
     efficiency_hex: float = 0.8,
 ) -> dict[str, Any]:
     _require_non_empty_profile("demand_profile", demand_profile)
-    _require_non_empty_profile("raw_waste_heat_profile", raw_waste_heat_profile)
+    _require_non_empty_profile(
+        "raw_waste_heat_profile", raw_waste_heat_profile
+    )
     _require_same_profile_length(
         "demand_profile",
         demand_profile,
@@ -324,7 +354,9 @@ def _build_waste_heat_reality_system(
         raw_waste_heat_profile,
     )
     _require_non_negative_profile("demand_profile", demand_profile)
-    _require_non_negative_profile("raw_waste_heat_profile", raw_waste_heat_profile)
+    _require_non_negative_profile(
+        "raw_waste_heat_profile", raw_waste_heat_profile
+    )
 
     if installed_capacity is None:
         installed_capacity = max(max(demand_profile), 1.0)
@@ -360,13 +392,21 @@ def _build_waste_heat_reality_system(
 
     heat_demand = _build_fixed_sink(heat_bus, "heat_demand", demand_profile)
 
-    components: list[Any] = [raw_heat_bus, heat_bus, raw_heat_source, waste_heat, heat_demand]
+    components: list[Any] = [
+        raw_heat_bus,
+        heat_bus,
+        raw_heat_source,
+        waste_heat,
+        heat_demand,
+    ]
 
     dump_sink = None
     if dump_sink_enabled:
         dump_sink = Sink(
             label="raw_waste_heat_dump_sink",
-            inputs={raw_heat_bus: Flow(variable_costs=dump_sink_variable_costs)},
+            inputs={
+                raw_heat_bus: Flow(variable_costs=dump_sink_variable_costs)
+            },
         )
         components.append(dump_sink)
 
@@ -374,7 +414,9 @@ def _build_waste_heat_reality_system(
     if backup_boiler_enabled:
         backup_boiler = Source(
             label="backup_boiler",
-            outputs={heat_bus: Flow(variable_costs=backup_boiler_variable_costs)},
+            outputs={
+                heat_bus: Flow(variable_costs=backup_boiler_variable_costs)
+            },
         )
         components.append(backup_boiler)
 
@@ -469,7 +511,9 @@ def _run_waste_heat_reality_case(
     try:
         results = optimise(case["energy_system"])
     except RuntimeError as error:
-        termination_condition = _termination_condition_from_runtime_error(error)
+        termination_condition = _termination_condition_from_runtime_error(
+            error
+        )
         if "infeasible" not in termination_condition:
             raise
         case.update(
@@ -488,7 +532,9 @@ def _run_waste_heat_reality_case(
             "results": results,
             "termination_condition": termination_condition,
             "solver_error": None,
-            "solph_results": _solph_results(results) if termination_condition == "optimal" else None,
+            "solph_results": _solph_results(results)
+            if termination_condition == "optimal"
+            else None,
         }
     )
     return case
@@ -500,25 +546,35 @@ def _run_waste_heat_reality_case(
 
 
 def _useful_heat_output(case: dict[str, Any], length: int) -> list[float]:
-    return _result_flow(case["solph_results"], case["waste_heat"], case["heat_bus"], length)
+    return _result_flow(
+        case["solph_results"], case["waste_heat"], case["heat_bus"], length
+    )
 
 
 def _raw_heat_input(case: dict[str, Any], length: int) -> list[float]:
-    return _result_flow(case["solph_results"], case["raw_heat_bus"], case["waste_heat"], length)
+    return _result_flow(
+        case["solph_results"], case["raw_heat_bus"], case["waste_heat"], length
+    )
 
 
 def _dump_flow(case: dict[str, Any], length: int) -> list[float]:
     assert case["dump_sink"] is not None
-    return _result_flow(case["solph_results"], case["raw_heat_bus"], case["dump_sink"], length)
+    return _result_flow(
+        case["solph_results"], case["raw_heat_bus"], case["dump_sink"], length
+    )
 
 
 def _backup_heat_output(case: dict[str, Any], length: int) -> list[float]:
     assert case["backup_boiler"] is not None
-    return _result_flow(case["solph_results"], case["backup_boiler"], case["heat_bus"], length)
+    return _result_flow(
+        case["solph_results"], case["backup_boiler"], case["heat_bus"], length
+    )
 
 
 def _waste_heat_investment(case: dict[str, Any]) -> float:
-    return _result_scalar(case["solph_results"][(case["waste_heat"], case["heat_bus"])], "invest")
+    return _result_scalar(
+        case["solph_results"][(case["waste_heat"], case["heat_bus"])], "invest"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -527,8 +583,12 @@ def _waste_heat_investment(case: dict[str, Any]) -> float:
 
 
 class TestInputValidation:
-    def test_empty_demand_profile_raises_value_error(self, project: Project) -> None:
-        with pytest.raises(ValueError, match="demand_profile must not be empty"):
+    def test_empty_demand_profile_raises_value_error(
+        self, project: Project
+    ) -> None:
+        with pytest.raises(
+            ValueError, match="demand_profile must not be empty"
+        ):
             _build_eesyplan_system(
                 project=project,
                 optimize_cap=False,
@@ -537,8 +597,12 @@ class TestInputValidation:
                 capex_var=0.0,
             )
 
-    def test_negative_demand_profile_raises_value_error(self, project: Project) -> None:
-        with pytest.raises(ValueError, match="demand_profile must not contain negative values"):
+    def test_negative_demand_profile_raises_value_error(
+        self, project: Project
+    ) -> None:
+        with pytest.raises(
+            ValueError, match="demand_profile must not contain negative values"
+        ):
             _build_eesyplan_system(
                 project=project,
                 optimize_cap=False,
@@ -547,13 +611,16 @@ class TestInputValidation:
                 capex_var=0.0,
             )
 
+
 # ---------------------------------------------------------------------------
 # Dispatch behaviour
 # ---------------------------------------------------------------------------
 
 
 class TestDispatchBehaviour:
-    def test_waste_heat_direct_optimization_succeeds_with_solver(self, project: Project) -> None:
+    def test_waste_heat_direct_optimization_succeeds_with_solver(
+        self, project: Project
+    ) -> None:
         _skip_if_solver_missing("cbc")
 
         energy_system, *_ = _build_solph_dispatch_system(project)
@@ -563,7 +630,9 @@ class TestDispatchBehaviour:
         assert isinstance(model, Model)
         assert float(pyomo_value(model.objective)) == pytest.approx(0.0)
 
-    def test_waste_heat_direct_solved_flows_match_expected_values(self, project: Project) -> None:
+    def test_waste_heat_direct_solved_flows_match_expected_values(
+        self, project: Project
+    ) -> None:
         _skip_if_solver_missing("cbc")
 
         (
@@ -580,12 +649,18 @@ class TestDispatchBehaviour:
         model.solve(solver="cbc")
         results = processing.results(model)
 
-        raw_heat_input = _result_flow(results, raw_heat_bus, waste_heat, len(raw_heat_profile))
-        useful_heat_output = _result_flow(results, waste_heat, heat_bus, len(demand_profile))
+        raw_heat_input = _result_flow(
+            results, raw_heat_bus, waste_heat, len(raw_heat_profile)
+        )
+        useful_heat_output = _result_flow(
+            results, waste_heat, heat_bus, len(demand_profile)
+        )
 
         assert raw_heat_input == pytest.approx(raw_heat_profile)
         assert useful_heat_output == pytest.approx(demand_profile)
-        assert [value * efficiency_hex for value in raw_heat_input] == pytest.approx(useful_heat_output)
+        assert [
+            value * efficiency_hex for value in raw_heat_input
+        ] == pytest.approx(useful_heat_output)
 
     def test_waste_heat_direct_optimise_accepts_eesyplan_energy_system(
         self,
@@ -633,14 +708,22 @@ class TestDispatchBehaviour:
 
         useful_heat_output = _useful_heat_output(case, len(demand_profile))
         raw_heat_input = _raw_heat_input(case, len(demand_profile))
-        expected_raw_heat_input = [value / case["efficiency_hex"] for value in demand_profile]
+        expected_raw_heat_input = [
+            value / case["efficiency_hex"] for value in demand_profile
+        ]
 
         assert useful_heat_output == pytest.approx(demand_profile)
-        assert all(value <= installed_capacity + 1e-8 for value in useful_heat_output)
+        assert all(
+            value <= installed_capacity + 1e-8 for value in useful_heat_output
+        )
         assert raw_heat_input == pytest.approx(expected_raw_heat_input)
 
-        for raw_input, useful_output in zip(raw_heat_input, useful_heat_output, strict=True):
-            assert useful_output == pytest.approx(raw_input * case["efficiency_hex"])
+        for raw_input, useful_output in zip(
+            raw_heat_input, useful_heat_output, strict=True
+        ):
+            assert useful_output == pytest.approx(
+                raw_input * case["efficiency_hex"]
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -663,7 +746,9 @@ class TestInvestmentBehaviour:
             capex_var=100.0,
         )
 
-        assert _waste_heat_investment(case) == pytest.approx(max(demand_profile))
+        assert _waste_heat_investment(case) == pytest.approx(
+            max(demand_profile)
+        )
 
     def test_must_waste_heat_direct_investment_costs_are_in_objective(
         self,
@@ -683,7 +768,9 @@ class TestInvestmentBehaviour:
         ep_costs = _investment_ep_costs(case["waste_heat"], case["heat_bus"])
         expected_objective = investment * ep_costs
 
-        assert _eesyplan_objective(case["results"]) == pytest.approx(expected_objective)
+        assert _eesyplan_objective(case["results"]) == pytest.approx(
+            expected_objective
+        )
 
     def test_must_waste_heat_direct_zero_demand_causes_no_use_and_no_investment(
         self,
@@ -699,8 +786,12 @@ class TestInvestmentBehaviour:
             capex_var=100.0,
         )
 
-        assert _useful_heat_output(case, len(demand_profile)) == pytest.approx(demand_profile)
-        assert _raw_heat_input(case, len(demand_profile)) == pytest.approx(demand_profile)
+        assert _useful_heat_output(case, len(demand_profile)) == pytest.approx(
+            demand_profile
+        )
+        assert _raw_heat_input(case, len(demand_profile)) == pytest.approx(
+            demand_profile
+        )
         assert _waste_heat_investment(case) == pytest.approx(0.0)
         assert _eesyplan_objective(case["results"]) == pytest.approx(0.0)
 
@@ -742,7 +833,9 @@ class TestRealityConstraints:
         if expected_termination == "optimal":
             useful_heat_output = _useful_heat_output(case, len(demand_profile))
             raw_heat_input = _raw_heat_input(case, len(demand_profile))
-            expected_raw_heat_input = [demand / case["efficiency_hex"] for demand in demand_profile]
+            expected_raw_heat_input = [
+                demand / case["efficiency_hex"] for demand in demand_profile
+            ]
 
             assert useful_heat_output == pytest.approx(demand_profile)
             assert raw_heat_input == pytest.approx(expected_raw_heat_input)
@@ -751,7 +844,9 @@ class TestRealityConstraints:
             assert case["results"] is None
             assert case["solph_results"] is None
 
-    def test_fixed_capacity_below_peak_demand_becomes_infeasible(self, project: Project) -> None:
+    def test_fixed_capacity_below_peak_demand_becomes_infeasible(
+        self, project: Project
+    ) -> None:
         demand_profile = [4.0, 8.0, 12.0]
         raw_waste_heat_profile = [20.0, 20.0, 20.0]
 
@@ -771,7 +866,9 @@ class TestRealityConstraints:
         assert case["results"] is None
         assert case["solph_results"] is None
 
-    def test_forced_surplus_dump_sink_costs_are_in_objective(self, project: Project) -> None:
+    def test_forced_surplus_dump_sink_costs_are_in_objective(
+        self, project: Project
+    ) -> None:
         demand_profile = [4.0, 8.0, 12.0]
         raw_waste_heat_profile = [20.0, 20.0, 20.0]
         dump_sink_variable_costs = 3.0
@@ -792,7 +889,9 @@ class TestRealityConstraints:
         dump_flow = _dump_flow(case, len(demand_profile))
         expected_objective = sum(dump_flow) * dump_sink_variable_costs
 
-        assert _eesyplan_objective(case["results"]) == pytest.approx(expected_objective)
+        assert _eesyplan_objective(case["results"]) == pytest.approx(
+            expected_objective
+        )
 
     @pytest.mark.parametrize(
         ("backup_boiler_enabled", "expected_termination"),
@@ -828,7 +927,9 @@ class TestRealityConstraints:
             assert case["results"] is None
             assert case["solph_results"] is None
 
-    def test_backup_is_preferred_when_cheaper_than_waste_heat(self, project: Project) -> None:
+    def test_backup_is_preferred_when_cheaper_than_waste_heat(
+        self, project: Project
+    ) -> None:
         demand_profile = [4.0, 8.0, 12.0]
         raw_waste_heat_profile = [20.0, 20.0, 20.0]
 
@@ -855,7 +956,9 @@ class TestRealityConstraints:
         assert raw_heat_input == pytest.approx([0.0, 0.0, 0.0])
         assert backup_heat_output == pytest.approx(demand_profile)
 
-    def test_backup_boiler_covers_residual_demand(self, project: Project) -> None:
+    def test_backup_boiler_covers_residual_demand(
+        self, project: Project
+    ) -> None:
         demand_profile = [4.0, 8.0, 12.0]
         raw_waste_heat_profile = [5.0, 5.0, 5.0]
 

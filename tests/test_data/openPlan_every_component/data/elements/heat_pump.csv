@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_fix,capex_var,opex_var,opex_fix,lifetime,optimize_cap,maximum_capacity,cop,bus_in_electricity,bus_in_heat,bus_out_heat
+heat_pump,EesyPlan testing,heat_pump-0,0.0,0.0,0.0,1000.0,0.01,10.0,20,False,,1.0,bus-0,bus-1,bus-5

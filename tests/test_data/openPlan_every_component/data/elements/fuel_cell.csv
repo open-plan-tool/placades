@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_fix,capex_var,opex_fix,opex_var,lifetime,optimize_cap,efficiency,bus_in_h2,bus_out_electricity
+fuel_cell,EesyPlan testing,fuel_cell-0,0.0,0.0,0.0,1000.0,10.0,0.01,20,False,0.8,bus-3,bus-4

@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_fix,capex_var,opex_fix,opex_var,lifetime,optimize_cap,maximum_capacity,efficiency,soc_max,soc_min,crate,bus_in_h2,bus_out_h2
+h2ess,EesyPlan testing,h2ess-0,0.0,0.0,0.0,1000.0,10.0,0.01,20,False,,0.8,1.0,0.0,1.0,bus-6,bus-6

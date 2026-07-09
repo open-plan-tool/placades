@@ -25,13 +25,14 @@ class Project:
         self.excess_cost = excess_cost
 
     def calculate_epc(
-        self, optimize_cap, capex_var, lifetime, age_installed, method="mvs"
+        self, optimise_cap, capex_var, lifetime, age_installed, method="mvs"
     ):
         """
         Calculate the annuity of investment..
 
         Parameters
         ----------
+        optimise_cap: bool
         capex_var
         lifetime
         age_installed
@@ -49,10 +50,10 @@ class Project:
         ...     tax=0,
         ...     discount_factor=0.01
         ...     )
-        >>> round(my_project.calculate_epc(234, 20, 0), 3)
+        >>> round(my_project.calculate_epc(True, 234, 20, 0), 3)
         12.967
-        >>> my_project.calculate_epc(234, 20, 0, "wrong")
-        >>> round(my_project.calculate_epc(234, 20, 0, "oemof"), 3)
+        >>> my_project.calculate_epc(True, 234, 20, 0, "wrong")
+        >>> round(my_project.calculate_epc(True, 234, 20, 0, "oemof"), 3)
         12.967
 
         """
@@ -68,7 +69,7 @@ class Project:
             )
 
             return calculate_annuity_mvs(
-                optimise_cap=optimize_cap,
+                optimise_cap=optimise_cap,
                 capex_var=capex_var,
                 lifetime=lifetime,
                 age_installed=age_installed,

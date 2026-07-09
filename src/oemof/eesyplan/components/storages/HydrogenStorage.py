@@ -82,7 +82,7 @@ class HydrogenStorage(GenericStorage):
         ...     bus_in_h2=h2_bus,
         ...     bus_out_h2=h2_bus,
         ...     age_installed=0,
-        ...     installed_capacity=10,
+        ...     installed_capacity=0,
         ...     capex_var=3,
         ...     opex_fix=5,
         ...     opex_var=0.,
@@ -117,8 +117,8 @@ class HydrogenStorage(GenericStorage):
             self.crate_charge = crate
             self.crate_discharge = crate
         else:
-            self.capacity_charge = nv * crate
-            self.capacity_discharge = nv * crate
+            self.capacity_charge = installed_capacity * crate
+            self.capacity_discharge = installed_capacity * crate
             self.crate_charge = None
             self.crate_discharge = None
 

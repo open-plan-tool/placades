@@ -377,7 +377,7 @@ class WasteHeatDirect(Converter):
         if heat_profile is None:
             raise ValueError("heat_profile must be provided.")
 
-        if isinstance(heat_profile, (str, bytes)):
+        if isinstance(heat_profile, str | bytes):
             raise TypeError("heat_profile must be a numeric time series.")
 
         try:

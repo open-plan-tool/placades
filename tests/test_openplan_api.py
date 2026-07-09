@@ -10,9 +10,11 @@ from oemof.tools.debugging import ExperimentalFeatureWarning
 
 warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 
-DATA_PATH = Path(Path(__file__).parent, "test_data", "openPlan_every_component")
+DATA_PATH = Path(
+    Path(__file__).parent, "test_data", "openPlan_every_component"
+)
 
-with open(DATA_PATH / "datapackage.json") as f:
+with Path.open(DATA_PATH / "datapackage.json") as f:
     _FULL_DATAPACKAGE = json.load(f)
 
 _SHARED_RESOURCES = {"bus", "project", "profiles"}
@@ -35,7 +37,7 @@ def _build_single_component_package(tmp_path, component_type):
         for resource in _FULL_DATAPACKAGE["resources"]
         if resource["name"] in _SHARED_RESOURCES | {component_type}
     ]
-    with open(package_path / "datapackage.json", "w") as f:
+    with Path.open(package_path / "datapackage.json", "w") as f:
         json.dump({**_FULL_DATAPACKAGE, "resources": resources}, f)
 
     return package_path

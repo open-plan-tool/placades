@@ -4,8 +4,13 @@ import pytest
 
 from oemof.eesyplan import Project
 from oemof.eesyplan.components.converters.HeatPump import HeatPump
-from oemof.solph import Bus, EnergySystem, Flow, Model
-from oemof.solph.components import Converter, Sink, Source
+from oemof.solph import Bus
+from oemof.solph import EnergySystem
+from oemof.solph import Flow
+from oemof.solph import Model
+from oemof.solph.components import Converter
+from oemof.solph.components import Sink
+from oemof.solph.components import Source
 from oemof.solph.processing import results
 
 
@@ -295,7 +300,7 @@ class TestHeatPumpRealityConstraints:
 
         model = Model(es)
 
-        with pytest.raises(Exception):
+        with pytest.raises(RuntimeError, match="infeasible"):
             model.solve(solver="cbc")
 
     def test_heat_pump_is_preferred_over_boiler_when_cheaper(self):

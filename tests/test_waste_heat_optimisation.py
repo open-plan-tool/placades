@@ -20,7 +20,6 @@ from oemof.solph import processing
 from oemof.solph.components import Sink
 from oemof.solph.components import Source
 
-
 # ---------------------------------------------------------------------------
 # Solver / result helpers
 # ---------------------------------------------------------------------------

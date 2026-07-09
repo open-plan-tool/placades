@@ -24,7 +24,9 @@ class Project:
         self.shortage_cost = shortage_cost
         self.excess_cost = excess_cost
 
-    def calculate_epc(self, capex_var, lifetime, age_installed, method="mvs"):
+    def calculate_epc(
+        self, optimize_cap, capex_var, lifetime, age_installed, method="mvs"
+    ):
         """
         Calculate the annuity of investment..
 
@@ -56,6 +58,7 @@ class Project:
         """
         if method == "mvs":
             check_parameter(
+                optimise_cap,
                 capex_var,
                 self.lifetime,
                 self.discount_factor,
@@ -63,7 +66,9 @@ class Project:
                 self.tax,
                 age_installed,
             )
+
             return calculate_annuity_mvs(
+                optimise_cap=optimize_cap,
                 capex_var=capex_var,
                 lifetime=lifetime,
                 age_installed=age_installed,
@@ -71,6 +76,7 @@ class Project:
                 lifetime_project=self.lifetime,
                 discount_factor=self.discount_factor,
             )
+        # currently not used:
         elif method == "oemof":
             check_parameter(
                 capex_var, self.lifetime, self.discount_factor, lifetime

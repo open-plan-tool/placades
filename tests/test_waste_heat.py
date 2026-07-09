@@ -236,3 +236,249 @@ def test_component_compiles_in_minimal_solph_model(
 
     assert isinstance(model, Model)
     assert hasattr(model, "objective")
+
+
+def test_validate_bus_rejects_non_bus() -> None:
+    """_validate_bus must reject objects that are no solph Bus."""
+    with pytest.raises(TypeError, match="bus_in_heat must be an oemof.solph.Bus."):
+        WasteHeatDirect._validate_bus("bus_in_heat", "not-a-bus")
+
+
+@pytest.mark.parametrize(
+    ("heat_profile", "error_type", "match"),
+    [
+        (None, ValueError, "heat_profile must be provided."),
+        ("abc", TypeError, "heat_profile must be a numeric time series."),
+        (b"abc", TypeError, "heat_profile must be a numeric time series."),
+        (123, TypeError, "heat_profile must be an iterable of numeric values."),
+        ([], ValueError, "heat_profile must not be empty."),
+        ([0.0, 0.0], ValueError, "heat_profile must contain at least one positive value."),
+        ([1.0, -1.0], ValueError, "heat_profile must only contain values >= 0."),
+        ([1.0, float("inf")], ValueError, "heat_profile must be finite."),
+        ([1.0, float("nan")], ValueError, "heat_profile must be finite."),
+        ([1.0, True], TypeError, "heat_profile must be an iterable of numeric values."),
+    ],
+)
+def test_validate_heat_profile_rejects_invalid_inputs(
+    heat_profile: Any,
+    error_type: type[Exception],
+    match: str,
+) -> None:
+    """_validate_heat_profile must reject invalid profiles."""
+    with pytest.raises(error_type, match=match):
+        WasteHeatDirect._validate_heat_profile(heat_profile)
+
+
+def test_validate_heat_profile_accepts_iterable_and_returns_tuple() -> None:
+    """_validate_heat_profile must convert valid iterables to tuple of float."""
+    profile = WasteHeatDirect._validate_heat_profile((1, 2.5, 3))
+
+    assert profile == (1.0, 2.5, 3.0)
+
+
+@pytest.mark.parametrize(
+    ("value", "error_type", "match"),
+    [
+        (0.0, ValueError, "efficiency_hex must be > 0 and <= 1."),
+        (-0.1, ValueError, "efficiency_hex must be > 0 and <= 1."),
+        (1.1, ValueError, "efficiency_hex must be > 0 and <= 1."),
+        ("abc", TypeError, "efficiency_hex must be numeric."),
+        (float("inf"), ValueError, "efficiency_hex must be finite."),
+    ],
+)
+def test_validate_efficiency_rejects_invalid_inputs(
+    value: Any,
+    error_type: type[Exception],
+    match: str,
+) -> None:
+    """_validate_efficiency must reject invalid values."""
+    with pytest.raises(error_type, match=match):
+        WasteHeatDirect._validate_efficiency(value)
+
+
+def test_validate_efficiency_accepts_valid_value() -> None:
+    """_validate_efficiency must accept values in the interval (0, 1]."""
+    assert WasteHeatDirect._validate_efficiency(1.0) == pytest.approx(1.0)
+
+
+@pytest.mark.parametrize(
+    ("name", "value", "error_type", "match"),
+    [
+        ("installed_capacity", -1.0, ValueError, "installed_capacity must be >= 0."),
+        ("installed_capacity", "abc", TypeError, "installed_capacity must be numeric."),
+        ("installed_capacity", float("inf"), ValueError, "installed_capacity must be finite."),
+    ],
+)
+def test_validate_non_negative_float_rejects_invalid_inputs(
+    name: str,
+    value: Any,
+    error_type: type[Exception],
+    match: str,
+) -> None:
+    """_validate_non_negative_float must reject invalid values."""
+    with pytest.raises(error_type, match=match):
+        WasteHeatDirect._validate_non_negative_float(name, value)
+
+
+def test_validate_optional_non_negative_float_accepts_none() -> None:
+    """_validate_optional_non_negative_float must accept None."""
+    assert (
+        WasteHeatDirect._validate_optional_non_negative_float(
+            "maximum_capacity", None
+        )
+        is None
+    )
+
+
+def test_validate_optional_non_negative_float_rejects_negative_value() -> None:
+    """_validate_optional_non_negative_float must reject negative values."""
+    with pytest.raises(
+        ValueError, match="maximum_capacity must be >= 0."
+    ):
+        WasteHeatDirect._validate_optional_non_negative_float(
+            "maximum_capacity", -1.0
+        )
+
+
+@pytest.mark.parametrize(
+    ("validator", "name", "value", "error_type", "match"),
+    [
+        (
+            WasteHeatDirect._validate_non_negative_int,
+            "age_installed",
+            -1,
+            ValueError,
+            "age_installed must be >= 0.",
+        ),
+        (
+            WasteHeatDirect._validate_positive_int,
+            "lifetime",
+            0,
+            ValueError,
+            "lifetime must be > 0.",
+        ),
+        (
+            WasteHeatDirect._validate_positive_int,
+            "lifetime",
+            -1,
+            ValueError,
+            "lifetime must be > 0.",
+        ),
+        (
+            WasteHeatDirect._validate_non_negative_int,
+            "age_installed",
+            1.5,
+            TypeError,
+            "age_installed must be integer.",
+        ),
+    ],
+)
+def test_int_validators_reject_invalid_inputs(
+    validator: Any,
+    name: str,
+    value: Any,
+    error_type: type[Exception],
+    match: str,
+) -> None:
+    """Integer validators must reject invalid inputs."""
+    with pytest.raises(error_type, match=match):
+        validator(name, value)
+
+
+def test_validate_bool_rejects_non_bool() -> None:
+    """_validate_bool must reject non-bool values."""
+    with pytest.raises(TypeError, match="optimize_cap must be bool."):
+        WasteHeatDirect._validate_bool("optimize_cap", 1)
+
+
+@pytest.mark.parametrize(
+    ("name", "value", "error_type", "match"),
+    [
+        ("x", True, TypeError, "x must be numeric."),
+        ("x", "abc", TypeError, "x must be numeric."),
+        ("x", float("inf"), ValueError, "x must be finite."),
+        ("x", float("nan"), ValueError, "x must be finite."),
+    ],
+)
+def test_to_float_rejects_invalid_inputs(
+    name: str,
+    value: Any,
+    error_type: type[Exception],
+    match: str,
+) -> None:
+    """_to_float must reject bool, non-numeric and non-finite values."""
+    with pytest.raises(error_type, match=match):
+        WasteHeatDirect._to_float(name, value)
+
+
+def test_to_float_accepts_numeric_input() -> None:
+    """_to_float must convert numeric values to float."""
+    assert WasteHeatDirect._to_float("x", 3) == pytest.approx(3.0)
+
+
+@pytest.mark.parametrize(
+    ("name", "value", "error_type", "match"),
+    [
+        ("x", True, TypeError, "x must be integer."),
+        ("x", 1.2, TypeError, "x must be integer."),
+        ("x", "abc", TypeError, "x must be integer."),
+    ],
+)
+def test_to_int_rejects_invalid_inputs(
+    name: str,
+    value: Any,
+    error_type: type[Exception],
+    match: str,
+) -> None:
+    """_to_int must reject non-integer inputs."""
+    with pytest.raises(error_type, match=match):
+        WasteHeatDirect._to_int(name, value)
+
+
+def test_to_int_accepts_integer_like_input() -> None:
+    """_to_int must accept exact integers."""
+    assert WasteHeatDirect._to_int("x", 2) == 2
+
+
+def test_determine_investment_maximum_capacity_uses_explicit_maximum(
+    project: Project,
+) -> None:
+    """Explicit maximum_capacity must be used if it is valid."""
+    raw_heat_bus = Bus(label="raw_waste_heat")
+    heat_bus = Bus(label="heat")
+
+    component = WasteHeatDirect(
+        name="waste_heat",
+        bus_in_heat=raw_heat_bus,
+        bus_out_heat=heat_bus,
+        project_data=project,
+        heat_profile=[10.0, 20.0],
+        installed_capacity=5.0,
+        maximum_capacity=12.0,
+        optimize_cap=True,
+        efficiency_hex=0.8,
+    )
+
+    assert component.investment_maximum_capacity == pytest.approx(12.0)
+
+
+def test_initialization_rejects_maximum_capacity_below_installed_capacity(
+    project: Project,
+) -> None:
+    """maximum_capacity must not be smaller than installed_capacity."""
+    raw_heat_bus = Bus(label="raw_waste_heat")
+    heat_bus = Bus(label="heat")
+
+    with pytest.raises(
+        ValueError, match="maximum_capacity must be >= installed_capacity."
+    ):
+        WasteHeatDirect(
+            name="waste_heat",
+            bus_in_heat=raw_heat_bus,
+            bus_out_heat=heat_bus,
+            project_data=project,
+            heat_profile=[10.0, 20.0],
+            installed_capacity=10.0,
+            maximum_capacity=5.0,
+            efficiency_hex=0.8,
+        )

@@ -1,6 +1,3 @@
-import warnings
-import pandas as pd
-
 from oemof.solph import Investment
 
 
@@ -34,6 +31,7 @@ def crf(project_life, discount_factor):
 
     return crfv
 
+
 def _create_invest_if_wanted(
     optimise_cap,
     existing_capacity,
@@ -47,10 +45,14 @@ def _create_invest_if_wanted(
 ):
     if optimise_cap:
         if age_installed != 0 or existing_capacity != 0:
-            raise ValueError("When optimizing an asset no existing capacity or installation age is allowed")
+            raise ValueError(
+                "When optimizing an asset no existing capacity or installation age is allowed"
+            )
 
     if age_installed > lifetime:
-        raise ValueError("The lifetime of an existing asset needs to be higher than the age of the asset")
+        raise ValueError(
+            "The lifetime of an existing asset needs to be higher than the age of the asset"
+        )
 
     epc = (
         project_data.calculate_epc(
@@ -81,15 +83,19 @@ def calculate_annuity_mvs(
     lifetime_project,
     discount_factor,
 ):
-
     if optimise_cap:
         first_time_investment = 0
-    else: #means that we don´t optimize but want only the replacement costs
-        first_time_investment =  lifetime - age_installed
+    else:  # means that we dont optimize but want only the replacement costs
+        first_time_investment = lifetime - age_installed
 
-
-    if first_time_investment<lifetime_project: #only consider costs if first investment needed is in lifetime of the project
-        NPV = capex_var * (1 + tax) * (1-discount_factor) ** first_time_investment
+    if (
+        first_time_investment < lifetime_project
+    ):  # only consider costs if first investment needed is in lifetime of the project
+        NPV = (
+            capex_var
+            * (1 + tax)
+            * (1 - discount_factor) ** first_time_investment
+        )
     else:
         NPV = 0
 

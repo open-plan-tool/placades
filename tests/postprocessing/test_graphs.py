@@ -5,8 +5,6 @@ from pathlib import Path
 import pandas as pd
 
 from oemof.datapackage import datapackage  # noqa
-from sqlalchemy import false
-
 from oemof.eesyplan import CarrierBus
 from oemof.eesyplan import Demand
 from oemof.eesyplan import DsoElectricity
@@ -164,8 +162,6 @@ warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
 
 
 def test_sankey_diagram():
-
-
     path = Path(Path(__file__).parent, "../test_data", "openPlan_package")
     energy_system = es.create_energy_system_from_dp(path)
     results = optimise(energy_system)

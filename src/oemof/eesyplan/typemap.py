@@ -12,7 +12,7 @@ from oemof.eesyplan.components.converters.ElectricalTransformator import (
 )
 from oemof.eesyplan.components.converters.Electrolyzer import Electrolyzer
 from oemof.eesyplan.components.converters.FuelCell import FuelCell
-from oemof.eesyplan.components.converters.HeatPump import HeatPump
+from oemof.eesyplan.components.converters.heat_pump import HeatPump
 from oemof.eesyplan.components.demand.electricity_demand import Demand
 from oemof.eesyplan.components.demand.fuel_demand import FuelDemand
 from oemof.eesyplan.components.demand.heat_demand import HeatDemand

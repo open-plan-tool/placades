@@ -3,6 +3,7 @@ from oemof.solph import Flow
 from oemof.solph.components import Converter
 
 
+# TODO: Decide whether FuelCell should support an optional waste-heat output (e.g. bus_out_heat, efficiency_heat).
 class FuelCell(Converter):
     def __init__(
         self,

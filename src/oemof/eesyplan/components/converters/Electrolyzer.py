@@ -140,8 +140,13 @@ class Electrolyzer(Converter):
             )
         }
 
+        conversion_factors = {
+            bus_out_h2: efficiency,
+        }
+
         if bus_out_heat is not None:
             outputs[bus_out_heat] = Flow()
+            conversion_factors[bus_out_heat] = efficiency_heat
 
         self.name = name
         self.age_installed = age_installed
@@ -158,8 +163,5 @@ class Electrolyzer(Converter):
             label=name,
             outputs=outputs,
             inputs=inputs,
-            conversion_factors={
-                bus_out_h2: efficiency,
-                bus_out_heat: efficiency_heat,
-            },
+            conversion_factors=conversion_factors,
         )

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 import pytest
@@ -241,7 +242,7 @@ def test_component_compiles_in_minimal_solph_model(
 def test_validate_bus_rejects_non_bus() -> None:
     """_validate_bus must reject objects that are no solph Bus."""
     with pytest.raises(
-        TypeError, match="bus_in_heat must be an oemof.solph.Bus."
+        TypeError, match=re.escape("bus_in_heat must be an oemof.solph.Bus.")
     ):
         WasteHeatDirect._validate_bus("bus_in_heat", "not-a-bus")
 
@@ -365,7 +366,9 @@ def test_validate_optional_non_negative_float_accepts_none() -> None:
 
 def test_validate_optional_non_negative_float_rejects_negative_value() -> None:
     """_validate_optional_non_negative_float must reject negative values."""
-    with pytest.raises(ValueError, match="maximum_capacity must be >= 0."):
+    with pytest.raises(
+        ValueError, match=re.escape("maximum_capacity must be >= 0.")
+    ):
         WasteHeatDirect._validate_optional_non_negative_float(
             "maximum_capacity", -1.0
         )
@@ -418,7 +421,9 @@ def test_int_validators_reject_invalid_inputs(
 
 def test_validate_bool_rejects_non_bool() -> None:
     """_validate_bool must reject non-bool values."""
-    with pytest.raises(TypeError, match="optimize_cap must be bool."):
+    with pytest.raises(
+        TypeError, match=re.escape("optimize_cap must be bool.")
+    ):
         WasteHeatDirect._validate_bool("optimize_cap", 1)
 
 
@@ -501,7 +506,8 @@ def test_initialization_rejects_maximum_capacity_below_installed_capacity(
     heat_bus = Bus(label="heat")
 
     with pytest.raises(
-        ValueError, match="maximum_capacity must be >= installed_capacity."
+        ValueError,
+        match=re.escape("maximum_capacity must be >= installed_capacity."),
     ):
         WasteHeatDirect(
             name="waste_heat",

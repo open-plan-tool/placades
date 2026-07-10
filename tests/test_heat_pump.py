@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from oemof.eesyplan import Project
-from oemof.eesyplan.components.converters.HeatPump import HeatPump
+from oemof.eesyplan.components.converters.heat_pump import HeatPump
 from oemof.solph import Bus
 from oemof.solph import EnergySystem
 from oemof.solph import Flow

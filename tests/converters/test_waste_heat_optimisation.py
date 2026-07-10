@@ -531,9 +531,11 @@ def _run_waste_heat_reality_case(
             "results": results,
             "termination_condition": termination_condition,
             "solver_error": None,
-            "solph_results": _solph_results(results)
-            if termination_condition == "optimal"
-            else None,
+            "solph_results": (
+                _solph_results(results)
+                if termination_condition == "optimal"
+                else None
+            ),
         }
     )
     return case

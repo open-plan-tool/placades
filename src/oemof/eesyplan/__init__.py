@@ -13,11 +13,11 @@ from oemof.eesyplan.components.converters.ChpVariableRatio import (
 from oemof.eesyplan.components.converters.DieselGenerator import (
     DieselGenerator,
 )
-from oemof.eesyplan.components.converters.ElectricalTransformator import (
+from oemof.eesyplan.components.converters.electrical_transformator import (
     ElectricalTransformator,
 )
-from oemof.eesyplan.components.converters.Electrolyzer import Electrolyzer
-from oemof.eesyplan.components.converters.FuelCell import FuelCell
+from oemof.eesyplan.components.converters.electrolyzer import Electrolyzer
+from oemof.eesyplan.components.converters.fuel_cell import FuelCell
 from oemof.eesyplan.components.converters.heat_pump import HeatPump
 from oemof.eesyplan.components.demand.electricity_demand import Demand
 from oemof.eesyplan.components.demand.fuel_demand import FuelDemand

@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from oemof.eesyplan import Project
-from oemof.eesyplan.components.converters.ElectricalTransformator import (
+from oemof.eesyplan.components.converters.electrical_transformator import (
     ElectricalTransformator,
 )
 from oemof.solph import Bus

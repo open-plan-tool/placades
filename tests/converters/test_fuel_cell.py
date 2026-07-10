@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from oemof.eesyplan import Project
-from oemof.eesyplan.components.converters.FuelCell import FuelCell
+from oemof.eesyplan.components.converters.fuel_cell import FuelCell
 from oemof.solph import Bus
 from oemof.solph import EnergySystem
 from oemof.solph import Flow

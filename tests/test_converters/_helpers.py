@@ -16,6 +16,9 @@ import pandas as pd
 import pytest
 
 from oemof import solph
+from oemof.eesyplan import EnergySystem
+from oemof.eesyplan import Project
+from oemof.eesyplan import optimise
 
 _NOT_GIVEN = object()
 _PLAIN_SCALAR_TYPES = (str, bytes, int, float, bool, type(None))
@@ -517,3 +520,62 @@ def assert_model_builds(component: Any) -> None:
     energy_system.add(*(buses + sources + sinks + [component]))
 
     solph.Model(energy_system)
+
+
+def make_optimisation_project() -> Project:
+    """Return a real Project object for optimisation tests."""
+    return Project(
+        name="Project_X",
+        lifetime=20,
+        tax=0,
+        discount_factor=0.01,
+    )
+
+
+def make_dispatch_energy_system(
+    number: int = 10,
+    *,
+    year: int = 2023,
+) -> tuple[EnergySystem, solph.Bus, solph.Bus, solph.Bus]:
+    """Create a minimal eesyplan energy system for dispatch tests."""
+    energy_system = EnergySystem(year, number=number)
+
+    fuel_bus = solph.Bus(label="fuel", balanced=False)
+    electricity_bus = solph.Bus(label="electricity", balanced=False)
+    heat_bus = solph.Bus(label="heat", balanced=False)
+
+    energy_system.add(fuel_bus, electricity_bus, heat_bus)
+
+    return energy_system, fuel_bus, electricity_bus, heat_bus
+
+
+def optimise_and_get_flow_sum(energy_system: EnergySystem) -> Any:
+    """Optimise the energy system and return summed flows."""
+    results = optimise(energy_system)
+
+    assert "flow" in results, (
+        f"Expected optimise(...) result to contain 'flow'. "
+        f"Got keys: {list(results.keys())!r}."
+    )
+
+    return results["flow"].sum()
+
+
+def summed_flow(flow_sum: Any, source: Any, target: Any) -> Any:
+    """Return summed flow value for a connection."""
+    return scalar(flow_sum[source, target])
+
+
+def assert_summed_flow(
+    flow_sum: Any,
+    source: Any,
+    target: Any,
+    expected: float,
+) -> None:
+    """Assert summed flow value for a connection."""
+    actual = summed_flow(flow_sum, source, target)
+
+    assert actual == pytest.approx(expected), (
+        f"Expected summed flow {source!r} -> {target!r} = {expected!r}, "
+        f"got {actual!r}."
+    )

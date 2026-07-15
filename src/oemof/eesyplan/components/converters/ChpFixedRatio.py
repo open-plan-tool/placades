@@ -9,6 +9,7 @@ from oemof.eesyplan.components.converters._validation import validate_bus
 from oemof.eesyplan.components.converters._validation import (
     validate_efficiency,
 )
+from oemof.eesyplan.components.converters._validation import validate_float
 from oemof.eesyplan.components.converters._validation import (
     validate_maximum_capacity_not_below_installed,
 )
@@ -93,7 +94,7 @@ class ChpFixedRatio(Converter):
     --------
     >>> from oemof.eesyplan import Project
     >>> from oemof.solph import Bus
-    >>> from oemof.eesyplan.components.converters.ChpFixedRatio import (
+    >>> from oemof.eesyplan.components.test_converters.ChpFixedRatio import (
     ...     ChpFixedRatio,
     ... )
     >>> fuel_bus = Bus(label="fuel")
@@ -146,7 +147,9 @@ class ChpFixedRatio(Converter):
         )
         self.bus_out_heat = validate_bus("bus_out_heat", bus_out_heat)
         self.project_data = project_data
-
+        # TODO(review): `project_data` wird aktuell nicht validiert, obwohl die
+        # meisten anderen Eingaben explizit geprüft werden. Eine frühe Validierung
+        # würde Fehler konsistenter und verständlicher machen.
         self.conversion_factor_to_electricity = validate_efficiency(
             "conversion_factor_to_electricity",
             conversion_factor_to_electricity,
@@ -162,6 +165,9 @@ class ChpFixedRatio(Converter):
             > 1.0
         ):
             raise ValueError("Total efficiency must be <= 100%.")
+        # TODO(review): Diese Prüfung verändert das
+        # Verhalten gegenüber der alten Version. Prüfen, ob diese Verschärfung
+        # als beabsichtigte API-/Kompatibilitätsänderung dokumentiert werden soll.
 
         self.age_installed = validate_non_negative_int(
             "age_installed", age_installed
@@ -170,14 +176,24 @@ class ChpFixedRatio(Converter):
             "installed_capacity", installed_capacity
         )
         self.capex_var = validate_non_negative_float("capex_var", capex_var)
+        # TODO(review): `capex_fix` wird validiert und gespeichert, hat aber
+        # aktuell keinen Einfluss auf Investitionsberechnung oder Modellverhalten.
+        # Entweder in `_create_invest_if_wanted(...)` integrieren oder den
+        # Parameter entfernen/deprecated markieren, um eine irreführende API
+        # zu vermeiden.
         self.capex_fix = validate_non_negative_float("capex_fix", capex_fix)
         self.opex_fix = validate_non_negative_float("opex_fix", opex_fix)
-        self.opex_var = validate_non_negative_float("opex_var", opex_var)
+        # TODO(review): opex_var darf auch negativ sein, durch angenommene Erlöse!?!
+        self.opex_var = validate_float("opex_var", opex_var)
         self.lifetime = validate_positive_int("lifetime", lifetime)
         self.optimize_cap = validate_bool("optimize_cap", optimize_cap)
+
         self.maximum_capacity = validate_optional_non_negative_capacity(
             "maximum_capacity", maximum_capacity
         )
+        # TODO(review): Die öffentliche API erlaubt hier `None`, der Default ist
+        # aber `float("+inf")`. Prüfen, ob `None` wirklich unterstützt werden
+        # soll oder ob Typannotation und Doku enger gefasst werden sollten.
 
         validate_maximum_capacity_not_below_installed(
             self.maximum_capacity,
@@ -207,7 +223,10 @@ class ChpFixedRatio(Converter):
             self.bus_out_electricity: self.conversion_factor_to_electricity,
             self.bus_out_heat: self.conversion_factor_to_heat,
         }
-
+        # TODO(review): Die Nennkapazität hängt nur am Strom-Output.
+        # Das sollte in der Doku weiterhin klar hervorgehoben bleiben, damit
+        # keine falschen Erwartungen an eine separat begrenzte Wärmekapazität
+        # entstehen.
         super().__init__(
             label=self.name,
             inputs=inputs,

@@ -399,6 +399,38 @@ class TestChpFixedRatioDispatch:
             _result_flow(results, chp, heat_bus), [0.0, 0.0, 0.0]
         )
 
+    def test_negative_opex_var_dispatches_at_full_capacity_without_demand(
+        self,
+        project: Project,
+    ) -> None:
+        eta_el = 0.4
+        eta_heat = 0.2
+        installed_capacity = 100.0
+
+        es, fuel_bus, electricity_bus, heat_bus, chp = (
+            _build_fixed_ratio_system(
+                project,
+                conversion_factor_to_electricity=eta_el,
+                conversion_factor_to_heat=eta_heat,
+                installed_capacity=installed_capacity,
+                number=4,
+                opex_var=-1.0,
+            )
+        )
+        results = _solve_model(es)
+
+        horizon = _result_horizon(results, chp, electricity_bus)
+
+        expected_el = [installed_capacity] * horizon
+        expected_fuel = [installed_capacity / eta_el] * horizon
+        expected_heat = [(installed_capacity / eta_el) * eta_heat] * horizon
+
+        _assert_all_close(
+            _result_flow(results, chp, electricity_bus), expected_el
+        )
+        _assert_all_close(_result_flow(results, fuel_bus, chp), expected_fuel)
+        _assert_all_close(_result_flow(results, chp, heat_bus), expected_heat)
+
     def test_dispatch_matches_electricity_demand_when_heat_can_be_dumped(
         self,
         project: Project,
@@ -647,6 +679,38 @@ class TestChpVariableRatioDispatch:
         _assert_non_negative(_result_flow(results, chp, electricity_bus))
         _assert_non_negative(_result_flow(results, chp, heat_bus))
 
+    def test_negative_opex_var_dispatches_electricity_at_full_capacity_without_demand(
+        self,
+        project: Project,
+    ) -> None:
+        eta_el = 0.5
+        installed_capacity = 100.0
+
+        es, fuel_bus, electricity_bus, heat_bus, chp = (
+            _build_variable_ratio_system(
+                project,
+                conversion_factor_to_electricity=eta_el,
+                conversion_factor_to_heat=0.3,
+                beta=0.4,
+                installed_capacity=installed_capacity,
+                number=4,
+                opex_var=-1.0,
+            )
+        )
+        results = _solve_model(es)
+
+        horizon = _result_horizon(results, chp, electricity_bus)
+
+        expected_el = [installed_capacity] * horizon
+        expected_fuel = [installed_capacity / eta_el] * horizon
+        expected_heat = [0.0] * horizon
+
+        _assert_all_close(
+            _result_flow(results, chp, electricity_bus), expected_el
+        )
+        _assert_all_close(_result_flow(results, fuel_bus, chp), expected_fuel)
+        _assert_all_close(_result_flow(results, chp, heat_bus), expected_heat)
+
     def test_all_flows_are_non_negative(
         self,
         project: Project,
@@ -728,3 +792,30 @@ class TestChpInvestmentBehaviour:
 
         assert invested is not None
         assert invested >= -1e-8
+
+    def test_chp_fixed_ratio_rejects_time_varying_conversion_factors(
+        project: Project,
+    ) -> None:
+        fuel_bus, electricity_bus, heat_bus = _build_common_buses()
+
+        with pytest.raises(
+            TypeError, match="conversion_factor_to_electricity must be numeric"
+        ):
+            ChpFixedRatio(
+                name="fixed_chp_timeseries",
+                bus_in_fuel=fuel_bus,
+                bus_out_electricity=electricity_bus,
+                bus_out_heat=heat_bus,
+                conversion_factor_to_electricity=[0.6, 0.5, 0.4, 0.3],
+                conversion_factor_to_heat=[0.2, 0.3, 0.4, 0.5],
+                project_data=project,
+                age_installed=0,
+                installed_capacity=100.0,
+                capex_var=1000.0,
+                capex_fix=0.0,
+                opex_fix=0.0,
+                opex_var=-1.0,
+                lifetime=20,
+                optimize_cap=False,
+                maximum_capacity=100.0,
+            )

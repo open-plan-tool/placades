@@ -51,6 +51,8 @@ class Electrolyzer(Converter):
         capex_fix : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `capex_fix=0`, hier steht `default=1000`.
         capex_var : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
@@ -60,20 +62,31 @@ class Electrolyzer(Converter):
         opex_var : float, default=0.01
             Costs associated with a flow through/from the asset
             (OPEX_var or fuel costs).
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `opex_var=0`, hier steht `default=0.01`.
         lifetime : int, default=20
             Number of operational years of the asset until it has to
             be replaced.
         optimize_cap : bool, default=False
             Choose if capacity optimization should be performed for
             this asset.
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `optimize_cap=True`, hier steht `default=False`.
         maximum_capacity : float or None, default=None
             Maximum total capacity of an asset that can be installed
             at the project site.
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `float("+inf")`, hier steht `None`.
         efficiency : float, default=0.8
             Ratio of energy output to energy input.
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `efficiency=0.3`, hier steht `default=0.8`.
         efficiency_heat : float, default=0.6
             TODO find a good attribute name and description
-
+        # TODO(review) [wichtig]: Platzhalterbeschreibung bitte ersetzen.
+            # Unklar ist aktuell, ob `efficiency_heat` ein zusätzlicher
+            # Output-Anteil, ein Abwärmefaktor oder ein Gesamtwirkungsgrad-
+            # Anteil relativ zum elektrischen Input sein soll.
         Examples
         --------
 
@@ -130,6 +143,11 @@ class Electrolyzer(Converter):
             maximum_capacity=maximum_capacity,
             project_data=project_data,
         )
+        # TODO(review) [dringend]: `capex_fix` wird trotz API-Parameter nicht
+        # verwendet. Bitte klären, ob das Absicht, technische Schuld oder
+        # unvollständige Implementierung ist.
+        # TODO(review) [wichtig]: Bitte prüfen, ob `maximum_capacity >=
+        # installed_capacity` validiert werden sollte.
 
         inputs = {bus_in_electricity: Flow()}
 
@@ -139,6 +157,8 @@ class Electrolyzer(Converter):
                 variable_costs=opex_var,
             )
         }
+        # TODO(review) [wichtig]: Bitte bestätigen, dass sich Kapazität
+        # bewusst auf den H2-Output bezieht und nicht auf den Strom-Input.
 
         conversion_factors = {
             bus_out_h2: efficiency,
@@ -147,6 +167,16 @@ class Electrolyzer(Converter):
         if bus_out_heat is not None:
             outputs[bus_out_heat] = Flow()
             conversion_factors[bus_out_heat] = efficiency_heat
+        # TODO(review) [dringend]: `efficiency` und `efficiency_heat` werden
+        # nicht validiert. Bitte fachlich festlegen:
+        # - Muss 0 < efficiency <= 1 gelten?
+        # - Muss 0 <= efficiency_heat <= 1 gelten?
+        # - Muss zusätzlich `efficiency + efficiency_heat <= 1` gelten?
+        #   Das wäre naheliegend, wenn beide Anteile auf denselben elektrischen
+        #   Input bezogen sind.
+        # TODO(review) [wichtig]: Falls `bus_out_heat is None`, wird
+        # `efficiency_heat` aktuell ignoriert. Das ist vermutlich korrekt,
+        # sollte aber dokumentiert werden.
 
         self.name = name
         self.age_installed = age_installed
@@ -159,6 +189,9 @@ class Electrolyzer(Converter):
         self.maximum_capacity = maximum_capacity
         self.efficiency = efficiency
         self.efficiency_heat = efficiency_heat
+        # TODO(review) [mittel]: `optimize_cap` wird genutzt, aber nicht als
+        # Attribut gespeichert. Bitte auf Konsistenz mit anderen Assets prüfen.
+
         super().__init__(
             label=name,
             outputs=outputs,

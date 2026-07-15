@@ -3,8 +3,18 @@
 from __future__ import annotations
 
 import math
+from typing import Any
 
 from oemof.solph import Bus
+
+
+def validate_float(name: str, value: Any) -> float:
+    numeric_value = to_float(name, value)
+
+    if not math.isfinite(numeric_value):
+        raise ValueError(f"{name} must be finite.")
+
+    return numeric_value
 
 
 def validate_name(value: object) -> str:

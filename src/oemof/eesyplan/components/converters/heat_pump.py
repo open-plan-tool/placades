@@ -16,6 +16,12 @@ class HeatPump(Converter):
         age_installed=0,
         installed_capacity=0,
         capex_fix=1000,
+        # TODO(review) [dringend]: `capex_fix` ist dokumentiert und wird als
+        # Attribut gespeichert, fließt aber unten nicht in die
+        # Investitionslogik ein. Bitte festlegen:
+        # 1) bewusst ungenutzt für API-Kompatibilität,
+        # 2) Implementierung unvollständig,
+        # 3) oder Parameter entfernen.
         capex_var=1000,
         opex_var=0.01,
         opex_fix=10,
@@ -23,6 +29,10 @@ class HeatPump(Converter):
         optimize_cap=False,
         maximum_capacity=None,
         cop=3,
+        # TODO(review) [wichtig]: Bitte fachlich/API-seitig bestätigen, ob
+        # `cop` bewusst sowohl als Skalar als auch als zeitabhängige Sequenz
+        # unterstützt werden soll. Falls ja, sollte die erwartete Form
+        # (list, np.ndarray, Länge = Zeitschritte) explizit dokumentiert werden.
     ):
         """
         Heat pump for efficient heat generation.
@@ -110,9 +120,19 @@ class HeatPump(Converter):
 
         if isinstance(cop, list):
             cop = np.array(cop)
+        # TODO(review) [dringend]: `cop` wird vor der Verwendung nicht validiert.
+        # Bitte bestätigen, dass folgende Fälle bewusst ausgeschlossen oder
+        # abgefangen werden sollen:
+        # - cop <= 0  -> Division durch 0 oder negative Faktoren
+        # - 0 < cop < 1 -> fachlich fragwürdig für Wärmepumpe
+        # - leere / falsch dimensionierte Sequenzen
+        # - zeitabhängiges cop mit unpassender Länge zum Zeithorizont
 
         nv = _create_invest_if_wanted(
             optimise_cap=optimize_cap,
+            # TODO(review) [nice-to-have]: Öffentliche API nutzt `optimize_cap`,
+            # der Helper aber `optimise_cap`. Bitte mittelfristig
+            # vereinheitlichen oder kurz kommentieren.
             capex_var=capex_var,
             opex_fix=opex_fix,
             lifetime=lifetime,
@@ -123,6 +143,10 @@ class HeatPump(Converter):
         )
 
         inputs = {bus_in_heat: Flow(), bus_in_electricity: Flow()}
+        # TODO(review) [mittel]: Bitte bestätigen, dass beide Inputs bewusst
+        # ohne weitere Restriktionen modelliert werden. Falls z. B. der
+        # Umweltwärme-Input begrenzt werden können soll, wäre hier ggf. eine
+        # Erweiterung nötig.
 
         outputs = {
             bus_out_heat: Flow(
@@ -135,6 +159,14 @@ class HeatPump(Converter):
             bus_in_electricity: 1 / cop,
             bus_in_heat: (cop - 1) / cop,
         }
+        # TODO(review) [dringend]: Bei ungültigem `cop` entstehen hier sofort
+        # problematische Werte. Insbesondere:
+        # - cop == 0 -> ZeroDivisionError
+        # - cop < 0 -> negative Umwandlungsfaktoren
+        # - cop < 1 -> negativer Wärmeanteil aus der Umweltquelle
+        # Bitte fachlich entscheiden, welche Schranken gelten sollen.
+        # TODO(review) [mittel]: Falls `cop` zeitabhängig ist, bitte prüfen, ob
+        # solph hier die resultierenden Arrays in genau dieser Form erwartet.
 
         super().__init__(
             label=name,

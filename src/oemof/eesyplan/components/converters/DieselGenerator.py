@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
+# TODO(review) [dringend]: `Any` für `project_data` ist sehr offen.
+# Bitte entweder einen konkreteren Typ verwenden oder `project_data`
+# explizit validieren, damit Fehler früher und klarer auftreten.
 from oemof.eesyplan.components.converters._validation import validate_bool
 from oemof.eesyplan.components.converters._validation import validate_bus
 from oemof.eesyplan.components.converters._validation import (
@@ -48,6 +51,8 @@ class DieselGenerator(Converter):
         Electricity output bus.
     project_data : oemof.eesyplan.Project
         Project data used to calculate investment annuities.
+    # TODO(review) [dringend]: Wird dokumentiert, aber im Code nicht
+        # typisiert oder validiert.
     efficiency : float, default=0.3
         Electrical efficiency. Must satisfy ``0 < efficiency <= 1``.
     age_installed : int, default=0
@@ -58,6 +63,10 @@ class DieselGenerator(Converter):
         Specific investment costs related to electrical output capacity.
     capex_fix : float, default=0.0
         Fixed investment costs. Stored for consistency.
+    # TODO(review) [wichtig]: `capex_fix` wird zwar gespeichert, aber
+        # in der eigentlichen Investitionslogik nicht verwendet.
+        # Bitte bewusst entscheiden: implementieren, entfernen oder klar
+        # als reine Metadaten deklarieren.
     opex_fix : float, default=10.0
         Fixed operating costs related to installed electrical capacity.
     opex_var : float, default=0.0
@@ -68,6 +77,9 @@ class DieselGenerator(Converter):
         If ``True``, output capacity is optimized using an investment flow.
     maximum_capacity : float or None, default=float("+inf")
         Maximum total electrical output capacity.
+    # TODO(review) [mittel]: Der Typ erlaubt `None`, der Default ist aber
+        # `float("+inf")`. Semantisch wäre entweder `None` als echter Default
+        # oder ein reiner `float`-Typ konsistenter.
 
     Notes
     -----
@@ -83,7 +95,7 @@ class DieselGenerator(Converter):
     --------
     >>> from oemof.eesyplan import Project
     >>> from oemof.solph import Bus
-    >>> from oemof.eesyplan.components.converters.DieselGenerator import (
+    >>> from oemof.eesyplan.components.test_converters.DieselGenerator import (
     ...     DieselGenerator,
     ... )
     >>> fuel_bus = Bus(label="diesel")
@@ -122,6 +134,8 @@ class DieselGenerator(Converter):
         lifetime: int = 20,
         optimize_cap: bool = True,
         maximum_capacity: float | None = float("+inf"),
+        # TODO(review) [mittel]: Falls `None` wirklich unterstützt wird,
+        # wäre `maximum_capacity: float | None = None` evtl. sauberer.
     ) -> None:
         """Initialize a diesel generator converter."""
         self.name = validate_name(name)
@@ -130,6 +144,8 @@ class DieselGenerator(Converter):
             "bus_out_electricity", bus_out_electricity
         )
         self.project_data = project_data
+        # TODO(review) [dringend]: `project_data` sollte idealerweise vor der
+        # Weitergabe an `_create_invest_if_wanted` validiert werden.
 
         self.efficiency = validate_efficiency("efficiency", efficiency)
         self.age_installed = validate_non_negative_int(
@@ -155,6 +171,9 @@ class DieselGenerator(Converter):
 
         nominal_capacity = _create_invest_if_wanted(
             optimise_cap=self.optimize_cap,
+            # TODO(review) [nice-to-have]: Schreibweise `optimise_cap`
+            # im Helper vs. `optimize_cap` in der öffentlichen API
+            # mittelfristig vereinheitlichen.
             capex_var=self.capex_var,
             opex_fix=self.opex_fix,
             lifetime=self.lifetime,
@@ -163,6 +182,9 @@ class DieselGenerator(Converter):
             maximum_capacity=self.maximum_capacity,
             project_data=self.project_data,
         )
+        # TODO(review) [wichtig]: Bitte fachlich bestätigen, dass sich die
+        # Investitions-/Bestandskapazität bewusst auf den elektrischen Output
+        # und nicht auf den Brennstoffinput bezieht.
 
         inputs = {self.bus_in_fuel: Flow()}
         outputs = {

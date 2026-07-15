@@ -83,7 +83,7 @@ class Boiler(Converter):
     --------
     >>> from oemof.eesyplan import Project
     >>> from oemof.solph import Bus
-    >>> from oemof.eesyplan.components.converters.Boiler import Boiler
+    >>> from oemof.eesyplan.components.test_converters.Boiler import Boiler
     >>> fuel_bus = Bus(label="fuel")
     >>> heat_bus = Bus(label="heat")
     >>> project = Project(
@@ -125,8 +125,15 @@ class Boiler(Converter):
         self.name = validate_name(name)
         self.bus_in_fuel = validate_bus("bus_in_fuel", bus_in_fuel)
         self.bus_out_heat = validate_bus("bus_out_heat", bus_out_heat)
+
+        # TODO(review): `project_data` wird aktuell nicht explizit validiert,
+        #  obwohl fast alle anderen Eingaben geprüft werden. Eine frühe
+        #  Validierung würde Fehler konsistenter und verständlicher machen.
         self.project_data = project_data
 
+        # TODO(review): Falls `validate_efficiency(...)` den Wert 0 bewusst
+        #  ausschließt, sollte diese strengere Validierung als Verhaltensänderung
+        #  gegenüber älteren Versionen klar dokumentiert werden.
         self.efficiency = validate_efficiency("efficiency", efficiency)
         self.age_installed = validate_non_negative_int(
             "age_installed", age_installed
@@ -135,15 +142,23 @@ class Boiler(Converter):
             "installed_capacity", installed_capacity
         )
         self.capex_var = validate_non_negative_float("capex_var", capex_var)
+        # TODO(review): `capex_fix` wird validiert und gespeichert, hat aber
+        #  aktuell keinen Einfluss auf die Investitionsberechnung oder das
+        #  Laufzeitverhalten. Entweder in `_create_invest_if_wanted(...)`
+        #  integrieren oder den Parameter entfernen/deprecated markieren.
         self.capex_fix = validate_non_negative_float("capex_fix", capex_fix)
         self.opex_fix = validate_non_negative_float("opex_fix", opex_fix)
         self.opex_var = validate_non_negative_float("opex_var", opex_var)
         self.lifetime = validate_positive_int("lifetime", lifetime)
         self.optimize_cap = validate_bool("optimize_cap", optimize_cap)
+        # TODO(review): Die API erlaubt hier `None`, der Default ist aber
+        #  `float("+inf")`. Typannotation, Default und Doku sollten klar
+        #  aufeinander abgestimmt werden.
         self.maximum_capacity = validate_optional_non_negative_capacity(
             "maximum_capacity", maximum_capacity
         )
-
+        # TODO(review): Konsistenzprüfung; diese verschärfte Validierung sollte
+        #  als potenzielle Kompatibilitätsänderung dokumentiert werden.
         validate_maximum_capacity_not_below_installed(
             self.maximum_capacity,
             self.installed_capacity,
@@ -168,6 +183,9 @@ class Boiler(Converter):
             )
         }
 
+        # TODO(review): Doku stellt klar, dass sich `installed_capacity` und
+        #  `maximum_capacity` auf den Nutzwärme-Output beziehen. Diese Semantik
+        #  sollte bei API-Änderungen unbedingt konsistent beibehalten werden.
         super().__init__(
             label=self.name,
             inputs=inputs,

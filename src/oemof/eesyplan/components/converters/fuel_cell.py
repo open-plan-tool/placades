@@ -49,6 +49,9 @@ class FuelCell(Converter):
         capex_fix : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
+            # TODO(review) [dringend]: Docstring widerspricht der Signatur:
+            # Im Code ist `capex_fix=0`, hier steht `default=1000`.
+            # Bitte korrigieren.
         capex_var : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
@@ -58,15 +61,23 @@ class FuelCell(Converter):
         opex_var : float, default=0.01
             Costs associated with a flow through/from the asset
             (OPEX_var or fuel costs).
+            # TODO(review) [dringend]: Docstring widerspricht der Signatur:
+            # Im Code ist `opex_var=0`, hier steht `default=0.01`.
         lifetime : int, default=20
             Number of operational years of the asset until it has to
             be replaced.
         optimize_cap : bool, default=False
             Choose if capacity optimization should be performed for
             this asset.
+            # TODO(review) [dringend]: Docstring widerspricht der Signatur:
+            # Im Code ist `optimize_cap=True`, hier steht `default=False`.
+            # Bitte fachlich bestätigen, welcher Default gewollt ist.
         maximum_capacity : float or None, default=None
             Maximum total capacity of an asset that can be installed
             at the project site.
+            # TODO(review) [dringend]: Auch hier Widerspruch zur Signatur:
+            # Im Code ist `float("+inf")`, im Docstring `None`.
+            # API-Semantik bitte vereinheitlichen.
         efficiency : float, default=0.8
             Ratio of energy output to energy input.
 
@@ -95,9 +106,16 @@ class FuelCell(Converter):
         ...     )
         ... )
         """
+        # TODO(review) [wichtig]: Es fehlt durchgehend Eingabevalidierung
+        # für name, Busse, Kostenparameter, lifetime, capacities und bools.
+        # Bitte prüfen, ob diese Komponente an die übrigen validierten
+        # Komponenten angeglichen werden soll.
 
         nv = _create_invest_if_wanted(
             optimise_cap=optimize_cap,
+            # TODO(review) [nice-to-have]: Öffentliche API nutzt
+            # `optimize_cap`, der Helper aber `optimise_cap`.
+            # Mittelfristig vereinheitlichen.
             capex_var=capex_var,
             opex_fix=opex_fix,
             lifetime=lifetime,
@@ -107,6 +125,16 @@ class FuelCell(Converter):
             project_data=project_data,
         )
 
+        # TODO(review) [dringend]: `capex_fix` wird hier nicht verwendet,
+        # obwohl es Teil der öffentlichen API ist und später gespeichert wird.
+        # Bitte entscheiden:
+        # - bewusst ungenutzt für API-Kompatibilität?
+        # - Implementierung unvollständig?
+        # - Parameter entfernen?
+        # TODO(review) [wichtig]: Es fehlt eine Konsistenzprüfung
+        # `maximum_capacity >= installed_capacity`. Bitte bestätigen, ob das
+        # zentral garantiert wird oder hier geprüft werden sollte.
+
         inputs = {bus_in_h2: Flow()}
 
         outputs = {
@@ -115,6 +143,10 @@ class FuelCell(Converter):
                 variable_costs=opex_var,
             )
         }
+
+        # TODO(review) [wichtig]: Bitte bestätigen, dass sich
+        # `installed_capacity` und `maximum_capacity` bewusst auf die
+        # elektrische Ausgangsleistung beziehen.
 
         self.name = name
         self.age_installed = age_installed
@@ -126,10 +158,16 @@ class FuelCell(Converter):
         self.lifetime = lifetime
         self.maximum_capacity = maximum_capacity
         self.efficiency = efficiency
+        # TODO(review) [mittel]: `optimize_cap` wird verwendet, aber nicht als
+        # Attribut gespeichert. Bitte prüfen, ob das bewusst so ist oder ob
+        # `self.optimize_cap` zur Konsistenz mit anderen Komponenten fehlt.
 
         super().__init__(
             label=name,
             outputs=outputs,
             inputs=inputs,
             conversion_factors={bus_out_electricity: efficiency},
+            # TODO(review) [dringend]: `efficiency` wird nicht validiert.
+            # Bitte festlegen, ob hier nur 0 < efficiency <= 1 zulässig ist.
+            # Ohne Prüfung sind auch 0, negative oder >1-Werte möglich.
         )

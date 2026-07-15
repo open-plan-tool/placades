@@ -95,7 +95,7 @@ class DieselGenerator(Converter):
     --------
     >>> from oemof.eesyplan import Project
     >>> from oemof.solph import Bus
-    >>> from oemof.eesyplan.components.test_converters.DieselGenerator import (
+    >>> from oemof.eesyplan.components.converters.DieselGenerator import (
     ...     DieselGenerator,
     ... )
     >>> fuel_bus = Bus(label="diesel")

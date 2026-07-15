@@ -94,7 +94,7 @@ class ChpFixedRatio(Converter):
     --------
     >>> from oemof.eesyplan import Project
     >>> from oemof.solph import Bus
-    >>> from oemof.eesyplan.components.test_converters.ChpFixedRatio import (
+    >>> from oemof.eesyplan.components.converters.ChpFixedRatio import (
     ...     ChpFixedRatio,
     ... )
     >>> fuel_bus = Bus(label="fuel")

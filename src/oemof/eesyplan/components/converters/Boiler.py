@@ -83,7 +83,7 @@ class Boiler(Converter):
     --------
     >>> from oemof.eesyplan import Project
     >>> from oemof.solph import Bus
-    >>> from oemof.eesyplan.components.test_converters.Boiler import Boiler
+    >>> from oemof.eesyplan.components.converters.Boiler import Boiler
     >>> fuel_bus = Bus(label="fuel")
     >>> heat_bus = Bus(label="heat")
     >>> project = Project(

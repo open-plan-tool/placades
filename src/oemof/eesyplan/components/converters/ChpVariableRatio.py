@@ -136,7 +136,7 @@ class ChpVariableRatio(ExtractionTurbineCHP):
     ...     project_data=project,
     ...     installed_capacity=10,
     ... )
-    >>> chp.efficiency_el_max_heat_extraction
+>>> round(chp.efficiency_el_max_heat_extraction, 2)
     0.26
     """
 

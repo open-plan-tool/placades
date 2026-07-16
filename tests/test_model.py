@@ -1,23 +1,19 @@
 import numpy as np
 import pandas as pd
 
-from oemof.eesyplan import (
-    CarrierBus,
-    Demand,
-    DsoElectricity,
-    PvPlant,
-    Project,
-    WindTurbine,
-)
-from oemof.eesyplan.model import EnergySystem, optimise
+from oemof.eesyplan import CarrierBus
+from oemof.eesyplan import Demand
+from oemof.eesyplan import DsoElectricity
+from oemof.eesyplan import Project
+from oemof.eesyplan import WindTurbine
+from oemof.eesyplan.model import EnergySystem
+from oemof.eesyplan.model import optimise
 
 
 def _make_energy_system():
     idx = pd.date_range("2019-01-01", periods=24, freq="h")
     es = EnergySystem(timeindex=idx)
-    project = Project(
-        name="test", lifetime=20, tax=0, discount_factor=0.01
-    )
+    project = Project(name="test", lifetime=20, tax=0, discount_factor=0.01)
     bus = CarrierBus(name="electricity_bus")
     DsoElectricity(
         name="dso",

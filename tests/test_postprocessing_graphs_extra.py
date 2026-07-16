@@ -1,21 +1,17 @@
 import numpy as np
 import pandas as pd
 
-from oemof.eesyplan import (
-    CarrierBus,
-    Demand,
-    DsoElectricity,
-    EnergySystem,
-    Project,
-    PvPlant,
-)
+from oemof.eesyplan import CarrierBus
+from oemof.eesyplan import Demand
+from oemof.eesyplan import DsoElectricity
+from oemof.eesyplan import EnergySystem
+from oemof.eesyplan import Project
+from oemof.eesyplan import PvPlant
 from oemof.eesyplan.postprocessing.graphs import sankey
 
 
 def test_sankey_with_unknown_node_in_flows():
-    project = Project(
-        name="test", lifetime=20, tax=0, discount_factor=0.01
-    )
+    project = Project(name="test", lifetime=20, tax=0, discount_factor=0.01)
     idx = pd.date_range("2020-01-01", periods=24, freq="h")
     es = EnergySystem(timeindex=idx)
 

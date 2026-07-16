@@ -1,11 +1,9 @@
 import pytest
 
 from oemof.eesyplan import Project
-from oemof.eesyplan.investment import (
-    _create_invest_if_wanted,
-    calculate_annuity_mvs,
-    crf,
-)
+from oemof.eesyplan.investment import _create_invest_if_wanted
+from oemof.eesyplan.investment import calculate_annuity_mvs
+from oemof.eesyplan.investment import crf
 
 
 def _make_project():

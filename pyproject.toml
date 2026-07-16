@@ -107,6 +107,9 @@ include = [
   "ci/templates/.github/workflows/github-actions.yml",
   "pytest.ini",
   "tests/test_data/TRY2015_39065002972500_Jahr.dat",
+  "tests/test_data/openPlan_package/datapackage.graphml",
+  "local.txt",
+  "tox.txt",
 ]
 exclude = ["docs/_build", "**/*.egg-info"]
 

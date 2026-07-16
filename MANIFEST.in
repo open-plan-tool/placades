@@ -14,7 +14,6 @@ include .taplo.toml
 include pyproject.toml
 include pytest.ini
 include tox.ini
-include *.txt
 
 include AUTHORS.rst
 include CHANGELOG.rst

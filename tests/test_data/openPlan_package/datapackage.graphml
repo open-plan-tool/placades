@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d0" for="node" attr.name="label" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="electricity">
+      <data key="d0">electricity</data>
+    </node>
+    <node id="lithium_battery_system">
+      <data key="d0">lithium_battery_system</data>
+    </node>
+    <node id="demand_el">
+      <data key="d0">demand_el</data>
+    </node>
+    <node id="My_DSO">
+      <data key="d0">My_DSO</data>
+    </node>
+    <node id="pv">
+      <data key="d0">pv</data>
+    </node>
+    <node id="wind">
+      <data key="d0">wind</data>
+    </node>
+    <node id="('internal_bus', 'My_DSO')">
+      <data key="d0">('internal_bus', 'My_DSO')</data>
+    </node>
+    <node id="('feedin_converter', 'My_DSO')">
+      <data key="d0">('feedin_converter', 'My_DSO')</data>
+    </node>
+    <node id="('feedin_sink', 'My_DSO')">
+      <data key="d0">('feedin_sink', 'My_DSO')</data>
+    </node>
+    <node id="('consumption_converter', 'My_DSO')">
+      <data key="d0">('consumption_converter', 'My_DSO')</data>
+    </node>
+    <node id="('consumption_source', 'My_DSO')">
+      <data key="d0">('consumption_source', 'My_DSO')</data>
+    </node>
+    <edge source="electricity" target="lithium_battery_system" />
+    <edge source="electricity" target="demand_el" />
+    <edge source="electricity" target="('feedin_converter', 'My_DSO')" />
+    <edge source="lithium_battery_system" target="electricity" />
+    <edge source="pv" target="electricity" />
+    <edge source="wind" target="electricity" />
+    <edge source="('internal_bus', 'My_DSO')" target="('feedin_sink', 'My_DSO')" />
+    <edge source="('internal_bus', 'My_DSO')" target="('consumption_converter', 'My_DSO')" />
+    <edge source="('feedin_converter', 'My_DSO')" target="('internal_bus', 'My_DSO')" />
+    <edge source="('consumption_converter', 'My_DSO')" target="electricity" />
+    <edge source="('consumption_source', 'My_DSO')" target="('internal_bus', 'My_DSO')" />
+  </graph>
+</graphml>

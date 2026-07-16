@@ -63,9 +63,19 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             name="wind",
             bus_out_electricity=bus_elec,
             input_timeseries=data["wind"],
-            installed_capacity=0.25,
+            installed_capacity=0,
             project_data=project,
             optimize_cap=True,
+        )
+    )
+    energy_system.add(
+        WindTurbine(
+            name="wind2",
+            bus_out_electricity=bus_elec,
+            input_timeseries=data["wind"],
+            installed_capacity=0.25,
+            project_data=project,
+            optimize_cap=False,
         )
     )
 
@@ -75,9 +85,20 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             bus_out_electricity=bus_elec,
             project_data=project,
             capex_var=0.01,
-            installed_capacity=pv_installed_cap,
+            installed_capacity=0,
             input_timeseries=data["pv"],
             optimize_cap=True,
+        )
+    )
+    energy_system.add(
+        PvPlant(
+            name="pv2",
+            bus_out_electricity=bus_elec,
+            project_data=project,
+            capex_var=0.01,
+            installed_capacity=pv_installed_cap,
+            input_timeseries=data["pv"],
+            optimize_cap=False,
         )
     )
 
@@ -86,12 +107,31 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             name="Batterie",
             bus_in_electricity=bus_elec,
             age_installed=0,
+            installed_capacity=0,
+            capex_var=3.0,
+            opex_fix=5.0,
+            opex_var=0.0,
+            lifetime=10.0,
+            optimize_cap=True,
+            soc_max=1,
+            soc_min=0,
+            crate=1.0,
+            efficiency=0.99,
+            project_data=project,
+            self_discharge=0.000,
+        )
+    )
+    energy_system.add(
+        ElectricalStorage(
+            name="Batterie2",
+            bus_in_electricity=bus_elec,
+            age_installed=0,
             installed_capacity=10,
             capex_var=3.0,
             opex_fix=5.0,
             opex_var=0.0,
             lifetime=10.0,
-            optimize_cap=optimize_battery,
+            optimize_cap=False,
             soc_max=1,
             soc_min=0,
             crate=1.0,
@@ -127,6 +167,7 @@ def test_sankey_diagram():
     results = optimise(energy_system)
 
     fig, _ = sankey(results["flow"], es=energy_system)
+
     with Path(
         Path(__file__).parent, "../test_data", "sankey_dict.json"
     ).open() as fp:

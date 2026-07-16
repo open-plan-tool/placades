@@ -92,7 +92,7 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         ...     bus_in_fuel=gas_bus,
         ...     bus_out_heat=heat_bus,
         ...     bus_out_electricity=el_bus,
-        ...     installed_capacity=300,
+        ...     installed_capacity=0,
         ...     conversion_factor_to_electricity=0.3,
         ...     conversion_factor_to_heat=0.5,
         ...     beta=0.5,

@@ -86,7 +86,7 @@ class ThermalStorage(GenericStorage):
         ...     bus_in_heat=heat_bus,
         ...     bus_out_heat=heat_bus,
         ...     age_installed=0,
-        ...     installed_capacity=0.1,
+        ...     installed_capacity=0,
         ...     capex_var=3,
         ...     opex_fix=5,
         ...     opex_var=0,
@@ -98,7 +98,7 @@ class ThermalStorage(GenericStorage):
         ...     efficiency=0.99,
         ...     project_data=my_project,
         ...     fixed_thermal_losses_relative=0.6,
-        ...     fixed_thermal_losses_absolute=200,
+        ...     fixed_thermal_losses_absolute=0,
         ...     thermal_loss_rate=0.0001,
         ... )
         """
@@ -125,8 +125,8 @@ class ThermalStorage(GenericStorage):
             self.crate_charge = crate
             self.crate_discharge = crate
         else:
-            self.capacity_charge = nv * crate
-            self.capacity_discharge = nv * crate
+            self.capacity_charge = installed_capacity * crate
+            self.capacity_discharge = installed_capacity * crate
             self.crate_charge = None
             self.crate_discharge = None
 

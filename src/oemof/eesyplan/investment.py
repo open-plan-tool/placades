@@ -1,7 +1,3 @@
-import warnings
-
-import pandas as pd
-
 from oemof.solph import Investment
 
 
@@ -36,73 +32,6 @@ def crf(project_life, discount_factor):
     return crfv
 
 
-def get_replacement_costs(
-    age_of_asset,
-    project_lifetime,
-    asset_lifetime,
-    first_time_investment,
-    discount_factor,
-):
-    """From mvs src/multi_vector_simulator/C2_economic_functions.py"""
-    if project_lifetime + age_of_asset == asset_lifetime:
-        number_of_investments = 1
-    else:
-        number_of_investments = round(
-            (project_lifetime + age_of_asset) / asset_lifetime + 0.5
-        )
-
-    replacement_costs = 0
-    latest_investment = first_time_investment
-    year = -age_of_asset
-    if abs(year) > asset_lifetime:
-        warnings.warn(
-            f"The age of the asset ({age_of_asset} years) is lower or equal "
-            f"than the asset lifetime ({asset_lifetime} years). This does not "
-            f"make sense, as a replacement is imminent or should already have "
-            f"happened. Please check this value.",
-            stacklevel=2,
-        )
-
-    present_value_of_capital_expenditures = pd.DataFrame(
-        [0.0 for _i in range(project_lifetime + 1)],
-        index=list(range(project_lifetime + 1)),
-    )
-
-    for _count_of_replacements in range(1, number_of_investments):
-        year += asset_lifetime
-        if year < project_lifetime:
-            latest_investment = first_time_investment / (
-                (1 + discount_factor) ** year
-            )
-            replacement_costs += latest_investment
-            present_value_of_capital_expenditures.loc[year] = latest_investment
-        elif year == project_lifetime:
-            warnings.warn(
-                "No asset replacement costs are computed for the project's "
-                "last year as the asset reach its end-of-life exactly on that"
-                " year",
-                stacklevel=2,
-            )
-
-    if year != project_lifetime:
-        year += asset_lifetime
-    if year > project_lifetime:
-        linear_depreciation_last_investment = (
-            latest_investment / asset_lifetime
-        )
-        value_at_project_end = (
-            linear_depreciation_last_investment
-            * (year - project_lifetime)
-            / (1 + discount_factor) ** project_lifetime
-        )
-        replacement_costs -= value_at_project_end
-        present_value_of_capital_expenditures.loc[
-            project_lifetime
-        ] = -value_at_project_end
-
-    return replacement_costs
-
-
 def _create_invest_if_wanted(
     optimise_cap,
     existing_capacity,
@@ -114,39 +43,61 @@ def _create_invest_if_wanted(
     maximum_capacity=float("+inf"),
     minimum_capacity=0,
 ):
-    if optimise_cap is True:
-        epc = (
-            project_data.calculate_epc(
-                capex_var, lifetime, age_installed, method="mvs"
+    if optimise_cap:
+        if age_installed != 0 or existing_capacity != 0:
+            raise ValueError(
+                "When optimizing an asset no existing capacity or installation age is allowed"
             )
-            + opex_fix
+
+    if age_installed > lifetime:
+        raise ValueError(
+            "The lifetime of an existing asset needs to be higher than the age of the asset"
         )
+
+    epc = (
+        project_data.calculate_epc(
+            optimise_cap, capex_var, lifetime, age_installed, method="mvs"
+        )
+        + opex_fix
+    )
+    if optimise_cap is True:
         return Investment(
             ep_costs=epc,
-            existing=existing_capacity,
             maximum=maximum_capacity,
             minimum=minimum_capacity,
         )
     else:
-        return existing_capacity
+        return Investment(
+            ep_costs=epc,
+            maximum=existing_capacity,
+            minimum=existing_capacity,
+        )
 
 
 def calculate_annuity_mvs(
+    optimise_cap,
     capex_var,
     lifetime,
-    age_installed,  # was used in a second call of get_replacement_costs
+    age_installed,
     tax,
     lifetime_project,
     discount_factor,
 ):
-    # ToDo: As I understand it should be: remaining = lifetime - age_installed
-    first_time_investment = capex_var * (1 + tax)
-    specific_replacement_costs_optimized = get_replacement_costs(
-        0, lifetime_project, lifetime, first_time_investment, discount_factor
-    )
-    specific_capex = (
-        first_time_investment + specific_replacement_costs_optimized
-    )
+    if optimise_cap:
+        first_time_investment = 0
+    else:  # means that we dont optimize but want only the replacement costs
+        first_time_investment = lifetime - age_installed
 
-    specific_capex *= crf(lifetime_project, discount_factor)
-    return specific_capex
+    if (
+        first_time_investment < lifetime_project
+    ):  # only consider costs if first investment needed is in lifetime of the project
+        NPV = (
+            capex_var
+            * (1 + tax)
+            * (1 - discount_factor) ** first_time_investment
+        )
+    else:
+        NPV = 0
+
+    eq_annual_capex = NPV * crf(lifetime, discount_factor)
+    return eq_annual_capex

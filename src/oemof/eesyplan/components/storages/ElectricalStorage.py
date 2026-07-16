@@ -133,8 +133,8 @@ class ElectricalStorage(GenericStorage):
             self.crate_charge = crate
             self.crate_discharge = crate
         else:
-            self.capacity_charge = nv * crate
-            self.capacity_discharge = nv * crate
+            self.capacity_charge = installed_capacity * crate
+            self.capacity_discharge = installed_capacity * crate
             self.crate_charge = None
             self.crate_discharge = None
 

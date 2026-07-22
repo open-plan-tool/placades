@@ -7,8 +7,8 @@ import pytest
 from pyomo.environ import SolverFactory
 
 from oemof.eesyplan import Project
-from oemof.eesyplan.components.converters.ChpFixedRatio import ChpFixedRatio
-from oemof.eesyplan.components.converters.ChpVariableRatio import (
+from oemof.eesyplan.components.converters.chp_fixed_ratio import ChpFixedRatio
+from oemof.eesyplan.components.converters.chp_variable_ratio import (
     ChpVariableRatio,
 )
 from oemof.solph import Bus

@@ -5,12 +5,12 @@ __version__ = "0.0.1"
 from oemof.eesyplan.components.buses.carrier import CarrierBus
 from oemof.eesyplan.components.compansation.excess import Excess
 from oemof.eesyplan.components.compansation.shortage import Shortage
-from oemof.eesyplan.components.converters.Boiler import Boiler
-from oemof.eesyplan.components.converters.ChpFixedRatio import ChpFixedRatio
-from oemof.eesyplan.components.converters.ChpVariableRatio import (
+from oemof.eesyplan.components.converters.boiler import Boiler
+from oemof.eesyplan.components.converters.chp_fixed_ratio import ChpFixedRatio
+from oemof.eesyplan.components.converters.chp_variable_ratio import (
     ChpVariableRatio,
 )
-from oemof.eesyplan.components.converters.DieselGenerator import (
+from oemof.eesyplan.components.converters.diesel_generator import (
     DieselGenerator,
 )
 from oemof.eesyplan.components.converters.electrical_transformator import (

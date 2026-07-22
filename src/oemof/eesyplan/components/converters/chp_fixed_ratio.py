@@ -1,4 +1,4 @@
-"""Boiler converter component."""
+"""Fixed-ratio combined heat and power converter component."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from oemof.eesyplan.components.converters._validation import validate_bus
 from oemof.eesyplan.components.converters._validation import (
     validate_efficiency,
 )
+from oemof.eesyplan.components.converters._validation import validate_float
 from oemof.eesyplan.components.converters._validation import (
     validate_maximum_capacity_not_below_installed,
 )
@@ -31,12 +32,12 @@ from oemof.solph import Flow
 from oemof.solph.components import Converter
 
 
-class Boiler(Converter):
-    """Boiler for heat generation.
+class ChpFixedRatio(Converter):
+    """Combined heat and power plant with fixed output ratio.
 
-    The boiler converts fuel energy from ``bus_in_fuel`` into useful heat on
-    ``bus_out_heat``. The installed or optimized capacity is related to the
-    useful heat output flow.
+    The component converts fuel into electricity and heat with fixed
+    conversion factors. The installed or optimized capacity is related to the
+    electricity output flow.
 
     Parameters
     ----------
@@ -44,47 +45,60 @@ class Boiler(Converter):
         Name of the asset.
     bus_in_fuel : oemof.solph.Bus
         Fuel input bus.
+    bus_out_electricity : oemof.solph.Bus
+        Electricity output bus.
     bus_out_heat : oemof.solph.Bus
-        Useful heat output bus.
+        Heat output bus.
+    conversion_factor_to_electricity : float
+        Electrical efficiency. Must satisfy ``0 < value <= 1``.
+    conversion_factor_to_heat : float
+        Thermal efficiency. Must satisfy ``0 < value <= 1``.
     project_data : oemof.eesyplan.Project
         Project data used to calculate investment annuities.
-    efficiency : float, default=0.8
-        Boiler efficiency. Must satisfy ``0 < efficiency <= 1``.
     age_installed : int, default=0
         Number of years the installed capacity has already been in operation.
     installed_capacity : float, default=0.0
-        Existing useful heat output capacity.
+        Existing electrical output capacity.
     capex_var : float, default=1000.0
-        Specific investment costs related to useful heat output capacity.
+        Specific investment costs related to electrical output capacity.
     capex_fix : float, default=0.0
         Fixed investment costs. Stored for consistency.
     opex_fix : float, default=10.0
-        Fixed operating costs related to installed heat output capacity.
+        Fixed operating costs related to installed electrical capacity.
     opex_var : float, default=0.0
-        Variable operating costs related to useful heat output.
+        Variable operating costs related to electricity output.
     lifetime : int, default=20
-        Technical lifetime of the boiler.
+        Technical lifetime of the CHP unit.
     optimize_cap : bool, default=True
-        If ``True``, output capacity is optimized using an investment flow.
+        If ``True``, electrical output capacity is optimized.
     maximum_capacity : float or None, default=float("+inf")
-        Maximum total useful heat output capacity.
+        Maximum total electrical output capacity.
 
     Notes
     -----
-    The converter equation is:
+    The converter equations are:
 
-    ``q_heat(t) = efficiency * q_fuel(t)``
+    ``p_el(t) = conversion_factor_to_electricity * p_fuel(t)``
 
-    The nominal capacity is attached to the heat output flow. Therefore,
-    ``installed_capacity`` and ``maximum_capacity`` refer to useful heat
-    output capacity, not to fuel input capacity.
+    ``q_heat(t) = conversion_factor_to_heat * p_fuel(t)``
+
+    The total efficiency is:
+
+    ``eta_total = conversion_factor_to_electricity
+    + conversion_factor_to_heat``
+
+    This implementation validates ``eta_total <= 1``. The nominal capacity is
+    attached only to the electricity output flow.
 
     Examples
     --------
     >>> from oemof.eesyplan import Project
     >>> from oemof.solph import Bus
-    >>> from oemof.eesyplan.components.converters.Boiler import Boiler
+    >>> from oemof.eesyplan.components.converters.chp_fixed_ratio import (
+    ...     ChpFixedRatio,
+    ... )
     >>> fuel_bus = Bus(label="fuel")
+    >>> electricity_bus = Bus(label="electricity")
     >>> heat_bus = Bus(label="heat")
     >>> project = Project(
     ...     name="Project_X",
@@ -92,25 +106,29 @@ class Boiler(Converter):
     ...     tax=0,
     ...     discount_factor=0.01,
     ... )
-    >>> boiler = Boiler(
-    ...     name="gas_boiler",
+    >>> chp = ChpFixedRatio(
+    ...     name="fixed_chp",
     ...     bus_in_fuel=fuel_bus,
+    ...     bus_out_electricity=electricity_bus,
     ...     bus_out_heat=heat_bus,
+    ...     conversion_factor_to_electricity=0.3,
+    ...     conversion_factor_to_heat=0.5,
     ...     project_data=project,
     ...     installed_capacity=10,
-    ...     efficiency=0.9,
     ... )
-    >>> boiler.efficiency
-    0.9
+    >>> chp.conversion_factor_to_electricity
+    0.3
     """
 
     def __init__(
         self,
         name: str,
         bus_in_fuel: Bus,
+        bus_out_electricity: Bus,
         bus_out_heat: Bus,
+        conversion_factor_to_electricity: float,
+        conversion_factor_to_heat: float,
         project_data: Any,
-        efficiency: float = 0.8,
         age_installed: int = 0,
         installed_capacity: float = 0.0,
         capex_var: float = 1000.0,
@@ -121,20 +139,36 @@ class Boiler(Converter):
         optimize_cap: bool = True,
         maximum_capacity: float | None = float("+inf"),
     ) -> None:
-        """Initialize a boiler converter."""
+        """Initialize a fixed-ratio CHP converter."""
         self.name = validate_name(name)
         self.bus_in_fuel = validate_bus("bus_in_fuel", bus_in_fuel)
+        self.bus_out_electricity = validate_bus(
+            "bus_out_electricity", bus_out_electricity
+        )
         self.bus_out_heat = validate_bus("bus_out_heat", bus_out_heat)
-
-        # TODO(review): `project_data` wird aktuell nicht explizit validiert,
-        #  obwohl fast alle anderen Eingaben geprüft werden. Eine frühe
-        #  Validierung würde Fehler konsistenter und verständlicher machen.
         self.project_data = project_data
+        # TODO(review): `project_data` wird aktuell nicht validiert, obwohl die
+        # meisten anderen Eingaben explizit geprüft werden. Eine frühe Validierung
+        # würde Fehler konsistenter und verständlicher machen.
+        self.conversion_factor_to_electricity = validate_efficiency(
+            "conversion_factor_to_electricity",
+            conversion_factor_to_electricity,
+        )
+        self.conversion_factor_to_heat = validate_efficiency(
+            "conversion_factor_to_heat",
+            conversion_factor_to_heat,
+        )
 
-        # TODO(review): Falls `validate_efficiency(...)` den Wert 0 bewusst
-        #  ausschließt, sollte diese strengere Validierung als Verhaltensänderung
-        #  gegenüber älteren Versionen klar dokumentiert werden.
-        self.efficiency = validate_efficiency("efficiency", efficiency)
+        if (
+            self.conversion_factor_to_electricity
+            + self.conversion_factor_to_heat
+            > 1.0
+        ):
+            raise ValueError("Total efficiency must be <= 100%.")
+        # TODO(review): Diese Prüfung verändert das
+        # Verhalten gegenüber der alten Version. Prüfen, ob diese Verschärfung
+        # als beabsichtigte API-/Kompatibilitätsänderung dokumentiert werden soll.
+
         self.age_installed = validate_non_negative_int(
             "age_installed", age_installed
         )
@@ -143,22 +177,24 @@ class Boiler(Converter):
         )
         self.capex_var = validate_non_negative_float("capex_var", capex_var)
         # TODO(review): `capex_fix` wird validiert und gespeichert, hat aber
-        #  aktuell keinen Einfluss auf die Investitionsberechnung oder das
-        #  Laufzeitverhalten. Entweder in `_create_invest_if_wanted(...)`
-        #  integrieren oder den Parameter entfernen/deprecated markieren.
+        # aktuell keinen Einfluss auf Investitionsberechnung oder Modellverhalten.
+        # Entweder in `_create_invest_if_wanted(...)` integrieren oder den
+        # Parameter entfernen/deprecated markieren, um eine irreführende API
+        # zu vermeiden.
         self.capex_fix = validate_non_negative_float("capex_fix", capex_fix)
         self.opex_fix = validate_non_negative_float("opex_fix", opex_fix)
-        self.opex_var = validate_non_negative_float("opex_var", opex_var)
+        # TODO(review): opex_var darf auch negativ sein, durch angenommene Erlöse!?!
+        self.opex_var = validate_float("opex_var", opex_var)
         self.lifetime = validate_positive_int("lifetime", lifetime)
         self.optimize_cap = validate_bool("optimize_cap", optimize_cap)
-        # TODO(review): Die API erlaubt hier `None`, der Default ist aber
-        #  `float("+inf")`. Typannotation, Default und Doku sollten klar
-        #  aufeinander abgestimmt werden.
+
         self.maximum_capacity = validate_optional_non_negative_capacity(
             "maximum_capacity", maximum_capacity
         )
-        # TODO(review): Konsistenzprüfung; diese verschärfte Validierung sollte
-        #  als potenzielle Kompatibilitätsänderung dokumentiert werden.
+        # TODO(review): Die öffentliche API erlaubt hier `None`, der Default ist
+        # aber `float("+inf")`. Prüfen, ob `None` wirklich unterstützt werden
+        # soll oder ob Typannotation und Doku enger gefasst werden sollten.
+
         validate_maximum_capacity_not_below_installed(
             self.maximum_capacity,
             self.installed_capacity,
@@ -177,18 +213,23 @@ class Boiler(Converter):
 
         inputs = {self.bus_in_fuel: Flow()}
         outputs = {
-            self.bus_out_heat: Flow(
+            self.bus_out_electricity: Flow(
                 nominal_capacity=nominal_capacity,
                 variable_costs=self.opex_var,
-            )
+            ),
+            self.bus_out_heat: Flow(),
         }
-
-        # TODO(review): Doku stellt klar, dass sich `installed_capacity` und
-        #  `maximum_capacity` auf den Nutzwärme-Output beziehen. Diese Semantik
-        #  sollte bei API-Änderungen unbedingt konsistent beibehalten werden.
+        conversion_factors = {
+            self.bus_out_electricity: self.conversion_factor_to_electricity,
+            self.bus_out_heat: self.conversion_factor_to_heat,
+        }
+        # TODO(review): Die Nennkapazität hängt nur am Strom-Output.
+        # Das sollte in der Doku weiterhin klar hervorgehoben bleiben, damit
+        # keine falschen Erwartungen an eine separat begrenzte Wärmekapazität
+        # entstehen.
         super().__init__(
             label=self.name,
             inputs=inputs,
             outputs=outputs,
-            conversion_factors={self.bus_out_heat: self.efficiency},
+            conversion_factors=conversion_factors,
         )

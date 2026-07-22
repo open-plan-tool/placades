@@ -113,7 +113,7 @@ class ChpVariableRatio(ExtractionTurbineCHP):
     --------
     >>> from oemof.eesyplan import Project
     >>> from oemof.solph import Bus
-    >>> from oemof.eesyplan.components.converters.ChpVariableRatio import (
+    >>> from oemof.eesyplan.components.converters.chp_variable_ratio import (
     ...     ChpVariableRatio,
     ... )
     >>> fuel_bus = Bus(label="fuel")

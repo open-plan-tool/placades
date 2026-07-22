@@ -127,9 +127,12 @@ def test_sankey_diagram():
     results = optimise(energy_system)
 
     fig, _ = sankey(results["flow"], es=energy_system)
-    with Path(
+
+    sankey_dict_path = Path(
         Path(__file__).parent, "../test_data", "sankey_dict.json"
-    ).open() as fp:
+    )
+
+    with sankey_dict_path.open(encoding="utf-8") as fp:
         saved_fig = json.load(fp)
 
     assert fig.to_dict() == saved_fig

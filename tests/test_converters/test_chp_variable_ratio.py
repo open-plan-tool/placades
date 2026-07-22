@@ -3,18 +3,19 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-from _helpers import DummyProjectData
-from _helpers import assert_any_flow_has_capacity
-from _helpers import assert_any_flow_has_investment_capacity
-from _helpers import assert_any_flow_has_variable_costs
-from _helpers import assert_conversion_factor
-from _helpers import assert_model_builds
-from _helpers import assert_no_none_keys
 
 from oemof import solph
-from oemof.eesyplan.components.converters.ChpVariableRatio import (
+from oemof.eesyplan.components.converters.chp_variable_ratio import (
     ChpVariableRatio,
 )
+
+from ._helpers import DummyProjectData
+from ._helpers import assert_any_flow_has_capacity
+from ._helpers import assert_any_flow_has_investment_capacity
+from ._helpers import assert_any_flow_has_variable_costs
+from ._helpers import assert_conversion_factor
+from ._helpers import assert_model_builds
+from ._helpers import assert_no_none_keys
 
 CONVERSION_FACTOR_TO_ELECTRICITY = 0.36
 CONVERSION_FACTOR_TO_HEAT = 0.5

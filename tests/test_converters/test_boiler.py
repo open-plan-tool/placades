@@ -3,16 +3,17 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-from _helpers import DummyProjectData
-from _helpers import assert_any_flow_has_variable_costs
-from _helpers import assert_conversion_factor
-from _helpers import assert_model_builds
-from _helpers import assert_no_none_keys
-from _helpers import assert_output_flow_capacity
-from _helpers import assert_output_flow_investment_capacity
 
 from oemof import solph
-from oemof.eesyplan.components.converters.Boiler import Boiler
+from oemof.eesyplan.components.converters.boiler import Boiler
+
+from ._helpers import DummyProjectData
+from ._helpers import assert_any_flow_has_variable_costs
+from ._helpers import assert_conversion_factor
+from ._helpers import assert_model_builds
+from ._helpers import assert_no_none_keys
+from ._helpers import assert_output_flow_capacity
+from ._helpers import assert_output_flow_investment_capacity
 
 EFFICIENCY = 0.9
 INSTALLED_CAPACITY = 100.0

@@ -1,0 +1,200 @@
+from oemof.eesyplan.investment import _create_invest_if_wanted
+from oemof.solph import Flow
+from oemof.solph.components import Converter
+
+
+class Electrolyzer(Converter):
+    def __init__(
+        self,
+        name,
+        bus_in_electricity,
+        bus_out_h2,
+        project_data,
+        bus_out_heat=None,
+        efficiency=0.3,
+        efficiency_heat=0.6,
+        age_installed=0,
+        installed_capacity=0,
+        capex_var=1000,
+        capex_fix=0,
+        opex_fix=10,
+        opex_var=0,
+        lifetime=20,
+        optimize_cap=True,
+        maximum_capacity=float("+inf"),
+    ):
+        """
+        Electrolyzer for hydrogen production.
+
+        This class represents an electrolyzer that converts electrical
+        energy into hydrogen gas through electrolysis, producing both
+        hydrogen and waste heat.
+
+        .. important ::
+            The efficiency parameter determines the conversion rate
+            from electricity to hydrogen.
+
+        :Structure:
+          *input*
+            1. el_bus : Electricity
+          *output*
+            1. heat_bus : Heat
+            2. h2_bus : H2
+        Parameters
+        ----------
+        name : str
+            Name of the asset.
+        age_installed : int, default=0
+            Number of years the asset has already been in operation.
+        installed_capacity : float, default=0
+            Already existing installed capacity.
+        capex_fix : float, default=1000
+            Specific investment costs of the asset related to the
+            installed capacity (CAPEX).
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `capex_fix=0`, hier steht `default=1000`.
+        capex_var : float, default=1000
+            Specific investment costs of the asset related to the
+            installed capacity (CAPEX).
+        opex_fix : float, default=10
+            Specific operational and maintenance costs of the asset
+            related to the installed capacity (OPEX_fix).
+        opex_var : float, default=0.01
+            Costs associated with a flow through/from the asset
+            (OPEX_var or fuel costs).
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `opex_var=0`, hier steht `default=0.01`.
+        lifetime : int, default=20
+            Number of operational years of the asset until it has to
+            be replaced.
+        optimize_cap : bool, default=False
+            Choose if capacity optimization should be performed for
+            this asset.
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `optimize_cap=True`, hier steht `default=False`.
+        maximum_capacity : float or None, default=None
+            Maximum total capacity of an asset that can be installed
+            at the project site.
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `float("+inf")`, hier steht `None`.
+        efficiency : float, default=0.8
+            Ratio of energy output to energy input.
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `efficiency=0.3`, hier steht `default=0.8`.
+        efficiency_heat : float, default=0.6
+            TODO find a good attribute name and description
+        # TODO(review) [wichtig]: Platzhalterbeschreibung bitte ersetzen.
+            # Unklar ist aktuell, ob `efficiency_heat` ein zusätzlicher
+            # Output-Anteil, ein Abwärmefaktor oder ein Gesamtwirkungsgrad-
+            # Anteil relativ zum elektrischen Input sein soll.
+        Examples
+        --------
+
+        >>> from oemof.eesyplan import Project
+        >>> from oemof.solph import Bus
+        >>> el_bus_in = Bus(label="el_bus_in")
+        >>> heat_bus_out = Bus(label="heat_bus_out")
+        >>> h2_bus_out = Bus(label="h2_bus_out")
+        >>> my_electrolyzer = Electrolyzer(
+        ...     name="Electrolyzer",
+        ...     bus_in_electricity=el_bus_in,
+        ...     bus_out_heat=heat_bus_out,
+        ...     bus_out_h2=h2_bus_out,
+        ...     age_installed=0,
+        ...     installed_capacity=0,
+        ...     capex_var=1000,
+        ...     opex_fix=1000,
+        ...     lifetime=20,
+        ...     maximum_capacity=None,
+        ...     efficiency=0.9,
+        ...     efficiency_heat=0.1,
+        ...     opex_var=0,
+        ...     optimize_cap=True,
+        ...     project_data=Project(
+        ...         name="Project_X", lifetime=20, tax=0,
+        ...         discount_factor=0.01),
+        ...     )
+        >>> electrolyzer_no_heat = Electrolyzer(
+        ...     name="Electrolyzer",
+        ...     bus_in_electricity=el_bus_in,
+        ...     bus_out_h2=h2_bus_out,
+        ...     age_installed=0,
+        ...     installed_capacity=0,
+        ...     capex_var=1000,
+        ...     opex_fix=1000,
+        ...     lifetime=20,
+        ...     maximum_capacity=None,
+        ...     efficiency=0.9,
+        ...     opex_var=0,
+        ...     optimize_cap=True,
+        ...     project_data=Project(
+        ...         name="Project_X", lifetime=20, tax=0,
+        ...         discount_factor=0.01),
+        ...     )
+
+        """
+        nv = _create_invest_if_wanted(
+            optimise_cap=optimize_cap,
+            capex_var=capex_var,
+            opex_fix=opex_fix,
+            lifetime=lifetime,
+            age_installed=age_installed,
+            existing_capacity=installed_capacity,
+            maximum_capacity=maximum_capacity,
+            project_data=project_data,
+        )
+        # TODO(review) [dringend]: `capex_fix` wird trotz API-Parameter nicht
+        # verwendet. Bitte klären, ob das Absicht, technische Schuld oder
+        # unvollständige Implementierung ist.
+        # TODO(review) [wichtig]: Bitte prüfen, ob `maximum_capacity >=
+        # installed_capacity` validiert werden sollte.
+
+        inputs = {bus_in_electricity: Flow()}
+
+        outputs = {
+            bus_out_h2: Flow(
+                nominal_capacity=nv,
+                variable_costs=opex_var,
+            )
+        }
+        # TODO(review) [wichtig]: Bitte bestätigen, dass sich Kapazität
+        # bewusst auf den H2-Output bezieht und nicht auf den Strom-Input.
+
+        conversion_factors = {
+            bus_out_h2: efficiency,
+        }
+
+        if bus_out_heat is not None:
+            outputs[bus_out_heat] = Flow()
+            conversion_factors[bus_out_heat] = efficiency_heat
+        # TODO(review) [dringend]: `efficiency` und `efficiency_heat` werden
+        # nicht validiert. Bitte fachlich festlegen:
+        # - Muss 0 < efficiency <= 1 gelten?
+        # - Muss 0 <= efficiency_heat <= 1 gelten?
+        # - Muss zusätzlich `efficiency + efficiency_heat <= 1` gelten?
+        #   Das wäre naheliegend, wenn beide Anteile auf denselben elektrischen
+        #   Input bezogen sind.
+        # TODO(review) [wichtig]: Falls `bus_out_heat is None`, wird
+        # `efficiency_heat` aktuell ignoriert. Das ist vermutlich korrekt,
+        # sollte aber dokumentiert werden.
+
+        self.name = name
+        self.age_installed = age_installed
+        self.installed_capacity = installed_capacity
+        self.capex_fix = capex_fix
+        self.capex_var = capex_var
+        self.opex_fix = opex_fix
+        self.opex_var = opex_var
+        self.lifetime = lifetime
+        self.maximum_capacity = maximum_capacity
+        self.efficiency = efficiency
+        self.efficiency_heat = efficiency_heat
+        # TODO(review) [mittel]: `optimize_cap` wird genutzt, aber nicht als
+        # Attribut gespeichert. Bitte auf Konsistenz mit anderen Assets prüfen.
+
+        super().__init__(
+            label=name,
+            outputs=outputs,
+            inputs=inputs,
+            conversion_factors=conversion_factors,
+        )

@@ -5,20 +5,20 @@ __version__ = "0.0.1"
 from oemof.eesyplan.components.buses.carrier import CarrierBus
 from oemof.eesyplan.components.compansation.excess import Excess
 from oemof.eesyplan.components.compansation.shortage import Shortage
-from oemof.eesyplan.components.converters.Boiler import Boiler
-from oemof.eesyplan.components.converters.ChpFixedRatio import ChpFixedRatio
-from oemof.eesyplan.components.converters.ChpVariableRatio import (
+from oemof.eesyplan.components.converters.boiler import Boiler
+from oemof.eesyplan.components.converters.chp_fixed_ratio import ChpFixedRatio
+from oemof.eesyplan.components.converters.chp_variable_ratio import (
     ChpVariableRatio,
 )
-from oemof.eesyplan.components.converters.DieselGenerator import (
+from oemof.eesyplan.components.converters.diesel_generator import (
     DieselGenerator,
 )
-from oemof.eesyplan.components.converters.ElectricalTransformator import (
+from oemof.eesyplan.components.converters.electrical_transformator import (
     ElectricalTransformator,
 )
-from oemof.eesyplan.components.converters.Electrolyzer import Electrolyzer
-from oemof.eesyplan.components.converters.FuelCell import FuelCell
-from oemof.eesyplan.components.converters.HeatPump import HeatPump
+from oemof.eesyplan.components.converters.electrolyzer import Electrolyzer
+from oemof.eesyplan.components.converters.fuel_cell import FuelCell
+from oemof.eesyplan.components.converters.heat_pump import HeatPump
 from oemof.eesyplan.components.demand.electricity_demand import Demand
 from oemof.eesyplan.components.demand.fuel_demand import FuelDemand
 from oemof.eesyplan.components.demand.heat_demand import HeatDemand

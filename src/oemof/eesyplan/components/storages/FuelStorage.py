@@ -1,102 +1,158 @@
-from math import sqrt
+from __future__ import annotations
 
+# BEARBEITET: Korrekter Importpfad für den Investment-Helper.
 from oemof.eesyplan.investment import _create_invest_if_wanted
-from oemof.solph import Flow
-from oemof.solph import Investment
 from oemof.solph.components import GenericStorage
+
+from ._storage_common import ScalarSequence
+from ._storage_common import make_storage_flow
+from ._storage_common import normalize_investment_sequences
+from ._storage_common import split_roundtrip_efficiency
+from ._storage_common import validate_common_storage_parameters
 
 
 class FuelStorage(GenericStorage):
+    """Brennstoffspeicher auf Basis von oemof.solph GenericStorage.
+
+    Die Klasse bildet einen allgemeinen Brennstoffspeicher ab.
+    Sie kann z. B. für Gas, Öl oder andere lagerfähige Brennstoffe genutzt werden.
+
+    Hinweise
+    --------
+    - `efficiency` wird als Roundtrip-Wirkungsgrad interpretiert.
+    - Bei `optimize_cap=True` wird die Speicherkapazität investiv optimiert.
+    - Die Lade- und Entladeleistung wird über die C-Rate begrenzt.
+    - Wenn kein Ausgangsbus angegeben wird, wird der Eingangsbus auch als Ausgangsbus verwendet.
+    """
+
     def __init__(
         self,
-        name,
+        name: str,
         bus_in_fuel,
-        age_installed,
-        installed_capacity,
-        capex_var,
-        opex_fix,
-        opex_var,
-        lifetime,
-        optimize_cap,
-        soc_max,
-        soc_min,
-        crate,  # ToDo: Distinguish input and output and change to c_rate
-        efficiency,  # ToDo: Distinguish input and output
-        project_data,
-        capex_fix=0.0,
-        self_discharge=0.0,
         bus_out_fuel=None,
-        maximum_capacity=float("+inf"),
+        age_installed: float = 0,
+        installed_capacity: float = 0,
+        capex_var: float = 0,
+        opex_fix: float = 0,
+        opex_var: float = 0,
+        lifetime: float = 20,
+        optimize_cap: bool = False,
+        soc_max: float = 1,
+        soc_min: float = 0,
+        crate: float = 1,
+        efficiency: float = 1,
+        project_data=None,
+        capex_fix: float = 0,
+        self_discharge: float = 0,
+        maximum_capacity: float | None = None,
+        initial_storage_level: float | None = 0.0,
+        balanced: bool = True,
     ):
-        """
-        Fuel Energy Storage System (FESS).
-
-        This class represents a fuel energy storage system for storing
-        and dispatching fuel energy carriers.
-
-        .. important ::
-            This system can store various types of fuel including natural
-            gas and biogas.
-
-        :Structure:
-          *input*
-            1. bus_in_fuel : Gas
-          *output*
-            1. bus_out_fuel : Gas
+        """Initialisiert einen Brennstoffspeicher.
 
         Parameters
         ----------
-        name : str
-           Name of the asset.
+        name:
+            Eindeutiger Name des Speichers.
+        bus_in_fuel:
+            Eingangsbus des Brennstoffspeichers.
+        bus_out_fuel:
+            Ausgangsbus des Brennstoffspeichers. Wenn `None`, wird der Eingangsbus verwendet.
+        age_installed:
+            Alter der bereits installierten Kapazität.
+        installed_capacity:
+            Bereits installierte Speicherkapazität.
+        capex_var:
+            Variable Investitionskosten bezogen auf die Speicherkapazität.
+        opex_fix:
+            Fixe Betriebskosten.
+        opex_var:
+            Variable Betriebskosten des Ladeflusses.
 
-        Examples
-        --------
-        >>> from oemof.eesyplan import Project
-        >>> from oemof.eesyplan import CarrierBus
-        >>> my_project = Project(
-        ...         name="my_project",
-        ...         lifetime=20,
-        ...         tax=0,
-        ...         discount_factor=0.01
-        ...     )
-        >>> fuel_bus = CarrierBus(name="gas_bus")
-        >>> my_storage = FuelStorage(
-        ...     name="gas_storage_tank",
-        ...     bus_in_fuel=fuel_bus,
-        ...     age_installed=0,
-        ...     installed_capacity=10,
-        ...     capex_var=3,
-        ...     opex_fix=5,
-        ...     opex_var=0.,
-        ...     lifetime=10,
-        ...     optimize_cap=False,
-        ...     soc_max=1,
-        ...     soc_min=0,
-        ...     crate=1,
-        ...     efficiency=0.99,
-        ...     project_data=my_project,
-        ...     self_discharge=0.0001,
-        ... )
-        >>> my_invest_storage = FuelStorage(
-        ...     name="gas_storage_tank_extension",
-        ...     bus_in_fuel=fuel_bus,
-        ...     bus_out_fuel=fuel_bus,
-        ...     age_installed=0,
-        ...     installed_capacity=0,
-        ...     capex_var=3,
-        ...     opex_fix=5,
-        ...     opex_var=0.,
-        ...     lifetime=10,
-        ...     optimize_cap=True,
-        ...     soc_max=1,
-        ...     soc_min=0,
-        ...     crate=1,
-        ...     efficiency=0.99,
-        ...     project_data=my_project,
-        ...     self_discharge=0.0001,
-        ... )
+            TODO: Klären, ob variable Speicherkosten fachlich auf den Ladefluss,
+            Entladefluss oder beide Flüsse gelegt werden sollen.
+        lifetime:
+            Technische Lebensdauer.
+        optimize_cap:
+            Wenn `True`, wird die Speicherkapazität optimiert.
+        soc_max:
+            Maximaler Speicherfüllstand relativ zur Speicherkapazität.
+        soc_min:
+            Minimaler Speicherfüllstand relativ zur Speicherkapazität.
+        crate:
+            C-Rate zur Begrenzung von Lade- und Entladeleistung.
+        efficiency:
+            Roundtrip-Wirkungsgrad des Speichers.
+        project_data:
+            Projektdaten für die Investitionsrechnung.
+        capex_fix:
+            Fixe Investitionskosten.
+
+            TODO: Aktuell nur gespeichert, aber nicht an `_create_invest_if_wanted`
+            übergeben.
+        self_discharge:
+            Relativer Verlust pro Zeitschritt.
+        maximum_capacity:
+            Maximale installierbare Speicherkapazität.
+        initial_storage_level:
+            Initialer Speicherfüllstand relativ zur Speicherkapazität.
+        balanced:
+            Wenn `True`, muss der Speicher am Ende den Anfangsfüllstand erreichen.
         """
 
+        # BEARBEITET: Wenn kein Output-Bus angegeben ist, wird der Input-Bus verwendet.
+        if bus_out_fuel is None:
+            bus_out_fuel = bus_in_fuel
+
+        # BEARBEITET: Einheitliche Validierung.
+        validate_common_storage_parameters(
+            name=name,
+            bus_in=bus_in_fuel,
+            bus_out=bus_out_fuel,
+            age_installed=age_installed,
+            installed_capacity=installed_capacity,
+            capex_var=capex_var,
+            capex_fix=capex_fix,
+            opex_fix=opex_fix,
+            opex_var=opex_var,
+            lifetime=lifetime,
+            optimize_cap=optimize_cap,
+            soc_min=soc_min,
+            soc_max=soc_max,
+            crate=crate,
+            efficiency=efficiency,
+            loss_rate=self_discharge,
+            maximum_capacity=maximum_capacity,
+            initial_storage_level=initial_storage_level,
+            balanced=balanced,
+            project_data=project_data,
+        )
+
+        # BEARBEITET: Einheitliche Attributspeicherung.
+        self.name = name
+        self.bus_in_fuel = bus_in_fuel
+        self.bus_out_fuel = bus_out_fuel
+        self.age_installed = age_installed
+        self.installed_capacity = installed_capacity
+        self.capex_var = capex_var
+        self.capex_fix = capex_fix
+        self.opex_fix = opex_fix
+        self.opex_var = opex_var
+        self.lifetime = lifetime
+        self.optimize_cap = optimize_cap
+        self.soc_max = soc_max
+        self.soc_min = soc_min
+        self.crate = crate
+        self.efficiency = efficiency
+        self.self_discharge = self_discharge
+        self.maximum_capacity = maximum_capacity
+        self.initial_storage_level = initial_storage_level
+        self.balanced = balanced
+        self.project_data = project_data
+
+        # BEARBEITET: Investition findet auf Speicherkapazität statt.
+        # TODO: Prüfen, ob `_create_invest_if_wanted` `maximum_capacity=None`
+        # sauber als unbegrenzt verarbeitet.
         nv = _create_invest_if_wanted(
             optimise_cap=optimize_cap,
             capex_var=capex_var,
@@ -108,42 +164,66 @@ class FuelStorage(GenericStorage):
             project_data=project_data,
         )
 
-        self.self_discharge = self_discharge
-        self.efficiency = sqrt(efficiency)
+        nv = normalize_investment_sequences(nv)
 
         if optimize_cap:
-            self.capacity_charge = Investment()
-            self.capacity_discharge = Investment()
+            self.capacity_charge = None
+            self.capacity_discharge = None
             self.crate_charge = crate
             self.crate_discharge = crate
         else:
-            self.capacity_charge = nv * crate
-            self.capacity_discharge = nv * crate
+            self.capacity_charge = installed_capacity * crate
+            self.capacity_discharge = installed_capacity * crate
             self.crate_charge = None
             self.crate_discharge = None
 
-        if bus_out_fuel is None:
-            bus_out_fuel = bus_in_fuel
+        # BEARBEITET: Roundtrip-Wirkungsgrad wird symmetrisch aufgeteilt.
+        efficiency_factor = split_roundtrip_efficiency(efficiency)
 
         super().__init__(
             label=name,
-            nominal_capacity=nv,
             inputs={
-                bus_in_fuel: Flow(
-                    nominal_capacity=self.capacity_charge,
+                bus_in_fuel: make_storage_flow(
+                    optimize_cap=optimize_cap,
+                    installed_capacity=installed_capacity,
+                    crate=crate,
                     variable_costs=opex_var,
-                )
+                ),
             },
             outputs={
-                bus_out_fuel: Flow(nominal_capacity=self.capacity_discharge)
+                bus_out_fuel: make_storage_flow(
+                    optimize_cap=optimize_cap,
+                    installed_capacity=installed_capacity,
+                    crate=crate,
+                    variable_costs=0,
+                ),
             },
-            loss_rate=self.self_discharge,
+            nominal_capacity=(nv if optimize_cap else installed_capacity),
+            loss_rate=self_discharge,
+            initial_storage_level=initial_storage_level,
+            balanced=balanced,
             min_storage_level=soc_min,
             max_storage_level=soc_max,
-            balanced=True,
-            initial_storage_level=None,
-            inflow_conversion_factor=self.efficiency,
-            outflow_conversion_factor=self.efficiency,
-            invest_relation_input_capacity=self.crate_charge,
-            invest_relation_output_capacity=self.crate_charge,
+            inflow_conversion_factor=efficiency_factor,
+            outflow_conversion_factor=efficiency_factor,
+            invest_relation_input_capacity=(crate if optimize_cap else None),
+            invest_relation_output_capacity=(crate if optimize_cap else None),
+        )
+
+        self.nominal_capacity = (
+            nv if optimize_cap else ScalarSequence(installed_capacity)
+        )
+
+        self.loss_rate = ScalarSequence(self_discharge)
+        self.initial_storage_level = ScalarSequence(initial_storage_level)
+        self.min_storage_level = ScalarSequence(soc_min)
+        self.max_storage_level = ScalarSequence(soc_max)
+        self.inflow_conversion_factor = ScalarSequence(efficiency_factor)
+        self.outflow_conversion_factor = ScalarSequence(efficiency_factor)
+
+        self.invest_relation_input_capacity = (
+            ScalarSequence(crate) if optimize_cap else None
+        )
+        self.invest_relation_output_capacity = (
+            ScalarSequence(crate) if optimize_cap else None
         )

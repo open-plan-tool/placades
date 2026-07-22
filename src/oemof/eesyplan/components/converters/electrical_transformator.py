@@ -23,12 +23,17 @@ class ElectricalTransformator(Converter):
     ):
         """
         This is an Electrical transformator, e.g. for different voltage levels
+        # TODO(review) [mittel]: Terminologie prüfen:
+            # Im Englischen wäre meist `ElectricalTransformer` statt
+            # `ElectricalTransformator`
 
         This class represents an electrical conversion of any kind
 
         .. important ::
             The efficiency parameter determines the conversion rate
             from gas to electrical output.
+        # TODO(review) [dringend]: Fachlich falscher Textbaustein.
+            # Hier wird Strom zu Strom umgewandelt, nicht Gas zu Strom.
 
         :Structure:
           *input*
@@ -51,12 +56,16 @@ class ElectricalTransformator(Converter):
         capex_fix : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `capex_fix=0`, hier steht `default=1000`.
         capex_var : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
         opex_fix : float, default=10
             Specific operational and maintenance costs of the asset
             related to the installed capacity (OPEX_fix).
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `opex_var=0`, hier steht `default=0.01`.
         opex_var : float, default=0.01
             Costs associated with a flow through/from the asset
             (OPEX_var or fuel costs).
@@ -66,11 +75,17 @@ class ElectricalTransformator(Converter):
         optimize_cap : bool, default=False
             Choose if capacity optimization should be performed for
             this asset.
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `optimize_cap=True`, hier steht `default=False`.
         maximum_capacity : float or None, default=None
             Maximum total capacity of an asset that can be installed
             at the project site.
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `float("+inf")`, hier steht `None`.
         efficiency : float, default=0.8
             Ratio of energy output to energy input.
+        # TODO(review) [dringend]: Docstring widerspricht der Signatur.
+            # Im Code ist `efficiency=0.3`, hier steht `default=0.8`.
 
         Examples
         --------
@@ -100,6 +115,9 @@ class ElectricalTransformator(Converter):
         """
         nv = _create_invest_if_wanted(
             optimise_cap=optimize_cap,
+            # TODO(review) [nice-to-have]: Schreibweise `optimise_cap`
+            # im Helper vs. `optimize_cap` in der öffentlichen API
+            # mittelfristig vereinheitlichen.
             capex_var=capex_var,
             opex_fix=opex_fix,
             lifetime=lifetime,
@@ -108,6 +126,13 @@ class ElectricalTransformator(Converter):
             maximum_capacity=maximum_capacity,
             project_data=project_data,
         )
+        # TODO(review) [dringend]: `capex_fix` wird nicht verwendet,
+        # obwohl es Teil der öffentlichen API ist.
+        # Bitte entscheiden: implementieren, entfernen oder dokumentieren.
+        # TODO(review) [wichtig]: Bitte prüfen, ob
+        # `maximum_capacity >= installed_capacity` validiert werden sollte.
+        # TODO(review) [wichtig]: Falls `optimize_cap=True`, sollte klar sein,
+        # ob `project_data` zwingend erforderlich ist und ggf. validiert werden
 
         inputs = {bus_in_electricity: Flow()}
 
@@ -117,6 +142,8 @@ class ElectricalTransformator(Converter):
                 variable_costs=opex_var,
             )
         }
+        # TODO(review) [wichtig]: Bitte bestätigen, dass sich die Kapazität
+        # bewusst auf die elektrische Ausgangsleistung bezieht.
 
         self.name = name
         self.age_installed = age_installed
@@ -128,11 +155,16 @@ class ElectricalTransformator(Converter):
         self.lifetime = lifetime
         self.maximum_capacity = maximum_capacity
         self.efficiency = efficiency
+        # TODO(review) [mittel]: `optimize_cap` wird verwendet, aber nicht als
+        # Attribut gespeichert. Auf Konsistenz mit anderen Komponenten prüfen.
+
         super().__init__(
             label=name,
             outputs=outputs,
             inputs=inputs,
             conversion_factors={bus_out_electricity: efficiency},
+            # TODO(review) [dringend]: `efficiency` wird nicht validiert.
+            # Vermutlich sollte 0 < efficiency <= 1 gelten.
         )
 
 

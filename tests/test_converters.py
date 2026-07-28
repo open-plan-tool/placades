@@ -1,7 +1,7 @@
 import pytest
 
 from oemof.eesyplan import Project
-from oemof.eesyplan.components.converters.ChpVariableRatio import (
+from oemof.eesyplan.components.converters.chp_variable_ratio import (
     ChpVariableRatio,
 )
 from oemof.solph import Bus
@@ -18,9 +18,9 @@ def test_init_chp_variable_ratio():
             bus_out_heat=heat_bus,
             bus_out_electricity=el_bus,
             installed_capacity=300,
-            conversion_factor_to_electricity=0.8,
-            conversion_factor_to_heat=0.5,
-            beta=0.5,
+            efficiency_electricity_full_condensation=0.8,
+            efficiency_electricity_chp=0.5,
+            efficiency_heat_chp=0.7,
             capex_var=1500,
             opex_fix=15,
             lifetime=20,

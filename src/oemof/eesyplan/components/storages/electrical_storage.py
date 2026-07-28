@@ -25,101 +25,101 @@ class ElectricalStorage(EnergyStorage):
         maximum_capacity=float("+inf"),
     ):
         """
-                Battery Energy Storage System (BESS).
+        Battery Energy Storage System (BESS).
 
-                This class represents a complete battery energy storage system
-                for electrical energy storage and dispatch.
+        This class represents a complete battery energy storage system
+        for electrical energy storage and dispatch.
 
-                .. important ::
-                   This is a simplified representation of a complete BESS
-                   including all necessary components.
+        .. important ::
+           This is a simplified representation of a complete BESS
+           including all necessary components.
 
-                :Structure:
-                 *input*
-                   1. charge : Electricity
-                 *output*
-                   1. discharge : Electricity
+        :Structure:
+         *input*
+           1. charge : Electricity
+         *output*
+           1. discharge : Electricity
 
         Parameters
-                ----------
-                name : string
-                    |name|
-                project_data : Project object
-                    |project_data|
-                installed_capacity : float
-                    |installed_capacity|
-                bus_in_electricity : Node object
-                    |bus_in_electricity|
-                bus_out_electricity : Node object, optional (default: None)
-                    |bus_out_electricity|
-                age_installed : float or int, optional (default: 0)
-                    |age_installed|
-                capex_var : float, optional (default: 0)
-                    |capex_var|
-                opex_fix : float, optional (default: 0)
-                    |opex_fix|
-                opex_var : float, optional (default: 0)
-                    |opex_var|
-                lifetime : int, optional (default: None)
-                    |lifetime|
-                optimize_cap : bool, optional (default: False)
-                    |optimize_cap|
-                soc_max : float, optional (default: 1)
-                    |soc_max|
-                soc_min : float, optional (default: 0)
-                    |soc_min|
-                self_discharge : float, optional (default: 0.0)
-                    |energy_losses_relative|
-                efficiency_charge : float, optional (default: 1.0)
-                    |efficiency_charge|
-                efficiency_discharge : float, optional (default: 1.0)
-                    |efficiency_discharge|
-                c_rate_charge : float, optional (default: 1.0)
-                    |crate|
-                c_rate_discharge : float, optional (default: None)
-                    |crate|
-                maximum_capacity : float, optional (default: float("+inf"))
-                    |maximum_capacity|
+        ----------
+        name : string
+            |name|
+        project_data : Project object
+            |project_data|
+        installed_capacity : float
+            |installed_capacity|
+        bus_in_electricity : Node object
+            |bus_in_electricity|
+        bus_out_electricity : Node object, optional (default: None)
+            |bus_out_electricity|
+        age_installed : float or int, optional (default: 0)
+            |age_installed|
+        capex_var : float, optional (default: 0)
+            |capex_var|
+        opex_fix : float, optional (default: 0)
+            |opex_fix|
+        opex_var : float, optional (default: 0)
+            |opex_var|
+        lifetime : int, optional (default: None)
+            |lifetime|
+        optimize_cap : bool, optional (default: False)
+            |optimize_cap|
+        soc_max : float, optional (default: 1)
+            |soc_max|
+        soc_min : float, optional (default: 0)
+            |soc_min|
+        self_discharge : float, optional (default: 0.0)
+            |energy_losses_relative|
+        efficiency_charge : float, optional (default: 1.0)
+            |efficiency_charge|
+        efficiency_discharge : float, optional (default: 1.0)
+            |efficiency_discharge|
+        c_rate_charge : float, optional (default: 1.0)
+            |crate|
+        c_rate_discharge : float, optional (default: None)
+            |crate|
+        maximum_capacity : float, optional (default: float("+inf"))
+            |maximum_capacity|
 
-                Examples
-                --------
-                >>> from oemof.eesyplan import Project
-                >>> from oemof.eesyplan import CarrierBus
-                >>> my_project = Project(
-                ...         name="my_project",
-                ...         lifetime=20,
-                ...         tax=0,
-                ...         discount_factor=0.01
-                ...     )
-                >>> el_bus = CarrierBus(name="my_electricity_bus")
-                >>> my_bess = ElectricalStorage(
-                ...     name="lithium_battery_system",
-                ...     project_data=my_project,
-                ...     bus_in_electricity=el_bus,
-                ...     installed_capacity=10,
-                ...     c_rate_charge=0.7,
-                ...     c_rate_discharge=0.8,
-                ...     self_discharge=0.0001,
-                ... )
-                >>> my_invest_bess = ElectricalStorage(
-                ...     name="lithium_battery_extension_system",
-                ...     bus_in_electricity=el_bus,
-                ...     bus_out_electricity=el_bus,
-                ...     age_installed=0,
-                ...     installed_capacity=0,
-                ...     capex_var=3,
-                ...     opex_fix=5,
-                ...     opex_var=0,
-                ...     lifetime=10,
-                ...     optimize_cap=True,
-                ...     soc_max=1,
-                ...     soc_min=0,
-                ...     c_rate_charge=0.7,
-                ...     c_rate_discharge=0.8,
-                ...     efficiency_charge=0.99,
-                ...     project_data=my_project,
-                ...     self_discharge=0.0001,
-                ... )
+        Examples
+        --------
+        >>> from oemof.eesyplan import Project
+        >>> from oemof.eesyplan import CarrierBus
+        >>> my_project = Project(
+        ...         name="my_project",
+        ...         lifetime=20,
+        ...         tax=0,
+        ...         discount_factor=0.01
+        ...     )
+        >>> el_bus = CarrierBus(name="my_electricity_bus")
+        >>> my_bess = ElectricalStorage(
+        ...     name="lithium_battery_system",
+        ...     project_data=my_project,
+        ...     bus_in_electricity=el_bus,
+        ...     installed_capacity=10,
+        ...     c_rate_charge=0.7,
+        ...     c_rate_discharge=0.8,
+        ...     self_discharge=0.0001,
+        ... )
+        >>> my_invest_bess = ElectricalStorage(
+        ...     name="lithium_battery_extension_system",
+        ...     bus_in_electricity=el_bus,
+        ...     bus_out_electricity=el_bus,
+        ...     age_installed=0,
+        ...     installed_capacity=0,
+        ...     capex_var=3,
+        ...     opex_fix=5,
+        ...     opex_var=0,
+        ...     lifetime=10,
+        ...     optimize_cap=True,
+        ...     soc_max=1,
+        ...     soc_min=0,
+        ...     c_rate_charge=0.7,
+        ...     c_rate_discharge=0.8,
+        ...     efficiency_charge=0.99,
+        ...     project_data=my_project,
+        ...     self_discharge=0.0001,
+        ... )
         """
         super().__init__(
             name,

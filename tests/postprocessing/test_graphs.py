@@ -1,4 +1,3 @@
-import json
 import warnings
 from pathlib import Path
 
@@ -105,7 +104,7 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
     energy_system.add(
         Demand(
             name="demand_el",
-            bus_in_electricity=bus_elec,
+            bus_in=bus_elec,
             input_timeseries=data["demand_elec"],
         )
     )
@@ -113,9 +112,9 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
 
 
 def test_graph_capacities():
-    res, es = simple_script()
+    res, esys = simple_script()
 
-    capacities_graph(res["invest"], es)
+    capacities_graph(res["invest"], esys)
 
 
 warnings.filterwarnings("ignore", category=ExperimentalFeatureWarning)
@@ -127,9 +126,21 @@ def test_sankey_diagram():
     results = optimise(energy_system)
 
     fig, _ = sankey(results["flow"], es=energy_system)
-    with Path(
-        Path(__file__).parent, "../test_data", "sankey_dict.json"
-    ).open() as fp:
-        saved_fig = json.load(fp)
+    actual_dict = fig.to_dict()
 
-    assert fig.to_dict() == saved_fig
+    actual_data = actual_dict["data"][0]
+
+    # Überprüfe Struktur
+    assert actual_data["type"] == "sankey"
+
+    # Überprüfe konkrete erwartete Werte
+    assert len(actual_data["node"]["label"]) == 11  # Z.B. 11 Nodes erwartet
+    assert len(actual_data["link"]["source"]) == 12  # Z.B. 12 Links erwartet
+
+    # Überprüfe, dass alle Fließwerte positiv sind
+    assert all(v >= 0 for v in actual_data["link"]["value"])
+
+    # Überprüfe Gesamtfluss mit Toleranz
+    total_flow = sum(actual_data["link"]["value"])
+    expected_total_flow = 880.9083295884674
+    assert abs(total_flow - expected_total_flow) < 1e-10

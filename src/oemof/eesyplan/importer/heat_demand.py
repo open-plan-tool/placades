@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 
 from oemof.demand import bdew
-from oemof.eesyplan.io import select_value
+from oemof.eesyplan.gui import select_value
 from oemof.eesyplan.io import unzip_package
 
 
@@ -106,9 +106,8 @@ def create_heat_demand(
     Example:
 
     >>> from oemof.demand import bdew
-    >>> from oemof.eesyplan.weather.weather_data import WeatherData
     >>> heat_demand = create_heat_demand(
-    ...     outdoor_temperature=[5]*8760,
+    ...     outdoor_temperature=[3] * 8760,
     ...     profile_type="Single-family house",
     ...     annual_heat_demand=231,
     ...     building_year=1992,

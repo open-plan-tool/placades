@@ -6,8 +6,8 @@ from oemof.eesyplan.components.buses.carrier import CarrierBus
 from oemof.eesyplan.components.compansation.excess import Excess
 from oemof.eesyplan.components.compansation.shortage import Shortage
 from oemof.eesyplan.components.converters.Boiler import Boiler
-from oemof.eesyplan.components.converters.ChpFixedRatio import ChpFixedRatio
-from oemof.eesyplan.components.converters.ChpVariableRatio import (
+from oemof.eesyplan.components.converters.chp_fixed_ratio import ChpFixedRatio
+from oemof.eesyplan.components.converters.chp_variable_ratio import (
     ChpVariableRatio,
 )
 from oemof.eesyplan.components.converters.DieselGenerator import (
@@ -87,9 +87,7 @@ __all__ = [
     "ThermalStorage",
     "WeatherData",
     "WindTurbine",
-    "energy_system",
     "export_results",
     "import_results",
     "optimise",
-    "results",
 ]

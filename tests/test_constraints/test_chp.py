@@ -23,13 +23,10 @@ def test_chp_fixed_dispatch():
         bus_out_heat=heat_bus,
         bus_out_electricity=el_bus,
         installed_capacity=300,
-        conversion_factor_to_electricity=np.arange(-1, 0, 0.1) * -1,
-        conversion_factor_to_heat=np.arange(0, 1, 0.1),
-        capex_var=1500,
-        opex_fix=15,
+        efficiency_electricity_chp=np.arange(-1, 0, 0.1) * -1,
+        efficiency_heat_chp=np.arange(0, 1, 0.1),
         opex_var=-1,
-        lifetime=20,
-        optimize_cap=True,
+        optimize_cap=False,
         project_data=Project(
             name="Project_X",
             lifetime=20,
@@ -71,14 +68,11 @@ def test_chp_variable_dispatch():
         bus_out_heat=heat_bus,
         bus_out_electricity=el_bus,
         installed_capacity=300,
-        conversion_factor_to_electricity=0.5,
-        conversion_factor_to_heat=0.3,
-        capex_var=1500,
-        beta=0.5,
-        opex_fix=15,
+        efficiency_electricity_full_condensation=0.55,
+        efficiency_electricity_chp=0.32,
+        efficiency_heat_chp=0.58,
         opex_var=-1,
-        lifetime=20,
-        optimize_cap=True,
+        optimize_cap=False,
         project_data=Project(
             name="Project_X",
             lifetime=20,
@@ -89,6 +83,7 @@ def test_chp_variable_dispatch():
     es.add(chp_var)
     results = optimise(es)
     flows = results["flow"]
+
     # Expected heat energy
     energy = chp_var.installed_capacity * number
     flow_sum = flows.sum()
@@ -96,6 +91,6 @@ def test_chp_variable_dispatch():
     assert flow_sum[chp_var, heat_bus] == 0
     assert flow_sum[
         chp_var, el_bus
-    ] / chp_var.conversion_factor_to_electricity == (
-        pytest.approx(flow_sum[gas_bus, chp_var], 0.000000001)
+    ] / chp_var.efficiency_electricity_full_condensation == (
+        pytest.approx(flow_sum[gas_bus, chp_var], 0.00001)
     )

@@ -73,6 +73,12 @@
     efficiency is the ratio of the energy taken out from the battery to the
     energy put into the battery [-] (Positive real number).
 
+.. |efficiency_charge| replace:: Description text is missing [unit is missing]
+    (no restrictions).
+
+.. |efficiency_discharge| replace:: Description text is missing [-]
+    (no restrictions).
+
 .. |efficiency_electricity_chp| replace:: Electrical efficiency with maximal
     heat extraction [-] (Positive real number).
 
@@ -81,6 +87,15 @@
 
 .. |efficiency_heat_chp| replace:: Thermal efficiency with maximal heat
     extraction [-] (Positive real number).
+
+.. |energy_losses_absolute| replace:: Description text is missing [unit is
+    missing] (no restrictions).
+
+.. |energy_losses_absolute_investment| replace:: Description text is missing
+    [unit is missing] (no restrictions).
+
+.. |energy_losses_relative| replace:: Description text is missing [unit is
+    missing] (no restrictions).
 
 .. |energy_prices| replace:: Price of the energy carrier sourced from the
     utility grid. Can be also a timeseries in €/kWh.
@@ -139,6 +154,9 @@
     40 kW PV at maximum in :unit: (Acceptable values are either a positive
     real number or None.).
 
+.. |maximum_capacity_investment| replace:: Description text is missing
+    [unit is missing] (no restrictions).
+
 .. |minimum| replace:: Minimum operation level of the flow as a factor of the
     nominal capacity [-] (Acceptable values are either a real number between
     0 and 1, or None).
@@ -196,6 +214,12 @@
     as a factor of the nominal capacity. When the battery is fully discharged
     the state of charge is represented by the value 0 [-] (Real number
     between 0 and 1).
+
+.. |theoretical_time_charge| replace:: Description text is missing
+    [h] (no restrictions).
+
+.. |theoretical_time_discharge| replace:: Description text is missing
+    [h] (no restrictions).
 
 .. |thermal_loss_rate| replace:: Definition of thermal loss rate. [-]
     (numeric).

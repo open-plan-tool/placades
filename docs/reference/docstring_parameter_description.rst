@@ -16,6 +16,9 @@
     planning and development costs which do not depend on the (optimized)
     capacities of the assets in € (Positive real number).
 
+.. |cop| replace:: Coefficient of performance Ratio of energy output to
+    energy input.
+
 .. |opex_var| replace:: Costs associated with a flow through/from the asset
     (OPEX_var or fuel costs). This could be fuel costs for fuel sources like
     biogas or oil or operational costs for thermal power plants which only

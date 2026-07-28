@@ -105,7 +105,7 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
     energy_system.add(
         Demand(
             name="demand_el",
-            bus_in_electricity=bus_elec,
+            bus_in=bus_elec,
             input_timeseries=data["demand_elec"],
         )
     )

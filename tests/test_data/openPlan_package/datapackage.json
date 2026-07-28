@@ -162,19 +162,17 @@
                         "format": "default"
                     },
                     {
-                        "name": "excess",
-                        "type": "boolean",
+                        "name": "shortage_cost",
+                        "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "excess_costs",
+                        "name": "excess_cost",
                         "type": "number",
                         "format": "default"
                     }
                 ],
-                "missingValues": [
-                    ""
-                ],
+                "missingValues": ["", "None", "null", "NaN"],
                 "primaryKey": "name",
                 "foreignKeys": []
             }
@@ -204,7 +202,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "bus_in_electricity",
+                        "name": "bus_in",
                         "type": "string",
                         "format": "default"
                     }
@@ -215,7 +213,7 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "bus_in_electricity",
+                        "fields": "bus_in",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"

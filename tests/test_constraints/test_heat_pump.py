@@ -70,13 +70,13 @@ def test_heat_pump_investment():
     es.add(el_bus, ambient_bus, heat_bus)
     heat_pump = HeatPump(
         name="air_source_heat_pump",
+        installed_capacity=0,
         bus_in_electricity=el_bus,
         bus_in_heat=ambient_bus,
         bus_out_heat=heat_bus,
         maximum_capacity=15,
         optimize_cap=True,
         capex_var=100,
-        capex_fix=10,
         opex_var=-10,
         opex_fix=1,
         cop=[3.5, 3.2] * 5,

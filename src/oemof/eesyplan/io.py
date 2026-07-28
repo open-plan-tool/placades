@@ -1,7 +1,5 @@
 import tempfile
 import zipfile
-from tkinter import Tk
-from tkinter import ttk
 
 
 def unzip_package(zip_path, ext_path=None):
@@ -18,27 +16,3 @@ def unzip_package(zip_path, ext_path=None):
         zip_ref.extractall(ext_path.name)
 
     return ext_path
-
-
-def select_value(choices) -> str:
-    selected_value = "None"
-
-    def on_select(event):
-        nonlocal selected_value
-        selected_value = combo.get()
-        root.destroy()
-
-    # Create window
-    root = Tk()
-    root.title("Model Selection")
-    root.geometry("450x80")
-
-    # Dropdown
-    ttk.Label(root, text="Select a model:").pack(pady=(15, 5))
-    combo = ttk.Combobox(root, values=choices, width=50, state="readonly")
-    combo.pack()
-    combo.bind("<<ComboboxSelected>>", on_select)
-
-    root.mainloop()
-
-    return selected_value

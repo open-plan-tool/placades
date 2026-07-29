@@ -1,6 +1,10 @@
 .. |<Parameter>| replace:: <Description> [<Unit>]
     (<Restriction>).
 
+.. |absolute_losses| replace:: Absolute heat losses of the device per
+    timestep [:unit:] (Acceptable values are either a non-negative real
+    number or None).
+
 .. |age_installed| replace:: Number of years the asset has already been
     in operation. If the project lasts longer than its remaining lifetime, the
     replacement costs of the asset will be taken into account in a (Natural
@@ -13,6 +17,12 @@
 .. |beta| replace:: Power loss index for CHPs, usually known as beta
     coefficient [-] (Between 0 and 1).
 
+.. |bus_1_heat| replace:: Connected Bus component for the first heat
+    connection of the pipe. [object].
+
+.. |bus_2_heat| replace:: Connected Bus component for the second heat
+    connection of the pipe. [object].
+
 .. |bus_in| replace:: Connected Bus component for an input flow. [object].
 
 .. |bus_in_electricity| replace:: Connected Bus component for the electricity
@@ -23,6 +33,9 @@
 
 .. |bus_in_heat| replace:: Connected Bus component for the heat input flow.
     [object].
+
+.. |bus_in_heat_auxiliary| replace:: Connected Bus component for the
+    auxiliary heat input flow. [object].
 
 .. |bus_in_hydrogen| replace:: Connected Bus component for the hydrogen input
     flow. [object].
@@ -41,6 +54,9 @@
 .. |bus_out_hydrogen| replace:: Connected Bus component for the hydrogen
     output flow. [object].
 
+.. |capacity| replace:: Nominal capacity of the component [:unit:]
+    (non-negative real number).
+
 .. |capex_fix| replace:: Planning and development costs. This could be
     planning and development costs which do not depend on the (optimized)
     capacities of the assets in € (Positive real number).
@@ -50,6 +66,9 @@
 
 .. |carrier| replace:: Energieträger/Medium like 'electricity', 'gas', 'heat',
     'hydrogen' [-] (string)
+
+.. |commodity| replace:: Commodity or energy carrier provided by the
+    component. [-] (string).
 
 .. |cop| replace:: Coefficient of performance Ratio of energy output to
     energy input.
@@ -100,6 +119,9 @@
 .. |energy_prices| replace:: Price of the energy carrier sourced from the
     utility grid. Can be also a timeseries in €/kWh.
 
+.. |energy_prics| replace:: Price of the energy carrier sourced from
+    the utility grid. Can be also a timeseries in €/kWh.
+
 .. |excess_cost| replace:: Text is missing.
 
 .. |feedin_cap| replace:: Maximum flow for feeding electricity into the grid
@@ -120,6 +142,10 @@
 .. |fixed_thermal_losses_relative| replace:: Thermal losses of storage
     independent of state of charge between two consecutive timesteps relative
     to nominal storage capacity [-] (Between 0 and 1).
+
+.. |full_load_hours_max| replace:: Maximum allowed annual full load
+    hours of the component [-] (Acceptable values are either a
+    non-negative real number or None).
 
 .. |full_load_time_max| replace:: Maximum allowed annual full load hours of
     the asset [-] (Acceptable values are either a non-negative real number or
@@ -195,6 +221,10 @@
 .. |project_data| replace:: The framework of the project in which the asset is
     ought to be optimized.
 
+.. |relative_losses| replace:: Relative heat losses of the pipe per
+    timestep as a factor of the transferred heat [-] (Acceptable values
+    are either a real number between 0 and 1).
+
 .. |renewable_asset| replace:: Choose if this asset should be considered as
     renewable. This parameter is necessary to consider the renewable share
     constraint correctly. [-] (Acceptable values are either Yes or No.).
@@ -202,6 +232,15 @@
 .. |renewable_share| replace:: Share of renewables in the generation mix of
     the energy supplied by the DSO utility. [Factor] (Real number between 0
     and 1).
+
+.. |return_pipe| replace:: Specifies whether the return pipe is included
+    in the representation of the heating pipe [-] (Acceptable values are
+    either Yes or No).
+
+.. |sco_max| replace:: The maximum permissible level of charge of the
+    storage as a factor of the nominal capacity. When the battery is
+    filled to its nominal capacity the state of charge is represented by
+    the value 1 [-] (Real number between 0 and 1).
 
 .. |shortage_cost| replace:: Text is missing
 
@@ -223,3 +262,6 @@
 
 .. |thermal_loss_rate| replace:: Definition of thermal loss rate. [-]
     (numeric).
+
+.. |variable_cost| replace:: Variable operating costs of the component
+    in €/[:unit:] (non-negative real number).

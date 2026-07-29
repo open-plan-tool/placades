@@ -6,8 +6,8 @@ from oemof.eesyplan.components.buses.carrier import CarrierBus
 from oemof.eesyplan.components.compansation.excess import Excess
 from oemof.eesyplan.components.compansation.shortage import Shortage
 from oemof.eesyplan.components.converters.Boiler import Boiler
-from oemof.eesyplan.components.converters.ChpFixedRatio import ChpFixedRatio
-from oemof.eesyplan.components.converters.ChpVariableRatio import (
+from oemof.eesyplan.components.converters.chp_fixed_ratio import ChpFixedRatio
+from oemof.eesyplan.components.converters.chp_variable_ratio import (
     ChpVariableRatio,
 )
 from oemof.eesyplan.components.converters.DieselGenerator import (
@@ -37,12 +37,12 @@ from oemof.eesyplan.components.providers.DSO_electricity import DsoElectricity
 from oemof.eesyplan.components.providers.DSO_fuel import DsoFuel
 from oemof.eesyplan.components.providers.DSO_heat import DsoHeat
 from oemof.eesyplan.components.providers.DSO_hydrogen import DsoHydrogen
-from oemof.eesyplan.components.storages.ElectricalStorage import (
+from oemof.eesyplan.components.storages.electrical_storage import (
     ElectricalStorage,
 )
-from oemof.eesyplan.components.storages.FuelStorage import FuelStorage
-from oemof.eesyplan.components.storages.HydrogenStorage import HydrogenStorage
-from oemof.eesyplan.components.storages.ThermalStorage import ThermalStorage
+from oemof.eesyplan.components.storages.fuel_storage import FuelStorage
+from oemof.eesyplan.components.storages.hydrogen_storage import HydrogenStorage
+from oemof.eesyplan.components.storages.thermal_storage import ThermalStorage
 from oemof.eesyplan.datapackage.results import export_results
 from oemof.eesyplan.datapackage.results import import_results
 from oemof.eesyplan.model import EnergySystem
@@ -87,9 +87,7 @@ __all__ = [
     "ThermalStorage",
     "WeatherData",
     "WindTurbine",
-    "energy_system",
     "export_results",
     "import_results",
     "optimise",
-    "results",
 ]

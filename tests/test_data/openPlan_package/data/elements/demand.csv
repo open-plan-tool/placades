@@ -1,2 +1,2 @@
-type,name,input_timeseries,bus_in_electricity
+type,name,input_timeseries,bus_in
 demand,demand_el,electricity_demand.csv,electricity

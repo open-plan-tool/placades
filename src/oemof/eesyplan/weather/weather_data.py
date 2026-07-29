@@ -12,7 +12,9 @@ except ModuleNotFoundError:
             pass
 
     logging.warning(
-        "If you want to use the WeatherData importer of oemof-eesyplan, you have to install extra dependencies `pip install oemoef-eesyplan[importer]` "
+        "If you want to use the WeatherData importer of oemof-eesyplan, "
+        "you have to install extra dependencies "
+        "`pip install oemoef-eesyplan[importer]` "
     )
 
 

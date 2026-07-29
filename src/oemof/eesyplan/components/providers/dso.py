@@ -38,7 +38,7 @@ class DSO(Node):
         name : str
             |name|
         energy_price : float, default=0.3
-            |energy_prics|
+            |energy_prices|
         feedin_tariff : float, default=0.1
             |feedin_tariff|
         peak_demand_pricing : float, default=0

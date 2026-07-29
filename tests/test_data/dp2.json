@@ -38,6 +38,11 @@
                         "format": "default"
                     },
                     {
+                        "name": "capex_fix",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
                         "name": "capex_var",
                         "type": "number",
                         "format": "default"
@@ -68,7 +73,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "efficiency_charge",
+                        "name": "efficiency",
                         "type": "number",
                         "format": "default"
                     },
@@ -83,7 +88,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "c_rate_charge",
+                        "name": "crate",
                         "type": "number",
                         "format": "default"
                     },
@@ -157,17 +162,19 @@
                         "format": "default"
                     },
                     {
-                        "name": "shortage_cost",
-                        "type": "number",
+                        "name": "excess",
+                        "type": "boolean",
                         "format": "default"
                     },
                     {
-                        "name": "excess_cost",
+                        "name": "excess_costs",
                         "type": "number",
                         "format": "default"
                     }
                 ],
-                "missingValues": ["", "None", "null", "NaN"],
+                "missingValues": [
+                    ""
+                ],
                 "primaryKey": "name",
                 "foreignKeys": []
             }
@@ -197,7 +204,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "bus_in",
+                        "name": "bus_in_electricity",
                         "type": "string",
                         "format": "default"
                     }
@@ -208,7 +215,7 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "bus_in",
+                        "fields": "bus_in_electricity",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"

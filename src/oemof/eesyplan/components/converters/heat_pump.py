@@ -13,13 +13,13 @@ class HeatPump(Converter):
         bus_in_electricity,
         bus_out_heat,
         bus_in_heat=None,
-        installed_capacity=0,
-        age_installed=0,
-        capex_var=0.0,
-        opex_var=0.0,
-        opex_fix=0.0,
-        lifetime=20,
+        installed_capacity=None,
         maximum_capacity=None,
+        age_installed=0,
+        capex_spec=0.0,
+        variable_costs=0.0,
+        opex_spec=0.0,
+        lifetime=20,
     ):
         """
         Heat pump for efficient heat generation.
@@ -47,15 +47,14 @@ class HeatPump(Converter):
             |age_installed|
         installed_capacity : float, default=0
              |installed_capacity|
-        capex_var : float, default=0
-            |capex_var|
-        opex_var : float, default=0
-            |opex_var|
-        opex_fix : float, default=0
-            |opex_fix|
+        capex_spec : float, default=0
+            |capex_spec|
+        variable_costs : float, default=0
+            |variable_costs|
+        opex_spec : float, default=0
+            |opex_spec|
         lifetime : int, default=20
             |lifetime|
-
         maximum_capacity : float or None, default=None
             |maximum_capacity|
         cop : float or list-like, default=0.8
@@ -98,8 +97,8 @@ class HeatPump(Converter):
             cop = np.array(cop)
 
         nv = project_data.create_invest_if_wanted(
-            capex_spec=capex_var,
-            opex_spec=opex_fix,
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
@@ -111,7 +110,7 @@ class HeatPump(Converter):
         outputs = {
             bus_out_heat: Flow(
                 nominal_capacity=nv,
-                variable_costs=opex_var,
+                variable_costs=variable_costs,
             )
         }
 
@@ -133,9 +132,9 @@ class HeatPump(Converter):
         self.name = name
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_var = capex_var
-        self.opex_var = opex_var
-        self.opex_fix = opex_fix
+        self.capex_spec = capex_spec
+        self.variable_costs = variable_costs
+        self.opex_spec = opex_spec
         self.lifetime = lifetime
 
         self.maximum_capacity = maximum_capacity

@@ -11,10 +11,9 @@ class GeothermalPlant(Source):
         name,
         age_installed=0,
         installed_capacity=0,
-        capex_fix=0,
-        capex_var=1000,
-        opex_fix=10,
-        opex_var=0,
+        capex_spec=1000,
+        opex_spec=10,
+        variable_costs=0,
         lifetime=20,
         maximum_capacity=None,
         renewable_asset=True,
@@ -47,17 +46,14 @@ class GeothermalPlant(Source):
             |age_installed|
         installed_capacity : float, default=0
             |installed_capacity|
-        capex_fix : float, default=0
-            |capex_fix|
-        capex_var : float, default=1000
-            |capex_var|
-        opex_fix : float, default=10
-            |opex_fix|
-        opex_var : float, default=0
-            |opex_var|
+        capex_spec : float, default=1000
+            |capex_spec|
+        opex_spec : float, default=10
+            |opex_spec|
+        variable_costs : float, default=0
+            |variable_costs|
         lifetime : int, default=20
             |lifetime|
-
         maximum_capacity : float or None, default=None
             |maximum_capacity|
         renewable_asset : bool, default=True
@@ -80,12 +76,10 @@ class GeothermalPlant(Source):
         ...     name="my_geothermal_plant",
         ...     age_installed=0, # a
         ...     installed_capacity=0, # kW
-        ...     capex_fix=0, # €
-        ...     capex_var=1000, # €/kW
-        ...     opex_fix=10, # €/kW/a
-        ...     opex_var=0, # €/kWh
+        ...     capex_spec=1000, # €/kW
+        ...     opex_spec=10, # €/kW/a
+        ...     variable_costs=0, # €/kWh
         ...     lifetime=25, # a
-        ...     optimize_cap=True,
         ...     maximum_capacity=1000, # kW
         ...     renewable_asset=True,
         ...     input_timeseries=[1,2,3],
@@ -95,8 +89,8 @@ class GeothermalPlant(Source):
         """
 
         nv = project_data.create_invest_if_wanted(
-            capex_spec=capex_var,
-            opex_spec=opex_fix,
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             project_data=project_data,
@@ -107,12 +101,11 @@ class GeothermalPlant(Source):
         self.name = name
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_fix = capex_fix
-        self.capex_var = capex_var
-        self.opex_fix = opex_fix
-        self.opex_var = opex_var
-        self.lifetime = lifetime
 
+        self.capex_spec = capex_spec
+        self.opex_spec = opex_spec
+        self.variable_costs = variable_costs
+        self.lifetime = lifetime
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = renewable_asset
 

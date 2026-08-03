@@ -10,11 +10,10 @@ class ElectricalStorage(EnergyStorage):
         bus_in_electricity,
         bus_out_electricity=None,
         age_installed=0,
-        capex_var=0,
-        opex_fix=0,
-        opex_var=0,
-        lifetime=None,
-        optimize_cap=False,
+        capex_spec=0,
+        opex_spec=0,
+        variable_costs=0,
+        lifetime=20,
         soc_max=1,
         soc_min=0,
         self_discharge=0.0,
@@ -54,16 +53,14 @@ class ElectricalStorage(EnergyStorage):
             |bus_out_electricity|
         age_installed : float or int, optional (default: 0)
             |age_installed|
-        capex_var : float, optional (default: 0)
-            |capex_var|
-        opex_fix : float, optional (default: 0)
-            |opex_fix|
-        opex_var : float, optional (default: 0)
-            |opex_var|
+        capex_spec : float, optional (default: 0)
+            |capex_spec|
+        opex_spec : float, optional (default: 0)
+            |opex_spec|
+        variable_costs : float, optional (default: 0)
+            |variable_costs|
         lifetime : int, optional (default: None)
             |lifetime|
-        optimize_cap : bool, optional (default: False)
-            |optimize_cap|
         soc_max : float, optional (default: 1)
             |soc_max|
         soc_min : float, optional (default: 0)
@@ -107,11 +104,10 @@ class ElectricalStorage(EnergyStorage):
         ...     bus_out_electricity=el_bus,
         ...     age_installed=0,
         ...     installed_capacity=0,
-        ...     capex_var=3,
-        ...     opex_fix=5,
-        ...     opex_var=0,
+        ...     capex_spec=3,
+        ...     opex_spec=5,
+        ...     variable_costs=0,
         ...     lifetime=10,
-        ...     optimize_cap=True,
         ...     soc_max=1,
         ...     soc_min=0,
         ...     c_rate_charge=0.7,
@@ -128,11 +124,11 @@ class ElectricalStorage(EnergyStorage):
             bus_in=bus_in_electricity,
             bus_out=bus_out_electricity,
             age_installed=age_installed,
-            capex_var=capex_var,
-            opex_fix=opex_fix,
-            opex_var=opex_var,
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
+            variable_costs=variable_costs,
             lifetime=lifetime,
-            optimize_cap=optimize_cap,
+
             soc_max=soc_max,
             soc_min=soc_min,
             energy_losses_relative=self_discharge,

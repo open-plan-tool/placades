@@ -12,11 +12,10 @@ class EnergyStorage(GenericStorage):
         bus_in,
         bus_out=None,
         age_installed=0,
-        capex_var=0,
-        opex_fix=0,
-        opex_var=0,
-        lifetime=None,
-        optimize_cap=False,
+        capex_spec=0,
+        opex_spec=0,
+        variable_costs=0,
+        lifetime=20,
         soc_max=1,
         soc_min=0,
         energy_losses_relative=0.0,
@@ -26,7 +25,7 @@ class EnergyStorage(GenericStorage):
         efficiency_discharge=1.0,
         theoretical_time_charge=1.0,  # hours
         theoretical_time_discharge=None,  # hours
-        maximum_capacity_investment=float("+inf"),
+        maximum_capacity_investment=None,
     ):
         """
         Energy Storage System (ESS).
@@ -58,16 +57,14 @@ class EnergyStorage(GenericStorage):
             |bus_out|
         age_installed : float or int, optional (default: 0)
             |age_installed|
-        capex_var : float, optional (default: 0)
-            |capex_var|
-        opex_fix : float, optional (default: 0)
-            |opex_fix|
-        opex_var : float, optional (default: 0)
-            |opex_var|
+        capex_spec : float, optional (default: 0)
+            |capex_spec|
+        opex_spec : float, optional (default: 0)
+            |opex_spec|
+        variable_costs : float, optional (default: 0)
+            |variable_costs|
         lifetime : int, optional
             |lifetime|
-        optimize_cap : bool, optional (default: False)
-            |optimize_cap|
         soc_max : float, optional (default: 1)
             |soc_max|
         soc_min : float, optional (default: 0)
@@ -111,12 +108,11 @@ class EnergyStorage(GenericStorage):
         ...     bus_in=heat_bus,
         ...     bus_out=heat_bus,
         ...     age_installed=0,
-        ...     installed_capacity=0.1,
-        ...     capex_var=3,
-        ...     opex_fix=5,
-        ...     opex_var=0,
+        ...     installed_capacity=0,
+        ...     capex_spec=3,
+        ...     opex_spec=5,
+        ...     variable_costs=0,
         ...     lifetime=10,
-        ...     optimize_cap=True,
         ...     soc_max=1,
         ...     soc_min=0,
         ...     theoretical_time_charge=1,  # hours
@@ -130,8 +126,8 @@ class EnergyStorage(GenericStorage):
         """
 
         nv = project_data.create_invest_if_wanted(
-            capex_spec=capex_var,
-            opex_spec=opex_fix,
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity_investment,
@@ -148,16 +144,16 @@ class EnergyStorage(GenericStorage):
         self.efficiency_charge = efficiency_charge
         self.efficiency_discharge = efficiency_discharge
 
-        if optimize_cap:
-            self.capacity_charge = Investment()
-            self.capacity_discharge = Investment()
-            self.crate_charge = theoretical_time_charge
-            self.crate_discharge = theoretical_time_discharge
-        else:
+        if installed_capacity:
             self.capacity_charge = nv * theoretical_time_charge
             self.capacity_discharge = nv * theoretical_time_discharge
             self.crate_charge = None
             self.crate_discharge = None
+        else:
+            self.capacity_charge = Investment()
+            self.capacity_discharge = Investment()
+            self.crate_charge = theoretical_time_charge
+            self.crate_discharge = theoretical_time_discharge
 
         if bus_out is None:
             bus_out = bus_in
@@ -172,7 +168,7 @@ class EnergyStorage(GenericStorage):
             inputs={
                 bus_in: Flow(
                     nominal_capacity=self.capacity_charge,
-                    variable_costs=opex_var,
+                    variable_costs=variable_costs,
                 )
             },
             outputs=outputs,

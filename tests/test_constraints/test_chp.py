@@ -25,8 +25,8 @@ def test_chp_fixed_dispatch():
         installed_capacity=300,
         efficiency_electricity_chp=np.arange(-1, 0, 0.1) * -1,
         efficiency_heat_chp=np.arange(0, 1, 0.1),
-        opex_var=-1,
-        optimize_cap=False,
+        variable_costs=-1,
+
         project_data=Project(
             name="Project_X",
             economic_period=20,
@@ -71,8 +71,8 @@ def test_chp_variable_dispatch():
         efficiency_electricity_full_condensation=0.55,
         efficiency_electricity_chp=0.32,
         efficiency_heat_chp=0.58,
-        opex_var=-1,
-        optimize_cap=False,
+        variable_costs=-1,
+
         project_data=Project(
             name="Project_X",
             economic_period=20,

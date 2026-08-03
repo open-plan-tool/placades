@@ -8,13 +8,12 @@ class Sink(SolphSink):
         name,
         project_data,
         bus_in,
-        optimize_cap=False,
         age_installed=0,
         installed_capacity=0,
         maximum_capacity=float("inf"),
-        capex_var=1000,
-        opex_fix=10,
-        opex_var=0,
+        capex_spec=1000,
+        opex_spec=10,
+        variable_costs=0,
         lifetime=20,
         minimum=None,
         maximum=None,
@@ -37,20 +36,18 @@ class Sink(SolphSink):
             |project_data|
         bus_in : Node object
             |bus_in|
-        optimize_cap : bool, optional (default: False)
-            |optimize_cap|
         age_installed : float or int, optional (default: 0)
             |age_installed|
         installed_capacity : float
             |installed_capacity|
         maximum_capacity : float, optional (default: float("+inf"))
             |maximum_capacity|
-        capex_var : float, optional (default: 0)
-            |capex_var|
-        opex_fix : float, optional (default: 0)
-            |opex_fix|
-        opex_var : float, optional (default: 0)
-            |opex_var|
+        capex_spec : float, optional (default: 0)
+            |capex_spec|
+        opex_spec : float, optional (default: 0)
+            |opex_spec|
+        variable_costs : float, optional (default: 0)
+            |variable_costs|
         lifetime : int, optional (default: None)
             |lifetime|
         minimum : float, optional
@@ -85,8 +82,8 @@ class Sink(SolphSink):
         >>> sink = Sink("test", project, bus)
         """
         nv = project_data.create_invest_if_wanted(
-            capex_spec=capex_var,
-            opex_spec=opex_fix,
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
@@ -98,7 +95,7 @@ class Sink(SolphSink):
             inputs={
                 bus_in: Flow(
                     nominal_capacity=nv,
-                    variable_costs=opex_var,
+                    variable_costs=variable_costs,
                     minimum=minimum,
                     maximum=maximum,
                     fix=fix,

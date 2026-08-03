@@ -11,14 +11,12 @@ class Boiler(Converter):
         project_data,
         efficiency=0.8,
         age_installed=0,
-        installed_capacity=0,
-        capex_var=1000,
-        capex_fix=0,
-        opex_fix=10,
-        opex_var=0,
+        installed_capacity=None,
+        maximum_capacity=None,
+        capex_spec=1000,
+        opex_spec=10,
+        variable_costs=0,
         lifetime=20,
-        optimize_cap=True,
-        maximum_capacity=float("+inf"),
     ):
         """
         Boiler for heat generation.
@@ -48,24 +46,18 @@ class Boiler(Converter):
             Number of years the asset has already been in operation.
         installed_capacity : float, default=0
             Already existing installed capacity.
-        capex_fix : float, default=1000
+        capex_spec : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
-        capex_var : float, default=1000
-            Specific investment costs of the asset related to the
-            installed capacity (CAPEX).
-        opex_fix : float, default=10
+        opex_spec : float, default=10
             Specific operational and maintenance costs of the asset
-            related to the installed capacity (OPEX_fix).
-        opex_var : float, default=0.01
+            related to the installed capacity (opex_spec).
+        variable_costs : float, default=0.01
             Costs associated with a flow through/from the asset
-            (OPEX_var or fuel costs).
+            (variable_costs or fuel costs).
         lifetime : int, default=20
             Number of operational years of the asset until it has to
             be replaced.
-        optimize_cap : bool, default=False
-            Choose if capacity optimization should be performed for
-            this asset.
         maximum_capacity : float or None, default=None
             Maximum total capacity of an asset that can be installed
             at the project site.
@@ -85,13 +77,12 @@ class Boiler(Converter):
         ...     bus_out_heat=heat_bus,
         ...     age_installed=0,
         ...     installed_capacity=0,
-        ...     capex_var=1000,
-        ...     opex_fix=1000,
+        ...     capex_spec=1000,
+        ...     opex_spec=1000,
         ...     lifetime=20,
         ...     maximum_capacity=None,
         ...     efficiency=0.8,
-        ...     opex_var=0,
-        ...     optimize_cap=True,
+        ...     variable_costs=0,
         ...     project_data=Project(
         ...         name="Project_X", economic_period=20, tax=0,
         ...         discount_factor=0.01),
@@ -99,8 +90,8 @@ class Boiler(Converter):
 
         """
         nv = project_data.create_invest_if_wanted(
-            capex_spec=capex_var,
-            opex_spec=opex_fix,
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
@@ -112,17 +103,16 @@ class Boiler(Converter):
         outputs = {
             bus_out_heat: Flow(
                 nominal_capacity=nv,
-                variable_costs=opex_var,
+                variable_costs=variable_costs,
             )
         }
 
         self.name = name
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_fix = capex_fix
-        self.capex_var = capex_var
-        self.opex_fix = opex_fix
-        self.opex_var = opex_var
+        self.capex_spec = capex_spec
+        self.opex_spec = opex_spec
+        self.variable_costs = variable_costs
         self.lifetime = lifetime
         self.maximum_capacity = maximum_capacity
         self.efficiency = efficiency

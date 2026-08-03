@@ -14,13 +14,12 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         efficiency_heat_chp,
         project_data,
         age_installed=0,
-        installed_capacity=0,
-        capex_var=1000,
-        opex_fix=10,
-        opex_var=0,
+        installed_capacity=None,
+        maximum_capacity=None,
+        capex_spec=1000,
+        opex_spec=10,
+        variable_costs=0,
         lifetime=20,
-        optimize_cap=False,
-        maximum_capacity=float("+inf"),
     ):
         """
         Combined Heat and Power (CHP) plant.
@@ -59,20 +58,18 @@ class ChpVariableRatio(ExtractionTurbineCHP):
             |efficiency_electricity_chp|
         efficiency_heat_chp : float
             |efficiency_heat_chp|
-        optimize_cap : bool, default=True
-            |optimize_cap|
         maximum_capacity : float or None, default=None
             |maximum_capacity|
         age_installed : int, default=0
             |age_installed|
         installed_capacity : float, default=0
             |installed_capacity|
-        capex_var : float, default=1000
-            |capex_var|
-        opex_fix : float, default=10
-            |opex_fix|
-        opex_var : float, default=0,
-            |opex_var|
+        capex_spec : float, default=1000
+            |capex_spec|
+        opex_spec : float, default=10
+            |opex_spec|
+        variable_costs : float, default=0,
+            |variable_costs|
         lifetime : int, default=20
             |lifetime|
         project_data: project_data
@@ -90,14 +87,13 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         ...     bus_in_fuel=gas_bus,
         ...     bus_out_heat=heat_bus,
         ...     bus_out_electricity=el_bus,
-        ...     installed_capacity=300,
+        ...     installed_capacity=0,
         ...     efficiency_electricity_full_condensation=0.3,
         ...     efficiency_electricity_chp=0.3,
         ...     efficiency_heat_chp=0.5,
-        ...     capex_var=1500,
-        ...     opex_fix=15,
+        ...     capex_spec=1500,
+        ...     opex_spec=15,
         ...     lifetime=20,
-        ...     optimize_cap=True,
         ...     project_data=Project(
         ...         name="Project_X", economic_period=20, tax=0,
         ...         discount_factor=0.01,
@@ -110,8 +106,8 @@ class ChpVariableRatio(ExtractionTurbineCHP):
             raise ValueError("Total efficiency is above 100%.")
 
         nv = project_data.create_invest_if_wanted(
-            capex_spec=capex_var,
-            opex_spec=opex_fix,
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
@@ -123,16 +119,16 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         outputs = {
             bus_out_electricity: Flow(
                 nominal_capacity=nv,
-                variable_costs=opex_var,
+                variable_costs=variable_costs,
             ),
             bus_out_heat: Flow(),
         }
 
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_var = capex_var
-        self.opex_fix = opex_fix
-        self.opex_var = opex_var
+        self.capex_spec = capex_spec
+        self.opex_spec = opex_spec
+        self.variable_costs = variable_costs
         self.lifetime = lifetime
 
         self.maximum_capacity = maximum_capacity

@@ -21,8 +21,8 @@ def test_init_chp_variable_ratio():
             efficiency_electricity_full_condensation=0.8,
             efficiency_electricity_chp=0.5,
             efficiency_heat_chp=0.7,
-            capex_var=1500,
-            opex_fix=15,
+            capex_spec=1500,
+            opex_spec=15,
             lifetime=20,
             optimize_cap=True,
             project_data=Project(

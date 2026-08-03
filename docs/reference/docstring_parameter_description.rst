@@ -61,7 +61,7 @@
     planning and development costs which do not depend on the (optimized)
     capacities of the assets in € (Positive real number).
 
-.. |capex_var| replace:: Specific investment costs of the asset related to the
+.. |capex_spec| replace:: Specific investment costs of the asset related to the
     installed capacity (CAPEX) in €/:unit:.
 
 .. |carrier| replace:: Energieträger/Medium like 'electricity', 'gas', 'heat',
@@ -195,11 +195,11 @@
     between two consecutive timesteps as a factor of the nominal capacity [-]
     (Acceptable values are either a non-negative real number or None).
 
-.. |opex_fix| replace:: Specific operational and maintenance costs of the
-    asset related to the installed capacity (OPEX_fix) in €/(:unit: • a)
+.. |opex_spec| replace:: Specific operational and maintenance costs of the
+    asset related to the installed capacity (opex_spec) in €/(:unit: • a)
 
-.. |opex_var| replace:: Costs associated with a flow through/from the asset
-    (OPEX_var or fuel costs). This could be fuel costs for fuel sources like
+.. |variable_costs| replace:: Costs associated with a flow through/from the asset
+    (variable_costs or fuel costs). This could be fuel costs for fuel sources like
     biogas or oil or operational costs for thermal power plants which only
     occur when operating the plant in €/kWh.
 

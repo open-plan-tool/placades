@@ -42,7 +42,6 @@ class Commodity(Source):
         ...     capacity=10,
         ...     full_load_hours_max=8760
         ... )
-
         >>> # Limited by the amount of energy. The total energy can be used in
         >>> # one timestep or can be used in 10 units in every time step. And
         >>> # everything between. Typically, a following boiler will restrict

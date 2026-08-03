@@ -23,7 +23,7 @@ def test_heat_pump_dispatch():
         bus_in_heat=ambient_bus,
         bus_out_heat=heat_bus,
         installed_capacity=15,
-        opex_var=-0.1,
+        variable_costs=-0.1,
         cop=[3.5, 3.2] * 5,
         project_data=Project(
             name="Project_X",
@@ -76,9 +76,9 @@ def test_heat_pump_investment():
         bus_out_heat=heat_bus,
         maximum_capacity=15,
         optimize_cap=True,
-        capex_var=100,
-        opex_var=-10,
-        opex_fix=1,
+        capex_spec=100,
+        variable_costs=-10,
+        opex_spec=1,
         cop=[3.5, 3.2] * 5,
         project_data=Project(
             name="Project_X",
@@ -98,8 +98,8 @@ def test_heat_pump_investment():
         round(
             (
                 results["objective"]
-                + results["invest"].squeeze() * heat_pump.capex_var
-                - results["invest"].squeeze() * heat_pump.opex_fix
+                + results["invest"].squeeze() * heat_pump.capex_spec
+                - results["invest"].squeeze() * heat_pump.opex_spec
             ),
             3,
         )

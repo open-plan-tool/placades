@@ -18,9 +18,9 @@ class AuxiliaryHeat(Converter):
         installed_capacity=None,
         maximum_capacity=None,
         age_installed=0,
-        capex_var=0,
-        opex_fix=0,
-        opex_var=0,
+        capex_spec=0,
+        opex_spec=0,
+        variable_costs=0,
         lifetime=20,
     ):
         """
@@ -45,12 +45,12 @@ class AuxiliaryHeat(Converter):
             |age_installed|
         installed_capacity : float, optional (default: 0)
             |installed_capacity|
-        capex_var : float, optional (default: 1000)
-            |capex_var|
-        opex_fix : float, optional (default: 10)
-            |opex_fix|
-        opex_var : float, optional (default: 0)
-            |opex_var|
+        capex_spec : float, optional (default: 1000)
+            |capex_spec|
+        opex_spec : float, optional (default: 10)
+            |opex_spec|
+        variable_costs : float, optional (default: 0)
+            |variable_costs|
         lifetime : int, optional (default: 20)
             |lifetime|
         maximum_capacity : float, optional (default: float("+inf"))
@@ -87,15 +87,15 @@ class AuxiliaryHeat(Converter):
         self.installed_capacity = installed_capacity
         self.maximum_capacity = maximum_capacity
         self.age_installed = age_installed
-        self.capex_var = capex_var
-        self.opex_fix = opex_fix
-        self.opex_var = opex_var
+        self.capex_spec = capex_spec
+        self.opex_spec = opex_spec
+        self.variable_costs = variable_costs
         self.lifetime = lifetime
         self.age_installed = age_installed
 
         nv = project_data.create_invest_if_wanted(
-            capex_spec=capex_var,
-            opex_spec=opex_fix,
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
@@ -108,7 +108,7 @@ class AuxiliaryHeat(Converter):
         outputs = {
             bus_out_heat: Flow(
                 nominal_capacity=nv,
-                variable_costs=opex_var,
+                variable_costs=variable_costs,
             )
         }
 

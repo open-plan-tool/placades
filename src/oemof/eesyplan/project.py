@@ -1,7 +1,4 @@
 from oemof.eesyplan.investment import calculate_annuity
-from oemof.eesyplan.type_checks import check_parameter
-from oemof.tools.economics import annuity
-
 from oemof.solph import Investment
 
 
@@ -66,10 +63,7 @@ class Project:
         # ToDo: check maximum_capacity und installed_capacity dann Fehler!
         if installed_capacity is None:
             specific_annual_cost = (
-                self.calculate_annuity(
-                    capex_spec, lifetime
-                )
-                + opex_spec
+                self.calculate_annuity(capex_spec, lifetime) + opex_spec
             )
             return Investment(
                 ep_costs=specific_annual_cost,

@@ -35,7 +35,9 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
         path = Path(Path(__file__).parent, DATA_PATH, fn)
         data[key] = pd.read_csv(path, header=None).squeeze()
 
-    project = Project(name="test", economic_period=20, tax=0, discount_factor=0)
+    project = Project(
+        name="test", economic_period=20, tax=0, discount_factor=0
+    )
 
     # ####################### initialize the energy system ####################
     energy_system = EnergySystem(2023, number=10)

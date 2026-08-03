@@ -1,4 +1,3 @@
-
 from oemof.solph import Flow
 from oemof.solph.components import Source
 

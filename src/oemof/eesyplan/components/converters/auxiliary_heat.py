@@ -1,6 +1,5 @@
 import numpy as np
 
-
 from oemof.solph import Flow
 from oemof.solph.components import Converter
 

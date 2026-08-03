@@ -15,7 +15,7 @@ def test_carrier_bus_excess():
     my_project = (
         Project(
             name="Project_X",
-            lifetime=20,
+            economic_period=20,
             tax=0,
             discount_factor=0.01,
         ),

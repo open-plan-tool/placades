@@ -27,7 +27,7 @@ def test_init_chp_variable_ratio():
             optimize_cap=True,
             project_data=Project(
                 name="Project_X",
-                lifetime=20,
+                economic_period=20,
                 tax=0,
                 discount_factor=0.01,
             ),

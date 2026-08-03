@@ -1,4 +1,4 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
+
 from oemof.solph import Flow
 from oemof.solph import Investment
 from oemof.solph.components import GenericStorage
@@ -96,7 +96,7 @@ class EnergyStorage(GenericStorage):
         >>> from oemof.eesyplan import CarrierBus
         >>> my_project = Project(
         ...         name="my_project",
-        ...         lifetime=20,
+        ...         economic_period=20,
         ...         tax=0,
         ...         discount_factor=0.01
         ...     )
@@ -130,13 +130,11 @@ class EnergyStorage(GenericStorage):
         ... )
         """
 
-        nv = _create_invest_if_wanted(
-            optimise_cap=optimize_cap,
-            capex_var=capex_var,
-            opex_fix=opex_fix,
+        nv = project_data.create_invest_if_wanted(
+            capex_spec=capex_var,
+            opex_spec=opex_fix,
             lifetime=lifetime,
-            age_installed=age_installed,
-            existing_capacity=installed_capacity,
+            installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity_investment,
             project_data=project_data,
         )

@@ -18,18 +18,18 @@ from oemof.eesyplan.components.demand.fuel_demand import FuelDemand
 from oemof.eesyplan.components.demand.heat_demand import HeatDemand
 from oemof.eesyplan.components.demand.hydrogen_demand import H2Demand
 from oemof.eesyplan.components.production.BiogasPlant import BiogasPlant
-from oemof.eesyplan.components.production.GeothermalPlant import (
+from oemof.eesyplan.components.production.geothermal_plant import (
     GeothermalPlant,
 )
-from oemof.eesyplan.components.production.PvPlant import PvPlant
-from oemof.eesyplan.components.production.SolarThermalPlant import (
+from oemof.eesyplan.components.production.pv_plant import PvPlant
+from oemof.eesyplan.components.production.solar_thermal_plant import (
     SolarThermalPlant,
 )
-from oemof.eesyplan.components.production.WindTurbine import WindTurbine
+from oemof.eesyplan.components.production.wind_turbine import WindTurbine
 from oemof.eesyplan.components.providers.DSO_electricity import DsoElectricity
 from oemof.eesyplan.components.providers.DSO_fuel import DsoFuel
-from oemof.eesyplan.components.providers.DSO_heat import DsoHeat
-from oemof.eesyplan.components.providers.DSO_hydrogen import DsoHydrogen
+from oemof.eesyplan.components.providers.dso_heat import DsoHeat
+from oemof.eesyplan.components.providers.dso_hydrogen import DsoHydrogen
 from oemof.eesyplan.components.storages.electrical_storage import (
     ElectricalStorage,
 )

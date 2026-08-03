@@ -2,8 +2,6 @@ import warnings
 
 import pandas as pd
 
-from oemof.solph import Investment
-
 
 def crf(project_life, discount_factor):
     """
@@ -103,38 +101,9 @@ def get_replacement_costs(
     return replacement_costs
 
 
-def _create_invest_if_wanted(
-    optimise_cap,
-    existing_capacity,
-    project_data,
-    capex_var,
-    opex_fix,
-    lifetime,
-    age_installed,
-    maximum_capacity=float("+inf"),
-    minimum_capacity=0,
-):
-    if optimise_cap is True:
-        epc = (
-            project_data.calculate_epc(
-                capex_var, lifetime, age_installed, method="mvs"
-            )
-            + opex_fix
-        )
-        return Investment(
-            ep_costs=epc,
-            existing=existing_capacity,
-            maximum=maximum_capacity,
-            minimum=minimum_capacity,
-        )
-    else:
-        return existing_capacity
-
-
-def calculate_annuity_mvs(
+def calculate_annuity(
     capex_var,
     lifetime,
-    age_installed,  # was used in a second call of get_replacement_costs
     tax,
     lifetime_project,
     discount_factor,

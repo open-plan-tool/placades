@@ -87,7 +87,7 @@ class FuelStorage(EnergyStorage):
         >>> from oemof.eesyplan import CarrierBus
         >>> my_project = Project(
         ...         name="my_project",
-        ...         lifetime=20,
+        ...         economic_period=20,
         ...         tax=0,
         ...         discount_factor=0.01
         ...     )

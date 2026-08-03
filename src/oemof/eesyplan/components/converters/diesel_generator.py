@@ -1,14 +1,16 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
+
 from oemof.solph import Flow
 from oemof.solph.components import Converter
 
 
-class FuelCell(Converter):
+class DieselGenerator(Converter):
     def __init__(
         self,
         name,
-        bus_in_h2,
+        bus_in_fuel,
         bus_out_electricity,
+        project_data,
+        efficiency=0.3,
         age_installed=0,
         installed_capacity=0,
         capex_var=1000,
@@ -17,25 +19,27 @@ class FuelCell(Converter):
         opex_var=0,
         lifetime=20,
         optimize_cap=True,
-        efficiency=0.8,
         maximum_capacity=float("+inf"),
-        project_data=None,
     ):
         """
-        Fuel cell for electricity generation.
+         Diesel generator for electricity generation.
 
-        This class represents a fuel cell that converts hydrogen or other
-        fuels into electrical energy through electrochemical processes.
+         This class represents a diesel generator that converts fuel
+         into electrical energy for backup or primary power generation.
 
         .. important ::
-            The efficiency of fuel cells is typically higher than
-            combustion-based generators.
+            The efficiency parameter determines the conversion rate
+            from fuel to electrical power.
 
         :Structure:
           *input*
-            1. bus_in_h2 : H2
+            1. from_bus : Fuel
           *output*
-            1. bus_out_electricity : Electricity
+            1. to_bus : Electricity
+
+        :Optimization:
+          The characteristic quantity of the optimization is the *maximum
+          power-output* of the Generator given in kW
 
         Parameters
         ----------
@@ -71,13 +75,14 @@ class FuelCell(Converter):
 
         Examples
         --------
+
         >>> from oemof.eesyplan import Project
         >>> from oemof.solph import Bus
-        >>> h2_bus = Bus(label="hydrogen_bus")
-        >>> el_bus = Bus(label="electricity_bus")
-        >>> my_fuel_cell = FuelCell(
-        ...     name="hydrogen_fuel_cell",
-        ...     bus_in_h2=h2_bus,
+        >>> gas_bus = Bus(label="gas_bus")
+        >>> el_bus = Bus(label="el_bus")
+        >>> my_gas_boiler = DieselGenerator(
+        ...     name="DieselGenerator",
+        ...     bus_in_fuel=gas_bus,
         ...     bus_out_electricity=el_bus,
         ...     age_installed=0,
         ...     installed_capacity=0,
@@ -85,28 +90,25 @@ class FuelCell(Converter):
         ...     opex_fix=1000,
         ...     lifetime=20,
         ...     maximum_capacity=None,
-        ...     efficiency=0.9,
+        ...     efficiency=0.3,
         ...     opex_var=0,
         ...     optimize_cap=True,
         ...     project_data=Project(
-        ...         name="Project_X", lifetime=20, tax=0,
-        ...         discount_factor=0.01,
+        ...         name="Project_X", economic_period=20, tax=0,
+        ...         discount_factor=0.01),
         ...     )
-        ... )
-        """
 
-        nv = _create_invest_if_wanted(
-            optimise_cap=optimize_cap,
-            capex_var=capex_var,
-            opex_fix=opex_fix,
+        """
+        nv = project_data.create_invest_if_wanted(
+            capex_spec=capex_var,
+            opex_spec=opex_fix,
             lifetime=lifetime,
-            age_installed=age_installed,
-            existing_capacity=installed_capacity,
+            installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
             project_data=project_data,
         )
 
-        inputs = {bus_in_h2: Flow()}
+        inputs = {bus_in_fuel: Flow()}
 
         outputs = {
             bus_out_electricity: Flow(
@@ -125,7 +127,6 @@ class FuelCell(Converter):
         self.lifetime = lifetime
         self.maximum_capacity = maximum_capacity
         self.efficiency = efficiency
-
         super().__init__(
             label=name,
             outputs=outputs,

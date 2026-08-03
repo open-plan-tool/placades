@@ -27,7 +27,7 @@ def test_heat_pump_dispatch():
         cop=[3.5, 3.2] * 5,
         project_data=Project(
             name="Project_X",
-            lifetime=20,
+            economic_period=20,
             tax=0,
             discount_factor=0.01,
         ),
@@ -82,7 +82,7 @@ def test_heat_pump_investment():
         cop=[3.5, 3.2] * 5,
         project_data=Project(
             name="Project_X",
-            lifetime=20,
+            economic_period=20,
             tax=0,
             discount_factor=0.01,
         ),

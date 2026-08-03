@@ -1,13 +1,13 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
+
 from oemof.solph import Flow
 from oemof.solph.components import Source
 
 
-class SolarThermalPlant(Source):
+class PvPlant(Source):
     def __init__(
         self,
         project_data,
-        bus_out_heat,
+        bus_out_electricity,
         input_timeseries,
         name,
         age_installed=0,
@@ -17,30 +17,33 @@ class SolarThermalPlant(Source):
         opex_fix=10,
         opex_var=0,
         lifetime=20,
-        optimize_cap=False,
         maximum_capacity=None,
         renewable_asset=True,
     ):
         """
-        Solar thermal plant for renewable heat generation.
+        Photovoltaic power plant for solar electricity generation.
 
-        This class represents a solar thermal plant that converts solar
-        irradiation into thermal energy using solar collectors.
+        This class represents a photovoltaic plant that converts solar
+        irradiation into electrical energy using photovoltaic panels.
 
         .. important ::
-            This is a renewable energy source that provides heat directly
-            from solar radiation.
+            This is a renewable energy source that contributes to the
+            renewable share of the system.
 
         :Structure:
           *output*
-            1. to_bus : Heat
+            1. to_bus : Electricity
+
+        :Optimization:
+          The characteristic quantity of the optimization is the *nominal
+          power-output* of the PV-plant given in kWp
 
         Parameters
         ----------
         project_data: Project object
-           |project_data|
-        bus_out_heat : bus object
-            |bus_out_heat|
+            |project_data|
+        bus_out_electricity : bus object
+            |bus_out_electricity|
         input_timeseries : array-like
             |input_timeseries|
         name : str
@@ -59,12 +62,11 @@ class SolarThermalPlant(Source):
             |opex_var|
         lifetime : int, default=20
             |lifetime|
-        optimize_cap : bool, default=False
-            |optimize_cap|
         maximum_capacity : float or None, default=None
             |maximum_capacity|
         renewable_asset : bool, default=True
             |renewable_asset|
+
 
         Examples
         --------
@@ -72,23 +74,23 @@ class SolarThermalPlant(Source):
         >>> from oemof.eesyplan import CarrierBus
         >>> my_project = Project(
         ...         name="my_project",
-        ...         lifetime=20,
+        ...         economic_period=20,
         ...         tax=0,
         ...         discount_factor=0.01
         ...     )
-        >>> heat_bus = CarrierBus(name="my_heat_bus")
-        >>> my_st = SolarThermalPlant(
-        ...     bus_out_heat=heat_bus,
-        ...     name="my_st_plant",
+        >>> el_bus = CarrierBus(name="my_electricity_bus")
+        >>> my_pv = PvPlant(
+        ...     bus_out_electricity=el_bus,
+        ...     name="my_pv_plant",
         ...     age_installed=0, # a
         ...     installed_capacity=0, # kW
         ...     capex_fix=0, # €
-        ...     capex_var=1000, # €/kW
-        ...     opex_fix=10, # €/kW/a
+        ...     capex_var=1000, # €/kWp
+        ...     opex_fix=10, # €/kWp/a
         ...     opex_var=0, # €/kWh
         ...     lifetime=25, # a
         ...     optimize_cap=True,
-        ...     maximum_capacity=1000, # kW
+        ...     maximum_capacity=1000, # kWp
         ...     renewable_asset=True,
         ...     input_timeseries=[1,2,3],
         ...     project_data=my_project,
@@ -96,17 +98,15 @@ class SolarThermalPlant(Source):
 
         """
 
-        nv = _create_invest_if_wanted(
-            optimise_cap=optimize_cap,
-            capex_var=capex_var,
-            opex_fix=opex_fix,
+        nv = project_data.create_invest_if_wanted(
+            capex_spec=capex_var,
+            opex_spec=opex_fix,
             lifetime=lifetime,
-            age_installed=age_installed,
-            existing_capacity=installed_capacity,
+            installed_capacity=installed_capacity,
             project_data=project_data,
         )
 
-        self.bus_out_heat = bus_out_heat
+        self.bus_out_electricity = bus_out_electricity
         self.input_timeseries = input_timeseries
         self.name = name
         self.age_installed = age_installed
@@ -116,12 +116,11 @@ class SolarThermalPlant(Source):
         self.opex_fix = opex_fix
         self.opex_var = opex_var
         self.lifetime = lifetime
-        self.optimize_cap = optimize_cap
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = renewable_asset
 
         outputs = {
-            self.bus_out_heat: Flow(
+            self.bus_out_electricity: Flow(
                 fix=input_timeseries,
                 nominal_capacity=nv,
             )

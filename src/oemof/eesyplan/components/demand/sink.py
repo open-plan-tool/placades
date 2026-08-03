@@ -1,4 +1,4 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
+
 from oemof.solph import Flow
 from oemof.solph.components import Sink as SolphSink
 
@@ -81,17 +81,15 @@ class Sink(SolphSink):
         >>> from oemof.eesyplan import Project
         >>> bus = CarrierBus("Test", balanced=False)
         >>> project = Project(
-        ...         name="Project_X", lifetime=20, tax=0,
+        ...         name="Project_X", economic_period=20, tax=0,
         ...         discount_factor=0.01)
         >>> sink = Sink("test", project, bus)
         """
-        nv = _create_invest_if_wanted(
-            optimise_cap=optimize_cap,
-            capex_var=capex_var,
-            opex_fix=opex_fix,
+        nv = project_data.create_invest_if_wanted(
+            capex_spec=capex_var,
+            opex_spec=opex_fix,
             lifetime=lifetime,
-            age_installed=age_installed,
-            existing_capacity=installed_capacity,
+            installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
             project_data=project_data,
         )

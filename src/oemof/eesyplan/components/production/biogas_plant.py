@@ -1,13 +1,13 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
+
 from oemof.solph import Flow
 from oemof.solph.components import Source
 
 
-class PvPlant(Source):
+class BiogasPlant(Source):
     def __init__(
         self,
         project_data,
-        bus_out_electricity,
+        bus_out_fuel,
         input_timeseries,
         name,
         age_installed=0,
@@ -17,34 +17,33 @@ class PvPlant(Source):
         opex_fix=10,
         opex_var=0,
         lifetime=20,
-        optimize_cap=False,
         maximum_capacity=None,
         renewable_asset=True,
     ):
         """
-        Photovoltaic power plant for solar electricity generation.
+        Biogas power plant for renewable gas generation.
 
-        This class represents a photovoltaic plant that converts solar
-        irradiation into electrical energy using photovoltaic panels.
+        This class represents a biogas plant that produces renewable gas
+        from organic waste materials through anaerobic digestion.
 
         .. important ::
-            This is a renewable energy source that contributes to the
-            renewable share of the system.
+            This is a renewable energy source that produces carbon-neutral
+            gas fuel.
 
         :Structure:
           *output*
-            1. to_bus : Electricity
+            1. to_bus : Fuel
 
         :Optimization:
           The characteristic quantity of the optimization is the *nominal
-          power-output* of the PV-plant given in kWp
+          power-output* of the biogas power plant given in kW
 
         Parameters
         ----------
         project_data: Project object
             |project_data|
-        bus_out_electricity : bus object
-            |bus_out_electricity|
+        bus_out_fuel : bus object
+            |bus_out_fuel|
         input_timeseries : array-like
             |input_timeseries|
         name : str
@@ -63,13 +62,11 @@ class PvPlant(Source):
             |opex_var|
         lifetime : int, default=20
             |lifetime|
-        optimize_cap : bool, default=False
-            |optimize_cap|
+
         maximum_capacity : float or None, default=None
             |maximum_capacity|
         renewable_asset : bool, default=True
             |renewable_asset|
-
 
         Examples
         --------
@@ -77,23 +74,23 @@ class PvPlant(Source):
         >>> from oemof.eesyplan import CarrierBus
         >>> my_project = Project(
         ...         name="my_project",
-        ...         lifetime=20,
+        ...         economic_period=20,
         ...         tax=0,
         ...         discount_factor=0.01
         ...     )
-        >>> el_bus = CarrierBus(name="my_electricity_bus")
-        >>> my_pv = PvPlant(
-        ...     bus_out_electricity=el_bus,
-        ...     name="my_pv_plant",
+        >>> fuel_bus = CarrierBus(name="my_fuel_bus")
+        >>> my_biogas = BiogasPlant(
+        ...     bus_out_fuel=fuel_bus,
+        ...     name="my_biogas_plant",
         ...     age_installed=0, # a
         ...     installed_capacity=0, # kW
         ...     capex_fix=0, # €
-        ...     capex_var=1000, # €/kWp
-        ...     opex_fix=10, # €/kWp/a
+        ...     capex_var=1000, # €/kW
+        ...     opex_fix=10, # €/kW/a
         ...     opex_var=0, # €/kWh
         ...     lifetime=25, # a
         ...     optimize_cap=True,
-        ...     maximum_capacity=1000, # kWp
+        ...     maximum_capacity=1000, # kW
         ...     renewable_asset=True,
         ...     input_timeseries=[1,2,3],
         ...     project_data=my_project,
@@ -101,17 +98,15 @@ class PvPlant(Source):
 
         """
 
-        nv = _create_invest_if_wanted(
-            optimise_cap=optimize_cap,
-            capex_var=capex_var,
-            opex_fix=opex_fix,
+        nv = project_data.create_invest_if_wanted(
+            capex_spec=capex_var,
+            opex_spec=opex_fix,
             lifetime=lifetime,
-            age_installed=age_installed,
-            existing_capacity=installed_capacity,
+            installed_capacity=installed_capacity,
             project_data=project_data,
         )
 
-        self.bus_out_electricity = bus_out_electricity
+        self.bus_out_fuel = bus_out_fuel
         self.input_timeseries = input_timeseries
         self.name = name
         self.age_installed = age_installed
@@ -121,12 +116,12 @@ class PvPlant(Source):
         self.opex_fix = opex_fix
         self.opex_var = opex_var
         self.lifetime = lifetime
-        self.optimize_cap = optimize_cap
+
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = renewable_asset
 
         outputs = {
-            self.bus_out_electricity: Flow(
+            self.bus_out_fuel: Flow(
                 fix=input_timeseries,
                 nominal_capacity=nv,
             )

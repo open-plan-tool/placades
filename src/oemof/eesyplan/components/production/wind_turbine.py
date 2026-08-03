@@ -1,4 +1,4 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
+
 from oemof.solph import Flow
 from oemof.solph.components import Source
 
@@ -17,7 +17,6 @@ class WindTurbine(Source):
         opex_fix=10,
         opex_var=0,
         lifetime=20,
-        optimize_cap=False,
         maximum_capacity=None,
         renewable_asset=True,
     ):
@@ -63,8 +62,7 @@ class WindTurbine(Source):
             |opex_var|
         lifetime : int, default=20
             |lifetime|
-        optimize_cap : bool, default=False
-            |optimize_cap|
+
         maximum_capacity : float or None, default=None
             |maximum_capacity|
         renewable_asset : bool, default=True
@@ -77,7 +75,7 @@ class WindTurbine(Source):
         >>> from oemof.eesyplan import CarrierBus
         >>> my_project = Project(
         ...         name="my_project",
-        ...         lifetime=20,
+        ...         economic_period=20,
         ...         tax=0,
         ...         discount_factor=0.01
         ...     )
@@ -101,13 +99,11 @@ class WindTurbine(Source):
 
         """
 
-        nv = _create_invest_if_wanted(
-            optimise_cap=optimize_cap,
-            capex_var=capex_var,
-            opex_fix=opex_fix,
+        nv = project_data.create_invest_if_wanted(
+            capex_spec=capex_var,
+            opex_spec=opex_fix,
             lifetime=lifetime,
-            age_installed=age_installed,
-            existing_capacity=installed_capacity,
+            installed_capacity=installed_capacity,
             project_data=project_data,
         )
 
@@ -121,7 +117,7 @@ class WindTurbine(Source):
         self.opex_fix = opex_fix
         self.opex_var = opex_var
         self.lifetime = lifetime
-        self.optimize_cap = optimize_cap
+
         self.maximum_capacity = maximum_capacity
         self.renewable_asset = renewable_asset
 

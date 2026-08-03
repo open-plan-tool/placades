@@ -29,7 +29,7 @@ def test_chp_fixed_dispatch():
         optimize_cap=False,
         project_data=Project(
             name="Project_X",
-            lifetime=20,
+            economic_period=20,
             tax=0,
             discount_factor=0.01,
         ),
@@ -75,7 +75,7 @@ def test_chp_variable_dispatch():
         optimize_cap=False,
         project_data=Project(
             name="Project_X",
-            lifetime=20,
+            economic_period=20,
             tax=0,
             discount_factor=0.01,
         ),

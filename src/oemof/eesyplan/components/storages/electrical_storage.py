@@ -128,7 +128,6 @@ class ElectricalStorage(EnergyStorage):
             opex_spec=opex_spec,
             variable_costs=variable_costs,
             lifetime=lifetime,
-
             soc_max=soc_max,
             soc_min=soc_min,
             energy_losses_relative=self_discharge,

@@ -14,7 +14,6 @@ class ThermalStorage(EnergyStorage):
         opex_spec=0.0,
         variable_costs=0.0,
         lifetime=20,
-
         soc_max=1.0,
         soc_min=0.0,
         thermal_losses_relative=0.0,
@@ -139,7 +138,6 @@ class ThermalStorage(EnergyStorage):
             opex_spec=opex_spec,
             variable_costs=variable_costs,
             lifetime=lifetime,
-
             soc_max=soc_max,
             soc_min=soc_min,
             energy_losses_relative=thermal_losses_relative,

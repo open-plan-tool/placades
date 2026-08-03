@@ -35,7 +35,6 @@ def test_node_io_balance():
             input_timeseries=5,
             installed_capacity=10,
             project_data=project,
-
         )
     )
 
@@ -46,7 +45,6 @@ def test_node_io_balance():
             project_data=project,
             installed_capacity=5.0,
             input_timeseries=3,
-
         )
     )
 

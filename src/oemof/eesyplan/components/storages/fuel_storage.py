@@ -14,7 +14,6 @@ class FuelStorage(EnergyStorage):
         opex_spec=0,
         variable_costs=0,
         lifetime=20,
-
         soc_max=1,
         soc_min=0,
         c_rate_charge=1.0,

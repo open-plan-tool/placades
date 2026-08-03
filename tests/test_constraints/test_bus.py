@@ -24,7 +24,6 @@ def test_carrier_bus_excess():
         bus_out_electricity=bus1,
         name="my_pv_plant",
         installed_capacity=5,
-
         input_timeseries=[1, 2, 3],
         project_data=my_project,
     )

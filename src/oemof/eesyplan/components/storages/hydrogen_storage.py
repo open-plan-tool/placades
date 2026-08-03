@@ -14,7 +14,6 @@ class HydrogenStorage(EnergyStorage):
         variable_costs=0,
         lifetime=20,
         age_installed=0,
-
         soc_max=1.0,
         soc_min=1.0,
         c_rate_charge=1.0,

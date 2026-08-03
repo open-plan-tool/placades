@@ -60,7 +60,9 @@ class Project:
         minimum_capacity,
     ):
         if (maximum_capacity or minimum_capacity) and installed_capacity:
-            raise ValueError("Maximum capacity and installed capacity can't be set at the same time. Create an existing component with an installed capacity or create an non existing component that shall be optimised")
+            raise ValueError(
+                "Maximum capacity and installed capacity can't be set at the same time. Create an existing component with an installed capacity or create an non existing component that shall be optimised"
+            )
 
         if installed_capacity is None:
             specific_annual_cost = (

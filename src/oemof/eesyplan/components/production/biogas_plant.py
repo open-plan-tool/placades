@@ -11,7 +11,6 @@ class BiogasPlant(Source):
         name,
         age_installed=0,
         installed_capacity=0,
-
         capex_spec=1000,
         opex_spec=10,
         variable_costs=0,

@@ -12,7 +12,6 @@ class FuelCell(Converter):
         installed_capacity=None,
         maximum_capacity=None,
         capex_spec=1000,
-
         opex_spec=10,
         variable_costs=0,
         lifetime=20,

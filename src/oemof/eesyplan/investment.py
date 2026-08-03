@@ -32,7 +32,7 @@ def crf(duration, discount_factor):
     return vcrf
 
 
-def get_replacement_costs( #todo Function not needed anymore, CRF-Method is consistent and no extra calculations needed (delete at some point)
+def get_replacement_costs(  # todo Function not needed anymore, CRF-Method is consistent and no extra calculations needed (delete at some point)
     age_of_asset,
     project_lifetime,
     asset_lifetime,
@@ -98,14 +98,14 @@ def get_replacement_costs( #todo Function not needed anymore, CRF-Method is cons
 
     return replacement_costs
 
-def calculate_annuity( #Todo Costs of existing components will be calculated in postprocessing
+
+def calculate_annuity(  # Todo Costs of existing components will be calculated in postprocessing
     capex_spec,
     asset_lifetime,
     tax,
     discount_factor,
 ):
-    npv = (capex_spec * (1 + tax))
+    npv = capex_spec * (1 + tax)
 
     annuity = npv * crf(asset_lifetime, discount_factor)
     return annuity
-

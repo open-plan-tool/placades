@@ -9,8 +9,8 @@ class Sink(SolphSink):
         project_data,
         bus_in,
         age_installed=0,
-        installed_capacity=0,
-        maximum_capacity=float("inf"),
+        installed_capacity=None,
+        maximum_capacity=None,
         capex_spec=1000,
         opex_spec=10,
         variable_costs=0,
@@ -38,9 +38,9 @@ class Sink(SolphSink):
             |bus_in|
         age_installed : float or int, optional (default: 0)
             |age_installed|
-        installed_capacity : float
+        installed_capacity : float or None (default: None)
             |installed_capacity|
-        maximum_capacity : float, optional (default: float("+inf"))
+        maximum_capacity : float or None (default: None)
             |maximum_capacity|
         capex_spec : float, optional (default: 0)
             |capex_spec|
@@ -81,13 +81,14 @@ class Sink(SolphSink):
         ...         discount_factor=0.01)
         >>> sink = Sink("test", project, bus)
         """
+        self.age_installed = age_installed
+
         nv = project_data.create_invest_if_wanted(
             capex_spec=capex_spec,
             opex_spec=opex_spec,
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
-            project_data=project_data,
         )
 
         super().__init__(

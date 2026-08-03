@@ -6,10 +6,11 @@ class FuelStorage(EnergyStorage):
         self,
         name,
         project_data,
-        installed_capacity,
         bus_in_fuel,
         bus_out_fuel=None,
         age_installed=0,
+        installed_capacity=None,
+        maximum_capacity=None,
         capex_spec=0,
         opex_spec=0,
         variable_costs=0,
@@ -21,7 +22,6 @@ class FuelStorage(EnergyStorage):
         efficiency_charge=1.0,
         efficiency_discharge=1.0,
         energy_losses_relative=0.0,
-        maximum_capacity_investment=float("+inf"),
     ):
         """
         Fuel Energy Storage System (FESS).
@@ -45,8 +45,10 @@ class FuelStorage(EnergyStorage):
             |name|
         project_data : Project object
             |project_data|
-        installed_capacity : float
+        installed_capacity : float or None (default: None)
             |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
         bus_in_fuel : Node object
             |bus_in_fuel|
         bus_out_fuel : Node object, optional (default: None)
@@ -75,8 +77,7 @@ class FuelStorage(EnergyStorage):
             |efficiency_discharge|
         energy_losses_relative : float, optional (default: 0.0)
             |energy_losses_relative|
-        maximum_capacity_investment : float, optional (default: float("+inf"))
-            |maximum_capacity_investment|
+
 
         Examples
         --------
@@ -103,7 +104,7 @@ class FuelStorage(EnergyStorage):
         ...     bus_in_fuel=fuel_bus,
         ...     bus_out_fuel=fuel_bus,
         ...     age_installed=0,
-        ...     installed_capacity=0,
+        ...     maximum_capacity=1000,
         ...     capex_spec=3,
         ...     opex_spec=5,
         ...     variable_costs=0,
@@ -121,6 +122,7 @@ class FuelStorage(EnergyStorage):
             name,
             project_data=project_data,
             installed_capacity=installed_capacity,
+            maximum_capacity=maximum_capacity,
             bus_in=bus_in_fuel,
             bus_out=bus_out_fuel,
             age_installed=age_installed,
@@ -135,5 +137,4 @@ class FuelStorage(EnergyStorage):
             efficiency_discharge=efficiency_discharge,
             theoretical_time_charge=c_rate_charge,  # hours
             theoretical_time_discharge=c_rate_discharge,  # hours
-            maximum_capacity_investment=maximum_capacity_investment,
         )

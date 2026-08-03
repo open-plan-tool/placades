@@ -180,9 +180,6 @@
     40 kW PV at maximum in :unit: (Acceptable values are either a positive
     real number or None.).
 
-.. |maximum_capacity_investment| replace:: Description text is missing
-    [unit is missing] (no restrictions).
-
 .. |minimum| replace:: Minimum operation level of the flow as a factor of the
     nominal capacity [-] (Acceptable values are either a real number between
     0 and 1, or None).

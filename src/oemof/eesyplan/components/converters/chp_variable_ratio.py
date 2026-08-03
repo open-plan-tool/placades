@@ -62,8 +62,10 @@ class ChpVariableRatio(ExtractionTurbineCHP):
             |maximum_capacity|
         age_installed : int, default=0
             |age_installed|
-        installed_capacity : float, default=0
+        installed_capacity : float or None (default: None)
             |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
         capex_spec : float, default=1000
             |capex_spec|
         opex_spec : float, default=10
@@ -87,7 +89,7 @@ class ChpVariableRatio(ExtractionTurbineCHP):
         ...     bus_in_fuel=gas_bus,
         ...     bus_out_heat=heat_bus,
         ...     bus_out_electricity=el_bus,
-        ...     installed_capacity=0,
+        ...     maximum_capacity=1000,
         ...     efficiency_electricity_full_condensation=0.3,
         ...     efficiency_electricity_chp=0.3,
         ...     efficiency_heat_chp=0.5,
@@ -111,7 +113,6 @@ class ChpVariableRatio(ExtractionTurbineCHP):
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
-            project_data=project_data,
         )
 
         inputs = {bus_in_fuel: Flow()}

@@ -8,10 +8,11 @@ class EnergyStorage(GenericStorage):
         self,
         name,
         project_data,
-        installed_capacity,
         bus_in,
         bus_out=None,
         age_installed=0,
+        installed_capacity=None,
+        maximum_capacity=None,
         capex_spec=0,
         opex_spec=0,
         variable_costs=0,
@@ -25,7 +26,6 @@ class EnergyStorage(GenericStorage):
         efficiency_discharge=1.0,
         theoretical_time_charge=1.0,  # hours
         theoretical_time_discharge=None,  # hours
-        maximum_capacity_investment=None,
     ):
         """
         Energy Storage System (ESS).
@@ -49,14 +49,17 @@ class EnergyStorage(GenericStorage):
             |name|
         project_data : Project object
             |project_data|
-        installed_capacity : float
-            |installed_capacity|
+
         bus_in : Node object
             |bus_in|
         bus_out : Node object, optional
             |bus_out|
         age_installed : float or int, optional (default: 0)
             |age_installed|
+        installed_capacity : float or None (default: None)
+            |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
         capex_spec : float, optional (default: 0)
             |capex_spec|
         opex_spec : float, optional (default: 0)
@@ -83,8 +86,7 @@ class EnergyStorage(GenericStorage):
             |theoretical_time_charge|
         theoretical_time_discharge : float, optional
             |theoretical_time_discharge|
-        maximum_capacity_investment : float, optional (default: float("+inf"))
-            |maximum_capacity_investment|
+
 
         Examples
         --------
@@ -108,7 +110,7 @@ class EnergyStorage(GenericStorage):
         ...     bus_in=heat_bus,
         ...     bus_out=heat_bus,
         ...     age_installed=0,
-        ...     installed_capacity=0,
+        ...     maximum_capacity=0,
         ...     capex_spec=3,
         ...     opex_spec=5,
         ...     variable_costs=0,
@@ -121,7 +123,7 @@ class EnergyStorage(GenericStorage):
         ...     project_data=my_project,
         ...     energy_losses_relative=0.6,
         ...     energy_losses_absolute_investment=20,
-        ...     energy_losses_absolute=0.001,
+        ...     energy_losses_absolute=0.1,
         ... )
         """
 
@@ -130,8 +132,7 @@ class EnergyStorage(GenericStorage):
             opex_spec=opex_spec,
             lifetime=lifetime,
             installed_capacity=installed_capacity,
-            maximum_capacity=maximum_capacity_investment,
-            project_data=project_data,
+            maximum_capacity=maximum_capacity,
         )
         if theoretical_time_discharge is None:
             theoretical_time_discharge = theoretical_time_charge
@@ -143,6 +144,7 @@ class EnergyStorage(GenericStorage):
         )
         self.efficiency_charge = efficiency_charge
         self.efficiency_discharge = efficiency_discharge
+        self.age_installed = age_installed
 
         if installed_capacity:
             self.capacity_charge = nv * theoretical_time_charge

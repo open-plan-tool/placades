@@ -6,9 +6,10 @@ class HydrogenStorage(EnergyStorage):
         self,
         name,
         project_data,
-        installed_capacity,
         bus_in_hydrogen,
         bus_out_hydrogen=None,
+        installed_capacity=None,
+        maximum_capacity=None,
         capex_spec=0,
         opex_spec=0,
         variable_costs=0,
@@ -21,7 +22,6 @@ class HydrogenStorage(EnergyStorage):
         efficiency_charge=1.0,
         efficiency_discharge=1.0,
         self_discharge=0.0,
-        maximum_capacity_investment=float("+inf"),
     ):
         """
         Hydrogen Energy Storage System (H2ESS).
@@ -45,8 +45,10 @@ class HydrogenStorage(EnergyStorage):
             |name|
         project_data : Project object
             |project_data|
-        installed_capacity : float
+        installed_capacity : float or None (default: None)
             |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
         bus_in_hydrogen : Node object
             |bus_in_hydrogen|
         bus_out_hydrogen : Node object, optional (default: None)
@@ -75,8 +77,6 @@ class HydrogenStorage(EnergyStorage):
             |efficiency_discharge|
         self_discharge : float, optional (default: 0.0)
             |energy_losses_relative|
-        maximum_capacity_investment : float, optional (default: float("+inf"))
-            |maximum_capacity_investment|
 
         Examples
         --------
@@ -103,7 +103,7 @@ class HydrogenStorage(EnergyStorage):
         ...     bus_in_hydrogen=h2_bus,
         ...     bus_out_hydrogen=h2_bus,
         ...     age_installed=0,
-        ...     installed_capacity=0,
+        ...     maximum_capacity=1000,
         ...     capex_spec=3,
         ...     opex_spec=5,
         ...     variable_costs=0,
@@ -135,5 +135,5 @@ class HydrogenStorage(EnergyStorage):
             efficiency_discharge=efficiency_discharge,
             theoretical_time_charge=c_rate_charge,  # hours
             theoretical_time_discharge=c_rate_discharge,  # hours
-            maximum_capacity_investment=maximum_capacity_investment,
+            maximum_capacity=maximum_capacity,
         )

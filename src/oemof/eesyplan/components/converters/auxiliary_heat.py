@@ -43,8 +43,10 @@ class AuxiliaryHeat(Converter):
             |project_data|
         age_installed : float or int, optional (default: 0)
             |age_installed|
-        installed_capacity : float, optional (default: 0)
+        installed_capacity : float or None (default: None)
             |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
         capex_spec : float, optional (default: 1000)
             |capex_spec|
         opex_spec : float, optional (default: 10)
@@ -53,8 +55,6 @@ class AuxiliaryHeat(Converter):
             |variable_costs|
         lifetime : int, optional (default: 20)
             |lifetime|
-        maximum_capacity : float, optional (default: float("+inf"))
-            |maximum_capacity|
 
         Examples
         --------
@@ -99,7 +99,6 @@ class AuxiliaryHeat(Converter):
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
-            project_data=project_data,
         )
         inputs = {
             bus_in_heat: Flow(),

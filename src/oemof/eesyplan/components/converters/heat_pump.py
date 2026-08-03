@@ -45,8 +45,10 @@ class HeatPump(Converter):
             |name|
         age_installed : int, default=0
             |age_installed|
-        installed_capacity : float, default=0
-             |installed_capacity|
+        installed_capacity : float or None (default: None)
+            |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
         capex_spec : float, default=0
             |capex_spec|
         variable_costs : float, default=0
@@ -102,7 +104,6 @@ class HeatPump(Converter):
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
-            project_data=project_data,
         )
 
         inputs = {bus_in_electricity: Flow()}

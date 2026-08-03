@@ -58,11 +58,6 @@
                         "format": "default"
                     },
                     {
-                        "name": "optimize_cap",
-                        "type": "boolean",
-                        "format": "default"
-                    },
-                    {
                         "name": "maximum_capacity",
                         "type": "string",
                         "format": "default"
@@ -328,11 +323,6 @@
                         "format": "default"
                     },
                     {
-                        "name": "capex_fix",
-                        "type": "number",
-                        "format": "default"
-                    },
-                    {
                         "name": "capex_spec",
                         "type": "number",
                         "format": "default"
@@ -350,11 +340,6 @@
                     {
                         "name": "lifetime",
                         "type": "integer",
-                        "format": "default"
-                    },
-                    {
-                        "name": "optimize_cap",
-                        "type": "boolean",
                         "format": "default"
                     },
                     {
@@ -441,11 +426,6 @@
                         "format": "default"
                     },
                     {
-                        "name": "capex_fix",
-                        "type": "number",
-                        "format": "default"
-                    },
-                    {
                         "name": "capex_spec",
                         "type": "number",
                         "format": "default"
@@ -463,11 +443,6 @@
                     {
                         "name": "lifetime",
                         "type": "integer",
-                        "format": "default"
-                    },
-                    {
-                        "name": "optimize_cap",
-                        "type": "boolean",
                         "format": "default"
                     },
                     {
@@ -549,17 +524,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "lifetime",
-                        "type": "integer",
-                        "format": "default"
-                    },
-                    {
-                        "name": "shortage_cost",
-                        "type": "integer",
-                        "format": "default"
-                    },
-                    {
-                        "name": "excess_cost",
+                        "name": "economic_period",
                         "type": "integer",
                         "format": "default"
                     }

@@ -44,8 +44,10 @@ class DieselGenerator(Converter):
             Name of the asset.
         age_installed : int, default=0
             Number of years the asset has already been in operation.
-        installed_capacity : float, default=0
-            Already existing installed capacity.
+        installed_capacity : float or None (default: None)
+            |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
         capex_spec : float, default=1000
             Specific investment costs of the asset related to the
             installed capacity (CAPEX).
@@ -58,9 +60,6 @@ class DieselGenerator(Converter):
         lifetime : int, default=20
             Number of operational years of the asset until it has to
             be replaced.
-        maximum_capacity : float or None, default=None
-            Maximum total capacity of an asset that can be installed
-            at the project site.
         efficiency : float, default=0.8
             Ratio of energy output to energy input.
 
@@ -76,11 +75,10 @@ class DieselGenerator(Converter):
         ...     bus_in_fuel=gas_bus,
         ...     bus_out_electricity=el_bus,
         ...     age_installed=0,
-        ...     installed_capacity=0,
+        ...     maximum_capacity=1000,
         ...     capex_spec=1000,
         ...     opex_spec=1000,
         ...     lifetime=20,
-        ...     maximum_capacity=None,
         ...     efficiency=0.3,
         ...     variable_costs=0,
         ...     project_data=Project(
@@ -95,7 +93,6 @@ class DieselGenerator(Converter):
             lifetime=lifetime,
             installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
-            project_data=project_data,
         )
 
         inputs = {bus_in_fuel: Flow()}

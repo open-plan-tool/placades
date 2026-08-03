@@ -10,12 +10,12 @@ class PvPlant(Source):
         input_timeseries,
         name,
         age_installed=0,
-        installed_capacity=0,
+        installed_capacity=None,
+        maximum_capacity=None,
         capex_spec=1000,
         opex_spec=10,
         variable_costs=0,
         lifetime=20,
-        maximum_capacity=None,
         renewable_asset=True,
     ):
         """
@@ -48,8 +48,10 @@ class PvPlant(Source):
             |name|
         age_installed : int, default=0
             |age_installed|
-        installed_capacity : float, default=0
+        installed_capacity : float or None (default: None)
             |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
         capex_spec : float, default=1000
             |capex_spec|
         opex_spec : float, default=10
@@ -58,8 +60,6 @@ class PvPlant(Source):
             |variable_costs|
         lifetime : int, default=20
             |lifetime|
-        maximum_capacity : float or None, default=None
-            |maximum_capacity|
         renewable_asset : bool, default=True
             |renewable_asset|
 
@@ -79,7 +79,6 @@ class PvPlant(Source):
         ...     bus_out_electricity=el_bus,
         ...     name="my_pv_plant",
         ...     age_installed=0, # a
-        ...     installed_capacity=0, # kW
         ...     capex_spec=1000, # €/kWp
         ...     opex_spec=10, # €/kWp/a
         ...     variable_costs=0, # €/kWh
@@ -97,7 +96,7 @@ class PvPlant(Source):
             opex_spec=opex_spec,
             lifetime=lifetime,
             installed_capacity=installed_capacity,
-            project_data=project_data,
+            maximum_capacity=maximum_capacity,
         )
 
         self.bus_out_electricity = bus_out_electricity

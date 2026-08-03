@@ -6,10 +6,11 @@ class ThermalStorage(EnergyStorage):
         self,
         name,
         project_data,
-        installed_capacity,
         bus_in_heat,
         bus_out_heat=None,
         age_installed=0,
+        installed_capacity=None,
+        maximum_capacity=None,
         capex_spec=0.0,
         opex_spec=0.0,
         variable_costs=0.0,
@@ -23,7 +24,6 @@ class ThermalStorage(EnergyStorage):
         efficiency_discharge=1.0,
         theoretical_time_charge=1.0,  # hours
         theoretical_time_discharge=None,  # hours
-        maximum_capacity_investment=float("+inf"),
     ):
         """
         Heat Energy Storage System (HESS).
@@ -47,8 +47,10 @@ class ThermalStorage(EnergyStorage):
             |name|
         project_data : Project object
             |project_data|
-        installed_capacity : float
+        installed_capacity : float or None (default: None)
             |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
         bus_in_heat : Node object
             |bus_in_heat|
         bus_out_heat : Node object, optional (default: None)
@@ -81,8 +83,6 @@ class ThermalStorage(EnergyStorage):
             |theoretical_time_charge|
         theoretical_time_discharge : float, optional (default: None)
             |theoretical_time_discharge|
-        maximum_capacity_investment : float, optional (default: float("+inf"))
-            |maximum_capacity_investment|
 
         Examples
         --------
@@ -106,7 +106,7 @@ class ThermalStorage(EnergyStorage):
         ...     bus_in_heat=heat_bus,
         ...     bus_out_heat=heat_bus,
         ...     age_installed=0,
-        ...     installed_capacity=0,
+        ...     maximum_capacity=1000,
         ...     capex_spec=3,
         ...     opex_spec=5,
         ...     variable_costs=0,
@@ -131,6 +131,7 @@ class ThermalStorage(EnergyStorage):
             name,
             project_data=project_data,
             installed_capacity=installed_capacity,
+            maximum_capacity=maximum_capacity,
             bus_in=bus_in_heat,
             bus_out=bus_out_heat,
             age_installed=age_installed,
@@ -149,5 +150,4 @@ class ThermalStorage(EnergyStorage):
             efficiency_discharge=efficiency_discharge,
             theoretical_time_charge=theoretical_time_charge,  # hours
             theoretical_time_discharge=theoretical_time_discharge,  # hours
-            maximum_capacity_investment=maximum_capacity_investment,
         )

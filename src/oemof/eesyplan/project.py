@@ -36,10 +36,9 @@ class Project:
         ...     tax=0,
         ...     discount_factor=0.01
         ...     )
-        >>> round(my_project.calculate_annuity(234, 20, 0), 3)
+        >>> round(my_project.calculate_annuity(234, 20), 3)
         12.967
-        >>> my_project.calculate_annuity(234, 20, 0, "wrong")
-        >>> round(my_project.calculate_annuity(234, 20, 0, "oemof"), 3)
+        >>> round(my_project.calculate_annuity(234, 20), 3)
         12.967
 
         """
@@ -57,11 +56,13 @@ class Project:
         opex_spec,
         lifetime,
         maximum_capacity,
-        minimum_capacity,
     ):
-        if (maximum_capacity or minimum_capacity) and installed_capacity:
+        if maximum_capacity and installed_capacity:
             raise ValueError(
-                "Maximum capacity and installed capacity can't be set at the same time. Create an existing component with an installed capacity or create an non existing component that shall be optimised"
+                "Maximum capacity and installed capacity can't be set at the "
+                "same time. Create an existing component with an installed "
+                "capacity or create an non existing component that shall be "
+                "optimised"
             )
 
         if installed_capacity is None:
@@ -72,7 +73,6 @@ class Project:
                 ep_costs=specific_annual_cost,
                 existing=0,  # existing capacity with investment is not allowed
                 maximum=maximum_capacity,
-                minimum=minimum_capacity,
             )
         else:
             return installed_capacity

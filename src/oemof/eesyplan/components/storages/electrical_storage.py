@@ -6,9 +6,10 @@ class ElectricalStorage(EnergyStorage):
         self,
         name,
         project_data,
-        installed_capacity,
         bus_in_electricity,
         bus_out_electricity=None,
+        installed_capacity=None,
+        maximum_capacity=None,
         age_installed=0,
         capex_spec=0,
         opex_spec=0,
@@ -21,7 +22,6 @@ class ElectricalStorage(EnergyStorage):
         efficiency_discharge=1.0,
         c_rate_charge=1.0,
         c_rate_discharge=None,
-        maximum_capacity=float("+inf"),
     ):
         """
         Battery Energy Storage System (BESS).
@@ -45,8 +45,10 @@ class ElectricalStorage(EnergyStorage):
             |name|
         project_data : Project object
             |project_data|
-        installed_capacity : float
+        installed_capacity : float or None (default: None)
             |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
         bus_in_electricity : Node object
             |bus_in_electricity|
         bus_out_electricity : Node object, optional (default: None)
@@ -75,8 +77,6 @@ class ElectricalStorage(EnergyStorage):
             |crate|
         c_rate_discharge : float, optional (default: None)
             |crate|
-        maximum_capacity : float, optional (default: float("+inf"))
-            |maximum_capacity|
 
         Examples
         --------
@@ -103,7 +103,7 @@ class ElectricalStorage(EnergyStorage):
         ...     bus_in_electricity=el_bus,
         ...     bus_out_electricity=el_bus,
         ...     age_installed=0,
-        ...     installed_capacity=0,
+        ...     maximum_capacity=1000,
         ...     capex_spec=3,
         ...     opex_spec=5,
         ...     variable_costs=0,
@@ -121,6 +121,7 @@ class ElectricalStorage(EnergyStorage):
             name,
             project_data=project_data,
             installed_capacity=installed_capacity,
+            maximum_capacity=maximum_capacity,
             bus_in=bus_in_electricity,
             bus_out=bus_out_electricity,
             age_installed=age_installed,
@@ -135,5 +136,4 @@ class ElectricalStorage(EnergyStorage):
             efficiency_discharge=efficiency_discharge,
             theoretical_time_charge=c_rate_charge,  # hours
             theoretical_time_discharge=c_rate_discharge,  # hours
-            maximum_capacity_investment=maximum_capacity,
         )

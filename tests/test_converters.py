@@ -24,7 +24,6 @@ def test_init_chp_variable_ratio():
             capex_spec=1500,
             opex_spec=15,
             lifetime=20,
-            optimize_cap=True,
             project_data=Project(
                 name="Project_X",
                 economic_period=20,

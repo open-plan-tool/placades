@@ -63,7 +63,6 @@ def simple_script():
             input_timeseries=data["wind"],
             installed_capacity=6.63,
             project_data=project,
-
         )
     )
 
@@ -74,7 +73,6 @@ def simple_script():
             project_data=project,
             installed_capacity=5.0,
             input_timeseries=data["pv"],
-
         )
     )
 
@@ -88,7 +86,6 @@ def simple_script():
             opex_spec=5.0,
             variable_costs=0.0,
             lifetime=10.0,
-
             soc_max=1,
             soc_min=0,
             crate=1.0,

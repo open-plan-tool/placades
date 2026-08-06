@@ -251,6 +251,19 @@
     the state of charge is represented by the value 0 [-] (Real number
     between 0 and 1).
 
+.. |temp_in_heat| replace:: Temperature of the in heat flow
+    [°C] (Real number above 0).
+
+.. |temp_out_heat| replace:: Temperature of the out heat flow. Note that the
+    temperature of the auxiliary is assumed to be above this temperature.
+    [°C] (Real number above 0).
+
+.. |temp_low_source_component| replace:: The return flow temperature of the
+    upstream component. If the upstream component is, for example, a storage
+    tank, then this refers to the cold temperature of the tank. In the case of
+    a heat pump, it would be the temperature of the incoming water (not the
+    temperature of the heat source). [°C] (Real number above 0).
+
 .. |theoretical_time_charge| replace:: Description text is missing
     [h] (no restrictions).
 

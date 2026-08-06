@@ -12,9 +12,9 @@ class AuxiliaryHeat(Converter):
         bus_in_heat_auxiliary,
         bus_out_heat,
         project_data,
-        temp_in_low,
-        temp_out_low,
-        temp_supply,
+        temp_in_heat,
+        temp_out_heat,
+        temp_low_source_component,
         installed_capacity=None,
         maximum_capacity=None,
         age_installed=0,
@@ -41,6 +41,12 @@ class AuxiliaryHeat(Converter):
             |bus_out_heat|
         project_data : Project object
             |project_data|
+        temp_in_heat : float or array-like
+            |temp_in_heat|
+        temp_out_heat : float or array-like
+            |temp_out_heat|
+        temp_low_source_component : float or array-like
+            |temp_low_source_component|
         age_installed : float or int, optional (default: 0)
             |age_installed|
         installed_capacity : float or None (default: None)
@@ -51,7 +57,7 @@ class AuxiliaryHeat(Converter):
             |capex_spec|
         opex_spec : float, optional (default: 10)
             |opex_spec|
-        variable_costs : float, optional (default: 0)
+        variable_costs : float or array-like, optional (default: 0)
             |variable_costs|
         lifetime : int, optional (default: 20)
             |lifetime|
@@ -81,9 +87,9 @@ class AuxiliaryHeat(Converter):
         self.bus_in_heat_auxiliary = bus_in_heat_auxiliary
         self.bus_out_heat = bus_out_heat
         self.project_data = project_data
-        self.temp_in_low = temp_in_low
-        self.temp_out_low = temp_out_low
-        self.temp_supply = temp_supply
+        self.temp_in_heat = temp_in_heat
+        self.temp_low_source_component = temp_low_source_component
+        self.temp_out_heat = temp_out_heat
         self.installed_capacity = installed_capacity
         self.maximum_capacity = maximum_capacity
         self.age_installed = age_installed
@@ -111,12 +117,12 @@ class AuxiliaryHeat(Converter):
             )
         }
 
-        temp_supply = np.array(temp_supply)
-        temp_out_low = np.array(temp_out_low)
-        temp_in_low = np.array(temp_in_low)
+        temp_out_heat = np.array(temp_out_heat)
+        temp_in_heat = np.array(temp_in_heat)
+        temp_low_source_component = np.array(temp_low_source_component)
 
-        energy_top = (temp_supply - temp_out_low) / (
-            temp_out_low - temp_in_low
+        energy_top = (temp_out_heat - temp_in_heat) / (
+            temp_in_heat - temp_low_source_component
         )
         energy_total = energy_top + 1
 

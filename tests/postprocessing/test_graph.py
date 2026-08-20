@@ -239,7 +239,7 @@ class TestSankey:
         self, sample_flows_df, sample_energy_system
     ):
         """Test: Sankey mit EnergySystem für Knotenfarben."""
-        fig, links_df = sankey(sample_flows_df, es=sample_energy_system(True))
+        fig, links_df = sankey(sample_flows_df, es=sample_energy_system)
 
         assert isinstance(fig, go.Figure)
         # Prüfe, dass Knotenfarben gesetzt wurden

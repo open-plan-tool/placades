@@ -37,3 +37,7 @@ html_short_title = f"{project}-{version}"
 napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
+
+linkcheck_ignore = [
+    "https://coveralls.io",
+]

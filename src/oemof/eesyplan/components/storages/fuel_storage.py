@@ -21,7 +21,7 @@ class FuelStorage(EnergyStorage):
         c_rate_discharge=None,
         efficiency_charge=1.0,
         efficiency_discharge=1.0,
-        energy_losses_relative=0.0,
+        energy_losses_variable=0.0,
     ):
         """
         Fuel Energy Storage System (FESS).
@@ -75,7 +75,7 @@ class FuelStorage(EnergyStorage):
             |efficiency_charge|
         efficiency_discharge : float, optional (default: 1.0)
             |efficiency_discharge|
-        energy_losses_relative : float, optional (default: 0.0)
+        energy_losses_variable : float, optional (default: 0.0)
             |energy_losses_relative|
 
 
@@ -97,7 +97,7 @@ class FuelStorage(EnergyStorage):
         ...     installed_capacity=10,
         ...     c_rate_charge=0.7,
         ...     c_rate_discharge=0.8,
-        ...     energy_losses_relative=0.0001,
+        ...     energy_losses_variable=0.0001,
         ... )
         >>> my_invest_bess = FuelStorage(
         ...     name="gas storage tank extension",
@@ -115,7 +115,7 @@ class FuelStorage(EnergyStorage):
         ...     c_rate_discharge=0.8,
         ...     efficiency_charge=0.99,
         ...     project_data=my_project,
-        ...     energy_losses_relative=0.0001,
+        ...     energy_losses_variable=0.0001,
         ... )
         """
         super().__init__(
@@ -132,7 +132,7 @@ class FuelStorage(EnergyStorage):
             lifetime=lifetime,
             soc_max=soc_max,
             soc_min=soc_min,
-            energy_losses_relative=energy_losses_relative,
+            energy_losses_variable=energy_losses_variable,
             efficiency_charge=efficiency_charge,
             efficiency_discharge=efficiency_discharge,
             theoretical_time_charge=c_rate_charge,  # hours

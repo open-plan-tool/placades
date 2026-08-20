@@ -74,12 +74,13 @@ class AuxiliaryHeat(Converter):
         ...     bus_in_heat=heat_bus,
         ...     bus_in_heat_auxiliary=heat_bus_aux,
         ...     bus_out_heat=heat_supply,
+        ...     installed_capacity=100,
         ...     project_data=Project(
         ...         name="Project_X", economic_period=20, tax=0,
         ...         discount_factor=0.01),
-        ...     temp_in_low=60,
-        ...     temp_out_low=20,
-        ...     temp_supply=80,
+        ...     temp_in_heat=60,
+        ...     temp_low_source_component=20,
+        ...     temp_out_heat=80,
         ...     )
         """
         self.name = name

@@ -131,7 +131,7 @@ class ElectricalStorage(EnergyStorage):
             lifetime=lifetime,
             soc_max=soc_max,
             soc_min=soc_min,
-            energy_losses_relative=self_discharge,
+            energy_losses_variable=self_discharge,
             efficiency_charge=efficiency_charge,
             efficiency_discharge=efficiency_discharge,
             theoretical_time_charge=c_rate_charge,  # hours

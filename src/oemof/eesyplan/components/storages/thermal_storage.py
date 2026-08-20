@@ -17,9 +17,8 @@ class ThermalStorage(EnergyStorage):
         lifetime=20,
         soc_max=1.0,
         soc_min=0.0,
-        thermal_losses_relative=0.0,
-        thermal_losses_absolute=0.0,
-        thermal_losses_absolute_investment=0,
+        thermal_losses_variable=0.0,
+        thermal_losses_fixed=0.0,
         efficiency_charge=1.0,
         efficiency_discharge=1.0,
         theoretical_time_charge=1.0,  # hours
@@ -69,12 +68,10 @@ class ThermalStorage(EnergyStorage):
             |soc_max|
         soc_min : float, optional (default: 0.0)
             |soc_min|
-        thermal_losses_relative : float, optional (default: 0.0)
+        thermal_losses_variable : float, optional (default: 0.0)
             |fixed_thermal_losses_relative|
-        thermal_losses_absolute : float, optional (default: 0.0)
+        thermal_losses_fixed : float, optional (default: 0.0)
             |fixed_thermal_losses_absolute|
-        thermal_losses_absolute_investment : float, optional (default: 0)
-            |energy_losses_absolute_investment|
         efficiency_charge : float, optional (default: 1.0)
             |efficiency_charge|
         efficiency_discharge : float, optional (default: 1.0)
@@ -117,15 +114,12 @@ class ThermalStorage(EnergyStorage):
         ...     theoretical_time_discharge=1,
         ...     efficiency_charge=0.99,
         ...     project_data=my_project,
-        ...     thermal_losses_relative=0.6,
-        ...     thermal_losses_absolute_investment=20,
+        ...     thermal_losses_variable=0.06,
+        ...     thermal_losses_fixed=0.02,
         ... )
         """
-        self.thermal_losses_relative = thermal_losses_relative
-        self.thermal_losses_absolute = thermal_losses_absolute
-        self.thermal_losses_absolute_investment = (
-            thermal_losses_absolute_investment
-        )
+        self.thermal_losses_variable = thermal_losses_variable
+        self.thermal_losses_fixed = thermal_losses_fixed
 
         super().__init__(
             name,
@@ -141,11 +135,8 @@ class ThermalStorage(EnergyStorage):
             lifetime=lifetime,
             soc_max=soc_max,
             soc_min=soc_min,
-            energy_losses_relative=thermal_losses_relative,
-            energy_losses_absolute=thermal_losses_absolute,
-            energy_losses_absolute_investment=(
-                thermal_losses_absolute_investment
-            ),
+            energy_losses_variable=thermal_losses_variable,
+            energy_losses_fixed=thermal_losses_fixed,
             efficiency_charge=efficiency_charge,
             efficiency_discharge=efficiency_discharge,
             theoretical_time_charge=theoretical_time_charge,  # hours

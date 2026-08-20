@@ -239,6 +239,10 @@
     filled to its nominal capacity the state of charge is represented by
     the value 1 [-] (Real number between 0 and 1).
 
+.. |self_discharge| replace:: Self-discharge refers to the loss of energy in a
+    storage device in relation to its state of charge (SOC) [-]
+    (Real number between 0 and 1).
+
 .. |shortage_cost| replace:: Text is missing
 
 .. |soc_max| replace:: The maximum permissible level of charge of the storage

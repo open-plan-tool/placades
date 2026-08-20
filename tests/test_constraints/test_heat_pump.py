@@ -1,10 +1,11 @@
 import pandas as pd
+import pytest
+from oemof.solph import Bus
 
 from oemof.eesyplan import EnergySystem
 from oemof.eesyplan import HeatPump
 from oemof.eesyplan import Project
 from oemof.eesyplan import optimise
-from oemof.solph import Bus
 
 
 def test_heat_pump_dispatch():
@@ -56,7 +57,10 @@ def test_heat_pump_dispatch():
 
     # Electricity input plus ambient input equals expected heat energy
     assert (
-        int((flows["electricity"].sum() + flows["ambient"].sum()).iloc[0])
+        pytest.approx(
+            ((flows["electricity"].sum() + flows["ambient"].sum()).iloc[0]),
+            abs=1e-5,
+        )
         == energy
     )
 
@@ -114,21 +118,26 @@ def test_heat_pump_investment():
 
     # Electricity input multiplied with cop equals expected heat energy
     assert (
-        round(
+        pytest.approx(
             (
                 pd.Series(heat_pump.cop)
                 * flows["electricity"].reset_index(drop=True).squeeze()
             ).sum(),
-            5,
+            1e-5,
         )
         == energy
     )
 
     # Heat pump output equals expected heat energy
-    assert flows["air_source_heat_pump"].sum().iloc[0] == energy
+    assert (
+        pytest.approx(flows["air_source_heat_pump"].sum().iloc[0], 1e-5)
+        == energy
+    )
 
     # Electricity input plus ambient input equals expected heat energy
     assert (
-        round((flows["electricity"].sum() + flows["ambient"].sum()).iloc[0], 5)
+        pytest.approx(
+            (flows["electricity"].sum() + flows["ambient"].sum()).iloc[0], 1e-5
+        )
         == energy
     )

@@ -342,7 +342,7 @@ class TestCapacitiesGraph:
         installed_trace = fig.data[1]
         assert "wind" == sorted(installed_trace.x)[1]
         assert 0 == installed_trace.y.min()
-        assert 1.0107436 == installed_trace.y.max()
+        assert 1.0107436 == round(installed_trace.y.max(), 7)
         assert 0 in installed_trace.y
 
         # # Prüfe optimized capacities

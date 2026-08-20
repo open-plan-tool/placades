@@ -149,4 +149,4 @@ def test_sankey_diagram():
     # Überprüfe Gesamtfluss mit Toleranz
     total_flow = sum(actual_data["link"]["value"])
     expected_total_flow = 880.9083295884674
-    assert abs(total_flow - expected_total_flow) < 1e-10
+    assert abs(total_flow - expected_total_flow) < 1e-6

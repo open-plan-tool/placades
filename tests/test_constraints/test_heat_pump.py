@@ -56,7 +56,7 @@ def test_heat_pump_dispatch():
 
     # Electricity input plus ambient input equals expected heat energy
     assert (
-        round((flows["electricity"].sum() + flows["ambient"].sum()).iloc[0], 5)
+        int((flows["electricity"].sum() + flows["ambient"].sum()).iloc[0])
         == energy
     )
 

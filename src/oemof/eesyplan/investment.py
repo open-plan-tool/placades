@@ -1,8 +1,3 @@
-import warnings
-
-import pandas as pd
-
-
 def crf(duration, discount_factor):
     """
     Calculates the capital recovery factor which is used to convert a one-time

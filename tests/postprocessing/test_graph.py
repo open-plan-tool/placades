@@ -27,7 +27,7 @@ DATA_FILES = {
     "wind": Path("wind_profile.csv"),
     "demand_elec": Path("electricity_demand.csv"),
 }
-
+OPTIMIZE = True
 
 # ============================================================================
 
@@ -37,14 +37,16 @@ DATA_FILES = {
 
 
 @pytest.fixture
-def sample_energy_system(pv_installed_cap=1.0, optimize_battery=False):
+def sample_energy_system():
     # Read data file
     data = {}
     for key, fn in DATA_FILES.items():
         path = Path(Path(__file__).parent.parent, DATA_PATH, fn)
         data[key] = pd.read_csv(path, header=None).squeeze()
 
-    project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
+    project = Project(
+        name="test", economic_period=20, tax=0, discount_factor=0
+    )
 
     # ####################### initialize the energy system ####################
     energy_system = EnergySystem(2023, number=24)
@@ -71,9 +73,8 @@ def sample_energy_system(pv_installed_cap=1.0, optimize_battery=False):
             name="wind",
             bus_out_electricity=bus_elec,
             input_timeseries=data["wind"],
-            installed_capacity=0.25,
+            maximum_capacity=250,
             project_data=project,
-            optimize_cap=True,
         )
     )
 
@@ -82,24 +83,25 @@ def sample_energy_system(pv_installed_cap=1.0, optimize_battery=False):
             name="pv",
             bus_out_electricity=bus_elec,
             project_data=project,
-            capex_var=0.01,
-            installed_capacity=pv_installed_cap,
+            maximum_capacity=250,
             input_timeseries=data["pv"],
-            optimize_cap=True,
         )
     )
+
+    m_capacity = None
+    i_capacity = 1000
 
     energy_system.add(
         ElectricalStorage(
             name="Batterie",
             bus_in_electricity=bus_elec,
             age_installed=0,
-            installed_capacity=10,
-            capex_var=3.0,
-            opex_fix=5.0,
-            opex_var=0.0,
-            lifetime=10.0,
-            optimize_cap=optimize_battery,
+            installed_capacity=i_capacity,
+            maximum_capacity=m_capacity,
+            capex_spec=3.0,
+            opex_spec=5.0,
+            variable_costs=0.0,
+            lifetime=10,
             soc_max=1,
             soc_min=0,
             c_rate_charge=1.0,
@@ -333,10 +335,11 @@ class TestCapacitiesGraph:
         fig = capacities_graph(sample_results["invest"], sample_energy_system)
 
         # Prüfe installed capacities
-        installed_trace = fig.data[0]
-        assert 1.0 == installed_trace.y.max()
-        assert 0.25 == installed_trace.y.min()
-        assert 1 in installed_trace.y
+        installed_trace = fig.data[1]
+        assert "wind" == sorted(installed_trace.x)[1]
+        assert 0 == installed_trace.y.min()
+        assert 1.0107436 == round(installed_trace.y.max(), 7)
+        assert 0 in installed_trace.y
 
         # # Prüfe optimized capacities
         # optimized_trace = fig.data[1]
@@ -414,9 +417,9 @@ class TestGraphCosts:
             "label": ["BHKW", "Gas_boiler", "Solarkollektor"],
             "installed_capacity": [0.0, 0.0, 0.0],
             "capex_fix": [0.0, 0.0, 0.0],
-            "capex_var": [1100.0, 120.0, 300.0],
-            "opex_fix": [11.0, 4.0, 20.0],
-            "opex_var": [0.0, 0.0, 0.0],
+            "capex_spec": [1100.0, 120.0, 300.0],
+            "opex_spec": [11.0, 4.0, 20.0],
+            "variable_costs": [0.0, 0.0, 0.0],
             "lifetime": [15, 20, 20],
             "energy_price": [0, 0, 0],
             "optimized_capacity": [10.728721, 93.602946, 3.872608],

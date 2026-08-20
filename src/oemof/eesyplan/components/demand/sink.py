@@ -1,4 +1,3 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Flow
 from oemof.solph.components import Sink as SolphSink
 
@@ -9,13 +8,12 @@ class Sink(SolphSink):
         name,
         project_data,
         bus_in,
-        optimize_cap=False,
         age_installed=0,
-        installed_capacity=0,
-        maximum_capacity=float("inf"),
-        capex_var=1000,
-        opex_fix=10,
-        opex_var=0,
+        installed_capacity=None,
+        maximum_capacity=None,
+        capex_spec=1000,
+        opex_spec=10,
+        variable_costs=0,
         lifetime=20,
         minimum=None,
         maximum=None,
@@ -38,20 +36,18 @@ class Sink(SolphSink):
             |project_data|
         bus_in : Node object
             |bus_in|
-        optimize_cap : bool, optional (default: False)
-            |optimize_cap|
         age_installed : float or int, optional (default: 0)
             |age_installed|
-        installed_capacity : float
+        installed_capacity : float or None (default: None)
             |installed_capacity|
-        maximum_capacity : float, optional (default: float("+inf"))
+        maximum_capacity : float or None (default: None)
             |maximum_capacity|
-        capex_var : float, optional (default: 0)
-            |capex_var|
-        opex_fix : float, optional (default: 0)
-            |opex_fix|
-        opex_var : float, optional (default: 0)
-            |opex_var|
+        capex_spec : float, optional (default: 0)
+            |capex_spec|
+        opex_spec : float, optional (default: 0)
+            |opex_spec|
+        variable_costs : float, optional (default: 0)
+            |variable_costs|
         lifetime : int, optional (default: None)
             |lifetime|
         minimum : float, optional
@@ -81,19 +77,18 @@ class Sink(SolphSink):
         >>> from oemof.eesyplan import Project
         >>> bus = CarrierBus("Test", balanced=False)
         >>> project = Project(
-        ...         name="Project_X", lifetime=20, tax=0,
+        ...         name="Project_X", economic_period=20, tax=0,
         ...         discount_factor=0.01)
         >>> sink = Sink("test", project, bus)
         """
-        nv = _create_invest_if_wanted(
-            optimise_cap=optimize_cap,
-            capex_var=capex_var,
-            opex_fix=opex_fix,
+        self.age_installed = age_installed
+
+        nv = project_data.create_invest_if_wanted(
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
             lifetime=lifetime,
-            age_installed=age_installed,
-            existing_capacity=installed_capacity,
+            installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
-            project_data=project_data,
         )
 
         super().__init__(
@@ -101,7 +96,7 @@ class Sink(SolphSink):
             inputs={
                 bus_in: Flow(
                     nominal_capacity=nv,
-                    variable_costs=opex_var,
+                    variable_costs=variable_costs,
                     minimum=minimum,
                     maximum=maximum,
                     fix=fix,

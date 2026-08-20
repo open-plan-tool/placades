@@ -57,7 +57,7 @@ to connect components. An overview of all components can be found at
             project_data=project,
             installed_capacity=5.0,
             input_timeseries=normalised_timeseries,
-            optimize_cap=False,
+
         )
     )
     energy_system.add(pv)

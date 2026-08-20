@@ -85,12 +85,12 @@
                         "format": "default"
                     },
                     {
-                        "name": "capex_var",
+                        "name": "capex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_fix",
+                        "name": "opex_spec",
                         "type": "number",
                         "format": "default"
                     },
@@ -332,17 +332,17 @@
                         "format": "default"
                     },
                     {
-                        "name": "capex_var",
+                        "name": "capex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_fix",
+                        "name": "opex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_var",
+                        "name": "variable_costs",
                         "type": "number",
                         "format": "default"
                     },
@@ -567,17 +567,17 @@
                         "format": "default"
                     },
                     {
-                        "name": "capex_var",
+                        "name": "capex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_fix",
+                        "name": "opex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_var",
+                        "name": "variable_costs",
                         "type": "number",
                         "format": "default"
                     },
@@ -711,17 +711,17 @@
                         "format": "default"
                     },
                     {
-                        "name": "capex_var",
+                        "name": "capex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_fix",
+                        "name": "opex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_var",
+                        "name": "variable_costs",
                         "type": "number",
                         "format": "default"
                     },

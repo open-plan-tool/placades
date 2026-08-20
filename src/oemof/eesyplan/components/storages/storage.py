@@ -1,4 +1,3 @@
-from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Flow
 from oemof.solph import Investment
 from oemof.solph.components import GenericStorage
@@ -9,25 +8,23 @@ class EnergyStorage(GenericStorage):
         self,
         name,
         project_data,
-        installed_capacity,
         bus_in,
         bus_out=None,
         age_installed=0,
-        capex_var=0,
-        opex_fix=0,
-        opex_var=0,
-        lifetime=None,
-        optimize_cap=False,
+        installed_capacity=None,
+        maximum_capacity=None,
+        capex_spec=0,
+        opex_spec=0,
+        variable_costs=0,
+        lifetime=20,
         soc_max=1,
         soc_min=0,
-        energy_losses_relative=0.0,
-        energy_losses_absolute=0.0,
-        energy_losses_absolute_investment=0.0,
+        energy_losses_variable=0.0,
+        energy_losses_fixed=0.0,
         efficiency_charge=1.0,
         efficiency_discharge=1.0,
         theoretical_time_charge=1.0,  # hours
         theoretical_time_discharge=None,  # hours
-        maximum_capacity_investment=float("+inf"),
     ):
         """
         Energy Storage System (ESS).
@@ -51,34 +48,33 @@ class EnergyStorage(GenericStorage):
             |name|
         project_data : Project object
             |project_data|
-        installed_capacity : float
-            |installed_capacity|
+
         bus_in : Node object
             |bus_in|
         bus_out : Node object, optional
             |bus_out|
         age_installed : float or int, optional (default: 0)
             |age_installed|
-        capex_var : float, optional (default: 0)
-            |capex_var|
-        opex_fix : float, optional (default: 0)
-            |opex_fix|
-        opex_var : float, optional (default: 0)
-            |opex_var|
+        installed_capacity : float or None (default: None)
+            |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
+        capex_spec : float, optional (default: 0)
+            |capex_spec|
+        opex_spec : float, optional (default: 0)
+            |opex_spec|
+        variable_costs : float, optional (default: 0)
+            |variable_costs|
         lifetime : int, optional
             |lifetime|
-        optimize_cap : bool, optional (default: False)
-            |optimize_cap|
         soc_max : float, optional (default: 1)
             |soc_max|
         soc_min : float, optional (default: 0)
             |soc_min|
-        energy_losses_relative : float, optional (default: 0.0)
+        energy_losses_variable : float, optional (default: 0.0)
             |energy_losses_relative|
-        energy_losses_absolute : float, optional (default: 0.0)
+        energy_losses_fixed : float, optional (default: 0.0)
             |energy_losses_absolute|
-        energy_losses_absolute_investment : float, optional (default: 0.0)
-            |energy_losses_absolute_investment|
         efficiency_charge : float, optional (default: 1.0)
             |efficiency_charge|
         efficiency_discharge : float, optional (default: 1.0)
@@ -87,8 +83,7 @@ class EnergyStorage(GenericStorage):
             |theoretical_time_charge|
         theoretical_time_discharge : float, optional
             |theoretical_time_discharge|
-        maximum_capacity_investment : float, optional (default: float("+inf"))
-            |maximum_capacity_investment|
+
 
         Examples
         --------
@@ -96,7 +91,7 @@ class EnergyStorage(GenericStorage):
         >>> from oemof.eesyplan import CarrierBus
         >>> my_project = Project(
         ...         name="my_project",
-        ...         lifetime=20,
+        ...         economic_period=20,
         ...         tax=0,
         ...         discount_factor=0.01
         ...     )
@@ -112,55 +107,48 @@ class EnergyStorage(GenericStorage):
         ...     bus_in=heat_bus,
         ...     bus_out=heat_bus,
         ...     age_installed=0,
-        ...     installed_capacity=0.1,
-        ...     capex_var=3,
-        ...     opex_fix=5,
-        ...     opex_var=0,
+        ...     maximum_capacity=0,
+        ...     capex_spec=3,
+        ...     opex_spec=5,
+        ...     variable_costs=0,
         ...     lifetime=10,
-        ...     optimize_cap=True,
         ...     soc_max=1,
         ...     soc_min=0,
         ...     theoretical_time_charge=1,  # hours
         ...     theoretical_time_discharge=1,  # hours
         ...     efficiency_charge=0.99,
         ...     project_data=my_project,
-        ...     energy_losses_relative=0.6,
-        ...     energy_losses_absolute_investment=20,
-        ...     energy_losses_absolute=0.001,
+        ...     energy_losses_variable=0.6,
+        ...     energy_losses_fixed=0.1,
         ... )
         """
 
-        nv = _create_invest_if_wanted(
-            optimise_cap=optimize_cap,
-            capex_var=capex_var,
-            opex_fix=opex_fix,
+        nv = project_data.create_invest_if_wanted(
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
             lifetime=lifetime,
-            age_installed=age_installed,
-            existing_capacity=installed_capacity,
-            maximum_capacity=maximum_capacity_investment,
-            project_data=project_data,
+            installed_capacity=installed_capacity,
+            maximum_capacity=maximum_capacity,
         )
         if theoretical_time_discharge is None:
             theoretical_time_discharge = theoretical_time_charge
 
-        self.energy_losses_relative = energy_losses_relative
-        self.energy_losses_absolute = energy_losses_absolute
-        self.energy_losses_absolute_investment = (
-            energy_losses_absolute_investment
-        )
+        self.energy_losses_variable = energy_losses_variable
+        self.energy_losses_fixed = energy_losses_fixed
         self.efficiency_charge = efficiency_charge
         self.efficiency_discharge = efficiency_discharge
+        self.age_installed = age_installed
 
-        if optimize_cap:
-            self.capacity_charge = Investment()
-            self.capacity_discharge = Investment()
-            self.crate_charge = theoretical_time_charge
-            self.crate_discharge = theoretical_time_discharge
-        else:
+        if installed_capacity:
             self.capacity_charge = nv * theoretical_time_charge
             self.capacity_discharge = nv * theoretical_time_discharge
             self.crate_charge = None
             self.crate_discharge = None
+        else:
+            self.capacity_charge = Investment()
+            self.capacity_discharge = Investment()
+            self.crate_charge = theoretical_time_charge
+            self.crate_discharge = theoretical_time_discharge
 
         if bus_out is None:
             bus_out = bus_in
@@ -175,7 +163,7 @@ class EnergyStorage(GenericStorage):
             inputs={
                 bus_in: Flow(
                     nominal_capacity=self.capacity_charge,
-                    variable_costs=opex_var,
+                    variable_costs=variable_costs,
                 )
             },
             outputs=outputs,
@@ -187,7 +175,7 @@ class EnergyStorage(GenericStorage):
             outflow_conversion_factor=self.efficiency_discharge,
             invest_relation_input_capacity=self.crate_charge,
             invest_relation_output_capacity=self.crate_charge,
-            loss_rate=self.energy_losses_relative,
-            fixed_losses_absolute=self.energy_losses_absolute,
-            fixed_losses_relative=self.energy_losses_absolute_investment,
+            loss_rate=self.energy_losses_variable,
+            fixed_losses_absolute=0,
+            fixed_losses_relative=self.energy_losses_fixed,
         )

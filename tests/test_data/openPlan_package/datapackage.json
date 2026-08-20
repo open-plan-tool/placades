@@ -38,28 +38,23 @@
                         "format": "default"
                     },
                     {
-                        "name": "capex_var",
+                        "name": "capex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_fix",
+                        "name": "opex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_var",
+                        "name": "variable_costs",
                         "type": "number",
                         "format": "default"
                     },
                     {
                         "name": "lifetime",
                         "type": "integer",
-                        "format": "default"
-                    },
-                    {
-                        "name": "optimize_cap",
-                        "type": "boolean",
                         "format": "default"
                     },
                     {
@@ -197,7 +192,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "bus_in",
+                        "name": "bus_in_electricity",
                         "type": "string",
                         "format": "default"
                     }
@@ -208,7 +203,7 @@
                 "primaryKey": "name",
                 "foreignKeys": [
                     {
-                        "fields": "bus_in",
+                        "fields": "bus_in_electricity",
                         "reference": {
                             "resource": "bus",
                             "fields": "name"
@@ -328,33 +323,23 @@
                         "format": "default"
                     },
                     {
-                        "name": "capex_fix",
+                        "name": "capex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "capex_var",
+                        "name": "opex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_fix",
-                        "type": "number",
-                        "format": "default"
-                    },
-                    {
-                        "name": "opex_var",
+                        "name": "variable_costs",
                         "type": "number",
                         "format": "default"
                     },
                     {
                         "name": "lifetime",
                         "type": "integer",
-                        "format": "default"
-                    },
-                    {
-                        "name": "optimize_cap",
-                        "type": "boolean",
                         "format": "default"
                     },
                     {
@@ -441,33 +426,23 @@
                         "format": "default"
                     },
                     {
-                        "name": "capex_fix",
+                        "name": "capex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "capex_var",
+                        "name": "opex_spec",
                         "type": "number",
                         "format": "default"
                     },
                     {
-                        "name": "opex_fix",
-                        "type": "number",
-                        "format": "default"
-                    },
-                    {
-                        "name": "opex_var",
+                        "name": "variable_costs",
                         "type": "number",
                         "format": "default"
                     },
                     {
                         "name": "lifetime",
                         "type": "integer",
-                        "format": "default"
-                    },
-                    {
-                        "name": "optimize_cap",
-                        "type": "boolean",
                         "format": "default"
                     },
                     {
@@ -549,17 +524,7 @@
                         "format": "default"
                     },
                     {
-                        "name": "lifetime",
-                        "type": "integer",
-                        "format": "default"
-                    },
-                    {
-                        "name": "shortage_cost",
-                        "type": "integer",
-                        "format": "default"
-                    },
-                    {
-                        "name": "excess_cost",
+                        "name": "economic_period",
                         "type": "integer",
                         "format": "default"
                     }

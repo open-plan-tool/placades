@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 from oemof.eesyplan import EnergySystem
 from oemof.eesyplan import HeatPump
@@ -23,11 +24,11 @@ def test_heat_pump_dispatch():
         bus_in_heat=ambient_bus,
         bus_out_heat=heat_bus,
         installed_capacity=15,
-        opex_var=-0.1,
+        variable_costs=-0.1,
         cop=[3.5, 3.2] * 5,
         project_data=Project(
             name="Project_X",
-            lifetime=20,
+            economic_period=20,
             tax=0,
             discount_factor=0.01,
         ),
@@ -56,7 +57,10 @@ def test_heat_pump_dispatch():
 
     # Electricity input plus ambient input equals expected heat energy
     assert (
-        round((flows["electricity"].sum() + flows["ambient"].sum()).iloc[0], 5)
+        pytest.approx(
+            ((flows["electricity"].sum() + flows["ambient"].sum()).iloc[0]),
+            abs=1e-5,
+        )
         == energy
     )
 
@@ -70,19 +74,17 @@ def test_heat_pump_investment():
     es.add(el_bus, ambient_bus, heat_bus)
     heat_pump = HeatPump(
         name="air_source_heat_pump",
-        installed_capacity=0,
         bus_in_electricity=el_bus,
         bus_in_heat=ambient_bus,
         bus_out_heat=heat_bus,
         maximum_capacity=15,
-        optimize_cap=True,
-        capex_var=100,
-        opex_var=-10,
-        opex_fix=1,
+        capex_spec=100,
+        variable_costs=-10,
+        opex_spec=1,
         cop=[3.5, 3.2] * 5,
         project_data=Project(
             name="Project_X",
-            lifetime=20,
+            economic_period=20,
             tax=0,
             discount_factor=0.01,
         ),
@@ -98,8 +100,8 @@ def test_heat_pump_investment():
         round(
             (
                 results["objective"]
-                + results["invest"].squeeze() * heat_pump.capex_var
-                - results["invest"].squeeze() * heat_pump.opex_fix
+                + results["invest"].squeeze() * heat_pump.capex_spec
+                - results["invest"].squeeze() * heat_pump.opex_spec
             ),
             3,
         )
@@ -116,21 +118,26 @@ def test_heat_pump_investment():
 
     # Electricity input multiplied with cop equals expected heat energy
     assert (
-        round(
+        pytest.approx(
             (
                 pd.Series(heat_pump.cop)
                 * flows["electricity"].reset_index(drop=True).squeeze()
             ).sum(),
-            5,
+            1e-5,
         )
         == energy
     )
 
     # Heat pump output equals expected heat energy
-    assert flows["air_source_heat_pump"].sum().iloc[0] == energy
+    assert (
+        pytest.approx(flows["air_source_heat_pump"].sum().iloc[0], 1e-5)
+        == energy
+    )
 
     # Electricity input plus ambient input equals expected heat energy
     assert (
-        round((flows["electricity"].sum() + flows["ambient"].sum()).iloc[0], 5)
+        pytest.approx(
+            (flows["electricity"].sum() + flows["ambient"].sum()).iloc[0], 1e-5
+        )
         == energy
     )

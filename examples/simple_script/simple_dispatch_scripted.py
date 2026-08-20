@@ -32,7 +32,9 @@ def simple_script():
         path = Path(DATA_PATH, fn)
         data[key] = pd.read_csv(path, header=None).squeeze()
 
-    project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
+    project = Project(
+        name="test", economic_period=20, tax=0, discount_factor=0
+    )
 
     # ####################### initialize the energy system ####################
     energy_system = EnergySystem(2023, number=180)
@@ -61,7 +63,6 @@ def simple_script():
             input_timeseries=data["wind"],
             installed_capacity=6.63,
             project_data=project,
-            optimize_cap=False,
         )
     )
 
@@ -72,7 +73,6 @@ def simple_script():
             project_data=project,
             installed_capacity=5.0,
             input_timeseries=data["pv"],
-            optimize_cap=False,
         )
     )
 
@@ -82,11 +82,10 @@ def simple_script():
             bus_in_electricity=bus_elec,
             age_installed=0,
             installed_capacity=1000,
-            capex_var=3.0,
-            opex_fix=5.0,
-            opex_var=0.0,
+            capex_spec=3.0,
+            opex_spec=5.0,
+            variable_costs=0.0,
             lifetime=10.0,
-            optimize_cap=False,
             soc_max=1,
             soc_min=0,
             crate=1.0,

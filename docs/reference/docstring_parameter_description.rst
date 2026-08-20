@@ -61,7 +61,7 @@
     planning and development costs which do not depend on the (optimized)
     capacities of the assets in € (Positive real number).
 
-.. |capex_var| replace:: Specific investment costs of the asset related to the
+.. |capex_spec| replace:: Specific investment costs of the asset related to the
     installed capacity (CAPEX) in €/:unit:.
 
 .. |carrier| replace:: Energieträger/Medium like 'electricity', 'gas', 'heat',
@@ -180,9 +180,6 @@
     40 kW PV at maximum in :unit: (Acceptable values are either a positive
     real number or None.).
 
-.. |maximum_capacity_investment| replace:: Description text is missing
-    [unit is missing] (no restrictions).
-
 .. |minimum| replace:: Minimum operation level of the flow as a factor of the
     nominal capacity [-] (Acceptable values are either a real number between
     0 and 1, or None).
@@ -195,11 +192,11 @@
     between two consecutive timesteps as a factor of the nominal capacity [-]
     (Acceptable values are either a non-negative real number or None).
 
-.. |opex_fix| replace:: Specific operational and maintenance costs of the
-    asset related to the installed capacity (OPEX_fix) in €/(:unit: • a)
+.. |opex_spec| replace:: Specific operational and maintenance costs of the
+    asset related to the installed capacity (opex_spec) in €/(:unit: • a)
 
-.. |opex_var| replace:: Costs associated with a flow through/from the asset
-    (OPEX_var or fuel costs). This could be fuel costs for fuel sources like
+.. |variable_costs| replace:: Costs associated with a flow through/from the asset
+    (variable_costs or fuel costs). This could be fuel costs for fuel sources like
     biogas or oil or operational costs for thermal power plants which only
     occur when operating the plant in €/kWh.
 
@@ -242,6 +239,10 @@
     filled to its nominal capacity the state of charge is represented by
     the value 1 [-] (Real number between 0 and 1).
 
+.. |self_discharge| replace:: Self-discharge refers to the loss of energy in a
+    storage device in relation to its state of charge (SOC) [-]
+    (Real number between 0 and 1).
+
 .. |shortage_cost| replace:: Text is missing
 
 .. |soc_max| replace:: The maximum permissible level of charge of the storage
@@ -253,6 +254,19 @@
     as a factor of the nominal capacity. When the battery is fully discharged
     the state of charge is represented by the value 0 [-] (Real number
     between 0 and 1).
+
+.. |temp_in_heat| replace:: Temperature of the in heat flow
+    [°C] (Real number above 0).
+
+.. |temp_out_heat| replace:: Temperature of the out heat flow. Note that the
+    temperature of the auxiliary is assumed to be above this temperature.
+    [°C] (Real number above 0).
+
+.. |temp_low_source_component| replace:: The return flow temperature of the
+    upstream component. If the upstream component is, for example, a storage
+    tank, then this refers to the cold temperature of the tank. In the case of
+    a heat pump, it would be the temperature of the incoming water (not the
+    temperature of the heat source). [°C] (Real number above 0).
 
 .. |theoretical_time_charge| replace:: Description text is missing
     [h] (no restrictions).

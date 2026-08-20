@@ -79,20 +79,14 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             input_timeseries=data["pv"],
         )
     )
-    if optimize_battery:
-        m_capacity = 10000
-        i_capacity = None
-    else:
-        m_capacity = None
-        i_capacity = 1000
 
     energy_system.add(
         ElectricalStorage(
             name="Batterie",
             bus_in_electricity=bus_elec,
             age_installed=0,
-            installed_capacity=i_capacity,
-            maximum_capacity=m_capacity,
+            installed_capacity=1000,
+            maximum_capacity=None,
             capex_spec=3.0,
             opex_spec=5.0,
             variable_costs=0.0,

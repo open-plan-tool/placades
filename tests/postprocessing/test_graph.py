@@ -27,7 +27,7 @@ DATA_FILES = {
     "wind": Path("wind_profile.csv"),
     "demand_elec": Path("electricity_demand.csv"),
 }
-
+OPTIMIZE = True
 
 # ============================================================================
 
@@ -37,7 +37,7 @@ DATA_FILES = {
 
 
 @pytest.fixture
-def sample_energy_system(pv_installed_cap=1.0, optimize_battery=False):
+def sample_energy_system():
     # Read data file
     data = {}
     for key, fn in DATA_FILES.items():
@@ -88,12 +88,8 @@ def sample_energy_system(pv_installed_cap=1.0, optimize_battery=False):
         )
     )
 
-    if optimize_battery:
-        m_capacity = 10000
-        i_capacity = None
-    else:
-        m_capacity = None
-        i_capacity = 1000
+    m_capacity = None
+    i_capacity = 1000
 
     energy_system.add(
         ElectricalStorage(
@@ -243,7 +239,7 @@ class TestSankey:
         self, sample_flows_df, sample_energy_system
     ):
         """Test: Sankey mit EnergySystem für Knotenfarben."""
-        fig, links_df = sankey(sample_flows_df, es=sample_energy_system)
+        fig, links_df = sankey(sample_flows_df, es=sample_energy_system(True))
 
         assert isinstance(fig, go.Figure)
         # Prüfe, dass Knotenfarben gesetzt wurden

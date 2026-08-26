@@ -28,6 +28,8 @@ class EnergyStorage(GenericStorage):
         theoretical_time_charge=1.0,  # hours
         theoretical_time_discharge=None,  # hours
         maximum_capacity_investment=float("+inf"),
+        constant_soc_until=1.0,
+        fraction_saturation_charging=1.0,
     ):
         """
         Energy Storage System (ESS).
@@ -150,6 +152,8 @@ class EnergyStorage(GenericStorage):
         )
         self.efficiency_charge = efficiency_charge
         self.efficiency_discharge = efficiency_discharge
+        self.constant_soc_until = constant_soc_until
+        self.fraction_saturation_charging = fraction_saturation_charging
 
         if optimize_cap:
             self.capacity_charge = Investment()
@@ -190,4 +194,6 @@ class EnergyStorage(GenericStorage):
             loss_rate=self.energy_losses_relative,
             fixed_losses_absolute=self.energy_losses_absolute,
             fixed_losses_relative=self.energy_losses_absolute_investment,
+            constant_soc_until=self.constant_soc_until,
+            fraction_saturation_charging=self.fraction_saturation_charging,
         )

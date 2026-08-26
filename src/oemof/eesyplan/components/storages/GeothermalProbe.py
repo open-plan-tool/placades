@@ -1,0 +1,163 @@
+from oemof.eesyplan.components.storages.storage import EnergyStorage
+
+
+class GeothermalProbe(EnergyStorage):
+    def __init__(
+        self,
+        name,
+        project_data,
+        installed_capacity,
+        bus_in_heat,
+        bus_out_heat=None,
+        age_installed=0,
+        capex_var=0.0,
+        opex_fix=0.0,
+        opex_var=0.0,
+        lifetime=None,
+        optimize_cap=False,
+        soc_max=1.0,
+        soc_min=0.0,
+        thermal_losses_relative=0.0,
+        thermal_losses_absolute=0.0,
+        thermal_losses_absolute_investment=0,
+        efficiency_charge=1.0,
+        efficiency_discharge=1.0,
+        theoretical_time_charge=1.0,  # hours
+        theoretical_time_discharge=None,  # hours
+        maximum_capacity_investment=float("+inf"),
+        constant_soc_until=0.0,
+        fraction_saturation_charging=0.0,
+    ):
+        """
+        Heat Energy Storage System (HESS).
+
+        This class represents a complete thermal energy storage system
+        for electrical energy storage and dispatch.
+
+        .. important ::
+           This is a simplified representation of a complete HESS
+           including all necessary components.
+
+        :Structure:
+         *input*
+           1. charge : Heat
+         *output*
+           1. discharge : Heat
+
+        Parameters
+        ----------
+        name : string
+            |name|
+        project_data : Project object
+            |project_data|
+        installed_capacity : float
+            |installed_capacity|
+        bus_in_heat : Node object
+            |bus_in_heat|
+        bus_out_heat : Node object, optional (default: None)
+            |bus_out_heat|
+        age_installed : float or int, optional (default: 0)
+            |age_installed|
+        capex_var : float, optional (default: 0.0)
+            |capex_var|
+        opex_fix : float, optional (default: 0.0)
+            |opex_fix|
+        opex_var : float, optional (default: 0.0)
+            |opex_var|
+        lifetime : int, optional (default: None)
+            |lifetime|
+        optimize_cap : bool, optional (default: False)
+            |optimize_cap|
+        soc_max : float, optional (default: 1.0)
+            |soc_max|
+        soc_min : float, optional (default: 0.0)
+            |soc_min|
+        thermal_losses_relative : float, optional (default: 0.0)
+            |fixed_thermal_losses_relative|
+        thermal_losses_absolute : float, optional (default: 0.0)
+            |fixed_thermal_losses_absolute|
+        thermal_losses_absolute_investment : float, optional (default: 0)
+            |energy_losses_absolute_investment|
+        efficiency_charge : float, optional (default: 1.0)
+            |efficiency_charge|
+        efficiency_discharge : float, optional (default: 1.0)
+            |efficiency_discharge|
+        theoretical_time_charge : float, optional (default: 1.0)
+            |theoretical_time_charge|
+        theoretical_time_discharge : float, optional (default: None)
+            |theoretical_time_discharge|
+        maximum_capacity_investment : float, optional (default: float("+inf"))
+            |maximum_capacity_investment|
+
+        Examples
+        --------
+        >>> from oemof.eesyplan import Project
+        >>> from oemof.eesyplan import CarrierBus
+        >>> from oemof.eesyplan import ThermalStorage
+        >>> my_project = Project(
+        ...         name="my_project",
+        ...         lifetime=20,
+        ...         tax=0,
+        ...         discount_factor=0.01
+        ...     )
+        >>> heat_bus = CarrierBus(name="my_heat_bus")
+        >>> my_storage = ThermalStorage(
+        ...     name="thermal_storage",
+        ...     project_data=my_project,
+        ...     bus_in_heat=heat_bus,
+        ...     installed_capacity=10,
+        ... )
+        >>> my_invest_storage = ThermalStorage(
+        ...     name="thermal_storage_extension",
+        ...     bus_in_heat=heat_bus,
+        ...     bus_out_heat=heat_bus,
+        ...     age_installed=0,
+        ...     installed_capacity=1000,
+        ...     capex_var=3,
+        ...     opex_fix=5,
+        ...     opex_var=0,
+        ...     lifetime=10,
+        ...     optimize_cap=False,
+        ...     soc_max=1,
+        ...     soc_min=0,
+        ...     theoretical_time_charge=1,
+        ...     theoretical_time_discharge=1,
+        ...     efficiency_charge=0.99,
+        ...     project_data=my_project,
+        ...     thermal_losses_relative=0.6,
+        ...     thermal_losses_absolute_investment=20,
+        ... )
+        """
+        self.thermal_losses_relative = thermal_losses_relative
+        self.thermal_losses_absolute = thermal_losses_absolute
+        self.thermal_losses_absolute_investment = (
+            thermal_losses_absolute_investment
+        )
+
+        super().__init__(
+            name,
+            project_data=project_data,
+            installed_capacity=installed_capacity,
+            bus_in=bus_in_heat,
+            bus_out=bus_out_heat,
+            age_installed=age_installed,
+            capex_var=capex_var,
+            opex_fix=opex_fix,
+            opex_var=opex_var,
+            lifetime=lifetime,
+            optimize_cap=optimize_cap,
+            soc_max=soc_max,
+            soc_min=soc_min,
+            energy_losses_relative=thermal_losses_relative,
+            energy_losses_absolute=thermal_losses_absolute,
+            energy_losses_absolute_investment=(
+                thermal_losses_absolute_investment
+            ),
+            efficiency_charge=efficiency_charge,
+            efficiency_discharge=efficiency_discharge,
+            theoretical_time_charge=theoretical_time_charge,  # hours
+            theoretical_time_discharge=theoretical_time_discharge,  # hours
+            maximum_capacity_investment=maximum_capacity_investment,
+            constant_soc_until=constant_soc_until,
+            fraction_saturation_charging=fraction_saturation_charging,
+        )

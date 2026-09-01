@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_fix,capex_var,opex_fix,opex_var,lifetime,optimize_cap,efficiency,bus_in_electricity,bus_out_electricity
+storage_charge_controller_in,EesyPlan testing,storage_charge_controller_in-0,0.0,0.0,0.0,1000.0,10.0,0.01,20,False,0.8,bus-0,bus-4

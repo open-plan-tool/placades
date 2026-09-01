@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_fix,capex_var,opex_fix,opex_var,lifetime,optimize_cap,efficiency,bus_in_electricity,bus_out_electricity
+solar_inverter,EesyPlan testing,solar_inverter-0,0.0,0.0,0.0,1000.0,10.0,0.01,20,False,0.8,bus-0,bus-4

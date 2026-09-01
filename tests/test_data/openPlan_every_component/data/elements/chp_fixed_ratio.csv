@@ -1,0 +1,2 @@
+type,project_data,name,age_installed,installed_capacity,capex_var,opex_fix,lifetime,optimize_cap,maximum_capacity,conversion_factor_to_heat,conversion_factor_to_electricity,bus_in_fuel,bus_out_heat,bus_out_electricity
+chp_fixed_ratio,EesyPlan testing,chp_fixed_ratio-0,0.0,0.0,1000.0,10.0,20,False,,0.2,0.8,bus-2,bus-5,bus-4

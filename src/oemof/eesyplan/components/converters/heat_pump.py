@@ -1,6 +1,5 @@
 import numpy as np
 
-from oemof.eesyplan.investment import _create_invest_if_wanted
 from oemof.solph import Flow
 from oemof.solph.components import Converter
 
@@ -14,14 +13,13 @@ class HeatPump(Converter):
         bus_in_electricity,
         bus_out_heat,
         bus_in_heat=None,
-        installed_capacity=0,
-        age_installed=0,
-        capex_var=0.0,
-        opex_var=0.0,
-        opex_fix=0.0,
-        lifetime=20,
-        optimize_cap=False,
+        installed_capacity=None,
         maximum_capacity=None,
+        age_installed=0,
+        capex_spec=0.0,
+        variable_costs=0.0,
+        opex_spec=0.0,
+        lifetime=20,
     ):
         """
         Heat pump for efficient heat generation.
@@ -47,18 +45,18 @@ class HeatPump(Converter):
             |name|
         age_installed : int, default=0
             |age_installed|
-        installed_capacity : float, default=0
-             |installed_capacity|
-        capex_var : float, default=0
-            |capex_var|
-        opex_var : float, default=0
-            |opex_var|
-        opex_fix : float, default=0
-            |opex_fix|
+        installed_capacity : float or None (default: None)
+            |installed_capacity|
+        maximum_capacity : float or None (default: None)
+            |maximum_capacity|
+        capex_spec : float, default=0
+            |capex_spec|
+        variable_costs : float, default=0
+            |variable_costs|
+        opex_spec : float, default=0
+            |opex_spec|
         lifetime : int, default=20
             |lifetime|
-        optimize_cap : bool, default=False
-            |optimize_cap|
         maximum_capacity : float or None, default=None
             |maximum_capacity|
         cop : float or list-like, default=0.8
@@ -78,7 +76,7 @@ class HeatPump(Converter):
         ...     installed_capacity=15,
         ...     cop=3.5,
         ...     project_data=Project(
-        ...         name="Project_X", lifetime=20, tax=0,
+        ...         name="Project_X", economic_period=20, tax=0,
         ...         discount_factor=0.01,
         ...     )
         ... )
@@ -90,7 +88,7 @@ class HeatPump(Converter):
         ...     installed_capacity=15,
         ...     cop=[3.5] * 5,
         ...     project_data=Project(
-        ...         name="Project_X", lifetime=20, tax=0,
+        ...         name="Project_X", economic_period=20, tax=0,
         ...         discount_factor=0.01,
         ...     )
         ... )
@@ -100,15 +98,12 @@ class HeatPump(Converter):
         if isinstance(cop, list):
             cop = np.array(cop)
 
-        nv = _create_invest_if_wanted(
-            optimise_cap=optimize_cap,
-            capex_var=capex_var,
-            opex_fix=opex_fix,
+        nv = project_data.create_invest_if_wanted(
+            capex_spec=capex_spec,
+            opex_spec=opex_spec,
             lifetime=lifetime,
-            age_installed=age_installed,
-            existing_capacity=installed_capacity,
+            installed_capacity=installed_capacity,
             maximum_capacity=maximum_capacity,
-            project_data=project_data,
         )
 
         inputs = {bus_in_electricity: Flow()}
@@ -116,7 +111,7 @@ class HeatPump(Converter):
         outputs = {
             bus_out_heat: Flow(
                 nominal_capacity=nv,
-                variable_costs=opex_var,
+                variable_costs=variable_costs,
             )
         }
 
@@ -138,10 +133,10 @@ class HeatPump(Converter):
         self.name = name
         self.age_installed = age_installed
         self.installed_capacity = installed_capacity
-        self.capex_var = capex_var
-        self.opex_var = opex_var
-        self.opex_fix = opex_fix
+        self.capex_spec = capex_spec
+        self.variable_costs = variable_costs
+        self.opex_spec = opex_spec
         self.lifetime = lifetime
-        self.optimize_cap = optimize_cap
+
         self.maximum_capacity = maximum_capacity
         self.cop = cop

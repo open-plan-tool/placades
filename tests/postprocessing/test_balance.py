@@ -10,7 +10,9 @@ from oemof.eesyplan.postprocessing.balance import nodes_io
 
 
 def test_node_io_balance():
-    project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
+    project = Project(
+        name="test", economic_period=20, tax=0, discount_factor=0
+    )
     energy_system = EnergySystem(2023, number=10)
 
     bus_elec = CarrierBus(name="electricity")
@@ -33,7 +35,6 @@ def test_node_io_balance():
             input_timeseries=5,
             installed_capacity=10,
             project_data=project,
-            optimize_cap=False,
         )
     )
 
@@ -44,7 +45,6 @@ def test_node_io_balance():
             project_data=project,
             installed_capacity=5.0,
             input_timeseries=3,
-            optimize_cap=False,
         )
     )
 

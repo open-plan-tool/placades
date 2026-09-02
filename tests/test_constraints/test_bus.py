@@ -12,19 +12,16 @@ def test_carrier_bus_excess():
     es = EnergySystem(2023, number=number)
     bus1 = CarrierBus(name="bus1", balanced=True, excess_cost=0)
     es.add(bus1)
-    my_project = (
-        Project(
-            name="Project_X",
-            lifetime=20,
-            tax=0,
-            discount_factor=0.01,
-        ),
+    my_project = Project(
+        name="Project_X",
+        economic_period=20,
+        tax=0,
+        discount_factor=0.01,
     )
     my_pv = PvPlant(
         bus_out_electricity=bus1,
         name="my_pv_plant",
         installed_capacity=5,
-        optimize_cap=False,
         input_timeseries=[1, 2, 3],
         project_data=my_project,
     )

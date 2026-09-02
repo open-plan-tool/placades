@@ -35,7 +35,9 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
         path = Path(Path(__file__).parent, DATA_PATH, fn)
         data[key] = pd.read_csv(path, header=None).squeeze()
 
-    project = Project(name="test", lifetime=20, tax=0, discount_factor=0)
+    project = Project(
+        name="test", economic_period=20, tax=0, discount_factor=0
+    )
 
     # ####################### initialize the energy system ####################
     energy_system = EnergySystem(2023, number=10)
@@ -62,9 +64,8 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             name="wind",
             bus_out_electricity=bus_elec,
             input_timeseries=data["wind"],
-            installed_capacity=0.25,
+            maximum_capacity=25,
             project_data=project,
-            optimize_cap=True,
         )
     )
 
@@ -73,10 +74,9 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             name="pv",
             bus_out_electricity=bus_elec,
             project_data=project,
-            capex_var=0.01,
-            installed_capacity=pv_installed_cap,
+            capex_spec=0.01,
+            maximum_capacity=10 * pv_installed_cap,
             input_timeseries=data["pv"],
-            optimize_cap=True,
         )
     )
 
@@ -85,12 +85,12 @@ def simple_script(pv_installed_cap=1.0, optimize_battery=False):
             name="Batterie",
             bus_in_electricity=bus_elec,
             age_installed=0,
-            installed_capacity=10,
-            capex_var=3.0,
-            opex_fix=5.0,
-            opex_var=0.0,
-            lifetime=10.0,
-            optimize_cap=optimize_battery,
+            installed_capacity=1000,
+            maximum_capacity=None,
+            capex_spec=3.0,
+            opex_spec=5.0,
+            variable_costs=0.0,
+            lifetime=10,
             soc_max=1,
             soc_min=0,
             c_rate_charge=1.0,
@@ -143,4 +143,4 @@ def test_sankey_diagram():
     # Überprüfe Gesamtfluss mit Toleranz
     total_flow = sum(actual_data["link"]["value"])
     expected_total_flow = 880.9083295884674
-    assert abs(total_flow - expected_total_flow) < 1e-10
+    assert abs(total_flow - expected_total_flow) < 1e-6

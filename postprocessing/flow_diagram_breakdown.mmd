@@ -1,0 +1,11 @@
+flowchart TD
+    START(["get_flow_cost_breakdown(f)"]) --> HASINPUTS{"Flow f has\ninput origins?"}
+
+    HASINPUTS -- No --> LEAF(["Return: own cost only\n(leaf / source flow)"])
+
+    HASINPUTS -- Yes --> RET(["Return: own cost\n+ each input's\npropagated cost"])
+
+    RET --> RECURSE["Each input origin\nis itself a flow"]
+    RECURSE --> AGAIN(["get_flow_cost_breakdown\n(input flow)"])
+
+    AGAIN --> HASINPUTS

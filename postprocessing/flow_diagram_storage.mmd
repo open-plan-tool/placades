@@ -1,0 +1,17 @@
+flowchart TD
+    FINDMIN["Start at timestep\nof minimum SoC\n(account near empty)"] --> STEPLOOP
+
+    STEPLOOP["Step through\neach timestep"] --> CHARGE{"Charging\nflow_in > 0 ?"}
+
+    CHARGE -- Yes --> ADDCOST["Add inflow's propagated\nfixed and variable cost\nto running account"]
+    ADDCOST --> NEXT["Next timestep"]
+    NEXT --> STEPLOOP
+
+    CHARGE -- No --> DISCHARGE{"Discharging\nflow_out > 0 ?"}
+
+    DISCHARGE -- Yes --> CALCSPEC["specific = running_account\n               / soc_start_t"]
+    CALCSPEC --> REMOVE["Remove from account:\nrem = min out divided by conversion, soc\naccount = account * (soc - rem) / soc"]
+    REMOVE --> NEXT
+
+    DISCHARGE -- No --> NEXT2["Record blended\nspecific cost\nno removal"]
+    NEXT2 --> NEXT

@@ -1,0 +1,9 @@
+oemof.solph==0.6.4
+oemof.network==0.5.3a2
+oemof.tools==0.4.3
+pandas==3.0.5
+numpy==2.5.2
+plotly==6.9.0
+networkx==3.6.1
+matplotlib==3.11.1
+highspy==1.15.1

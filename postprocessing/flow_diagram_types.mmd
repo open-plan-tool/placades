@@ -1,0 +1,13 @@
+flowchart LR
+    A{"Source node?"}
+    A -- Yes --> FROM_SOURCE["FROM_SOURCE"]
+    A -- No --> B{"Target is\nstorage?"}
+    B -- Yes --> TO_STORAGE["TO_STORAGE"]
+    B -- No --> C{"Source is\nstorage?"}
+    C -- Yes --> FROM_STORAGE["FROM_STORAGE"]
+    C -- No --> NORMAL["NORMAL"]
+
+    D{"In a detected\ncycle?"}
+    D -- "Both ends\nin cycle" --> CIRC_INTERNAL["CIRCULAR_INTERNAL"]
+    D -- "Leaves cycle" --> CIRC_OUTFLOW["CIRCULAR_OUTFLOW"]
+    D -- "Enters cycle\nnot FROM_STORAGE" --> CIRC_INFLOW["CIRCULAR_INFLOW"]

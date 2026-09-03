@@ -34,6 +34,95 @@ CIRCULAR_INTERNAL = "circular_internal"
 CIRCULAR_INFLOW = "circular_inflow"
 CIRCULAR_OUTFLOW = "circular_outflow"
 
+#todo: Implement Fix costs into the calculations
+
+def calculate_costs_of_all_flows(results) -> dict:
+    flow_v = results.to_df("flow")
+    abs_var_cost_values = results.to_df("variable_costs")
+    invest_costs_df = (
+        results.to_df("investment_costs")
+        if "investment_costs" in results.keys()
+        else pd.DataFrame()
+    )
+
+    graph = build_graph_timestep(flow_v)
+    cycles = list(nx.simple_cycles(graph))
+    logging.info("Detected cycles: %s", cycles)
+
+    flows_from = defaultdict(list)
+    flows_to = defaultdict(list)
+    for f in flow_v.columns:
+        source, target = f
+        flows_from[source].append(f)
+        flows_to[target].append(f)
+
+    storage_content, storage_nodes = _extract_storage(results)
+
+    f_all = _init_flow_records(
+        flow_v, abs_var_cost_values, invest_costs_df, storage_nodes, flows_to
+    )
+    f_all = fix_simultaneous_storage_flows(f_all, storage_nodes)
+
+    circular_nodes, internal_flows = find_circular_nodes(f_all, cycles)
+    cycle_inflows, cycle_outflows = get_cycle_inflows_outflows(
+        f_all, circular_nodes, internal_flows
+    )
+    for f in f_all:
+        if f in internal_flows:
+            f_all[f]["type"] = CIRCULAR_INTERNAL
+        elif f in cycle_outflows:
+            f_all[f]["type"] = CIRCULAR_OUTFLOW
+        elif f in cycle_inflows and f_all[f]["type"] != FROM_STORAGE:
+            f_all[f]["type"] = CIRCULAR_INFLOW
+
+    _validate_no_simultaneous_storage(f_all, storage_nodes)
+
+    _seed_source_flows(f_all)
+    _propagate_until_complete(
+        f_all,
+        flows_from,
+        storage_content,
+        internal_flows,
+        cycle_inflows,
+        cycle_outflows,
+    )
+
+    for f, rec in f_all.items():
+        df = rec["flow_df"]
+        if rec["contrib"].empty:
+            continue
+        if not isinstance(rec["contrib"].columns, pd.MultiIndex):
+            logging.warning(
+                "Breakdown columns not a MultiIndex for %s->%s: %r",
+                f[0].label,
+                f[1].label,
+                rec["contrib"].columns,
+            )
+            continue
+        for ctype, col in (("fix", "fix_c_tot_p"), ("var", "var_c_tot_p")):
+            if df[col].isna().any():
+                continue
+            if ctype not in rec["contrib"].columns.get_level_values("type"):
+                continue
+            total = rec["contrib"].xs(ctype, level="type", axis=1).sum(axis=1)
+            if not np.allclose(total, df[col], rtol=1e-6, atol=1e-6):
+                logging.warning(
+                    "Breakdown mismatch for %s->%s (%s cost): max diff %.6f",
+                    f[0].label,
+                    f[1].label,
+                    ctype,
+                    float((total - df[col]).abs().max()),
+                )
+
+    for f, rec in f_all.items():
+        logging.debug(
+            "%s->%s: fix_c_spec=%.6f",
+            f[0].label,
+            f[1].label,
+            rec["fix_c_spec"],
+        )
+
+    return f_all
 
 def _sum_columns_by_level(df: pd.DataFrame, level) -> pd.DataFrame:
     return df.T.groupby(level=level).sum().T
@@ -599,90 +688,4 @@ def build_graph_timestep(
     return G
 
 
-def calculate_costs_of_all_flows(results) -> dict:
-    flow_v = results.to_df("flow")
-    abs_var_cost_values = results.to_df("variable_costs")
-    invest_costs_df = (
-        results.to_df("investment_costs")
-        if "investment_costs" in results.keys()
-        else pd.DataFrame()
-    )
 
-    graph = build_graph_timestep(flow_v)
-    cycles = list(nx.simple_cycles(graph))
-    logging.info("Detected cycles: %s", cycles)
-
-    flows_from = defaultdict(list)
-    flows_to = defaultdict(list)
-    for f in flow_v.columns:
-        source, target = f
-        flows_from[source].append(f)
-        flows_to[target].append(f)
-
-    storage_content, storage_nodes = _extract_storage(results)
-
-    f_all = _init_flow_records(
-        flow_v, abs_var_cost_values, invest_costs_df, storage_nodes, flows_to
-    )
-    f_all = fix_simultaneous_storage_flows(f_all, storage_nodes)
-
-    circular_nodes, internal_flows = find_circular_nodes(f_all, cycles)
-    cycle_inflows, cycle_outflows = get_cycle_inflows_outflows(
-        f_all, circular_nodes, internal_flows
-    )
-    for f in f_all:
-        if f in internal_flows:
-            f_all[f]["type"] = CIRCULAR_INTERNAL
-        elif f in cycle_outflows:
-            f_all[f]["type"] = CIRCULAR_OUTFLOW
-        elif f in cycle_inflows and f_all[f]["type"] != FROM_STORAGE:
-            f_all[f]["type"] = CIRCULAR_INFLOW
-
-    _validate_no_simultaneous_storage(f_all, storage_nodes)
-
-    _seed_source_flows(f_all)
-    _propagate_until_complete(
-        f_all,
-        flows_from,
-        storage_content,
-        internal_flows,
-        cycle_inflows,
-        cycle_outflows,
-    )
-
-    for f, rec in f_all.items():
-        df = rec["flow_df"]
-        if rec["contrib"].empty:
-            continue
-        if not isinstance(rec["contrib"].columns, pd.MultiIndex):
-            logging.warning(
-                "Breakdown columns not a MultiIndex for %s->%s: %r",
-                f[0].label,
-                f[1].label,
-                rec["contrib"].columns,
-            )
-            continue
-        for ctype, col in (("fix", "fix_c_tot_p"), ("var", "var_c_tot_p")):
-            if df[col].isna().any():
-                continue
-            if ctype not in rec["contrib"].columns.get_level_values("type"):
-                continue
-            total = rec["contrib"].xs(ctype, level="type", axis=1).sum(axis=1)
-            if not np.allclose(total, df[col], rtol=1e-6, atol=1e-6):
-                logging.warning(
-                    "Breakdown mismatch for %s->%s (%s cost): max diff %.6f",
-                    f[0].label,
-                    f[1].label,
-                    ctype,
-                    float((total - df[col]).abs().max()),
-                )
-
-    for f, rec in f_all.items():
-        logging.debug(
-            "%s->%s: fix_c_spec=%.6f",
-            f[0].label,
-            f[1].label,
-            rec["fix_c_spec"],
-        )
-
-    return f_all

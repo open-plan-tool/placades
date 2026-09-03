@@ -1,18 +1,12 @@
-def plot_all_flows_plotly(all_flow_dict, storage_content=None,normalize=False, specific=True):
-    """
-    Plots all flows including:
-    - flow volume
-    - propagated variable costs
-    - propagated fixed costs
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
-    Parameters
-    ----------
-    all_flow_dict : dict
-        Output of calculate_costs_of_all_flows()
-    normalize : bool
-        If True, normalize values (useful for comparison)
-    """
+from oemof.eesyplan.postprocessing.cost_calculation import _sum_columns_by_level
 
+
+def plot_all_flows_plotly(all_flow_dict, storage_content=None, normalize=False, specific=True):
     fig = make_subplots(
         rows=5, cols=1,
         shared_xaxes=True,
@@ -34,24 +28,21 @@ def plot_all_flows_plotly(all_flow_dict, storage_content=None,normalize=False, s
         df = flow_data["flow_df"]
         color = flow_colors[flow_name]
 
-        label = f"{flow_name[0].label} → {flow_name[1].label}"
+        label = f"{flow_name[0].label} -> {flow_name[1].label}"
 
         flow = df["flow_v"]
         mask = flow > 0.001
 
         if specific:
-            var_cost = df["var_c_spec_p"].where(mask, df["var_c_spec_p"].clip(upper=1)) #in case of very little flow dont show huge values
+            var_cost = df["var_c_spec_p"].where(mask, df["var_c_spec_p"].clip(upper=1))
             fix_cost = df["fix_c_spec_p"].where(mask, df["fix_c_spec_p"].clip(upper=1))
-            total_cost=var_cost+fix_cost
-
+            total_cost = var_cost + fix_cost
         else:
             var_cost = df["var_c_tot_p"]
             fix_cost = df["fix_c_tot_p"]
-            total_cost=var_cost+fix_cost
+            total_cost = var_cost + fix_cost
 
-
-
-        if normalize: #not working as intended
+        if normalize:
             if flow.max() != 0:
                 flow = flow / flow.max()
             if var_cost.max() != 0:
@@ -59,81 +50,44 @@ def plot_all_flows_plotly(all_flow_dict, storage_content=None,normalize=False, s
             if fix_cost.max() != 0:
                 fix_cost = fix_cost / fix_cost.max()
 
-        # --- FLOW ---
         fig.add_trace(
-            go.Scattergl(
-                x=df.index,
-                y=flow,
-                name=f"{label} (flow)",
-                legendgroup=label,
-                mode="lines",
-                line = dict(color=color)
-            ),
+            go.Scattergl(x=df.index, y=flow, name=f"{label} (flow)",
+                         legendgroup=label, mode="lines", line=dict(color=color)),
             row=1, col=1
         )
 
-        # --- VARIABLE COST ---
         fig.add_trace(
-            go.Scattergl(
-                x=df.index,
-                y=var_cost,
-                name=f"{label} (var cost)",
-                legendgroup=label,
-                mode="lines",
-                showlegend=False,
-                line=dict(color=color)
-            ),
+            go.Scattergl(x=df.index, y=var_cost, name=f"{label} (var cost)",
+                         legendgroup=label, mode="lines", showlegend=False,
+                         line=dict(color=color)),
             row=2, col=1
         )
 
-        # --- FIXED COST ---
         fig.add_trace(
-            go.Scattergl(
-                x=df.index,
-                y=fix_cost,
-                name=f"{label} (fix cost)",
-                legendgroup=label,
-                mode="lines",
-                showlegend=False,
-                line=dict(color=color)
-            ),
+            go.Scattergl(x=df.index, y=fix_cost, name=f"{label} (fix cost)",
+                         legendgroup=label, mode="lines", showlegend=False,
+                         line=dict(color=color)),
             row=3, col=1
         )
 
-        # --- TOTAL COST ---
         fig.add_trace(
-            go.Scattergl(
-                x=df.index,
-                y=total_cost,
-                name=f"{label} (total cost)",
-                legendgroup=label,
-                mode="lines",
-                showlegend=False,
-                line=dict(color=color)
-            ),
+            go.Scattergl(x=df.index, y=total_cost, name=f"{label} (total cost)",
+                         legendgroup=label, mode="lines", showlegend=False,
+                         line=dict(color=color)),
             row=4, col=1
         )
-    # --- STORAGE CONTENT ---
+
     if storage_content is not None:
-
         storage_colors = px.colors.qualitative.Dark24
-
         for i, storage in enumerate(storage_content.columns):
-
             color = storage_colors[i % len(storage_colors)]
-
             fig.add_trace(
-                go.Scattergl(
-                    x=storage_content.index,
-                    y=storage_content[storage].clip(lower=0),
-                    name=f"{storage} (storage)",
-                    legendgroup=f"storage_{storage}",
-                    mode="lines",
-                    line=dict(
-                        color=color,
-                        dash="dash"
-                    )
-                ),
+                go.Scattergl(x=storage_content.index,
+                             y=storage_content[storage].clip(lower=0),
+                             name=f"{storage} (storage)",
+                             legendgroup=f"storage_{storage}",
+                             mode="lines",
+                             line=dict(color=color, dash="dash")),
                 row=5, col=1
             )
 
@@ -150,68 +104,28 @@ def plot_all_flows_plotly(all_flow_dict, storage_content=None,normalize=False, s
     )
 
 
-
 def get_flow_cost_breakdown(f, all_flow_dict: dict, split: bool = False) -> pd.DataFrame:
-    """Return the per-timestep cost breakdown of a single flow.
-
-    One-hop decomposition: columns hold the flow itself and its direct input
-    flows, each carrying its full propagated cost share (so e.g. a storage
-    output flow appears as its own origin instead of being dissolved into its
-    upstream flows). Values are absolute costs in EUR per timestep. With
-    ``split=True`` the columns become a MultiIndex ``(origin, type)`` where
-    ``type`` is ``"fix"`` or ``"var"``.
-    """
     contrib = all_flow_dict[f]["contrib"].copy()
     if contrib.empty:
         return contrib
     merged = _sum_columns_by_level(contrib, [0, 1])
     if split:
         return merged
-
     return _sum_columns_by_level(merged, "origin")
 
 
 def plot_flow_cost_breakdown(all_flow_dict: dict, specific: bool = True,
                              filename: str = "flow_cost_breakdown.html",
                              auto_open: bool = True, min_total: float = 1.0):
-    """Plot the cost breakdown of every flow as a stacked area chart.
-
-    A dropdown menu (top right, above the legend) selects a flow (only the
-    total = fixed + variable view is offered). Each stacked area shows how much
-    of the selected flow's propagated cost was contributed by a directly
-    connected flow (one-hop decomposition: the flow itself plus each of its
-    input flows) in each timestep. Every origin is split into a fixed and a
-    variable part, both listed separately in the legend (``origin (fix)`` /
-    ``origin (var)``). Positive contributions are stacked above zero, negative
-    contributions below zero; a black line shows the propagated cost total.
-    Parts/origins whose total cost over all timesteps does not exceed
-    ``min_total`` (default 1 EUR) are omitted from both the diagram and the
-    legend, and each origin appears with a single legend entry (the positive
-    and negative stack traces are grouped and share one color and one hover
-    entry showing their net sum).
-
-    Parameters
-    ----------
-    specific : bool
-        If True, contributions are shown as specific costs [EUR/kWh],
-        otherwise as absolute costs [EUR].
-    min_total : float
-        Parts/origins with a smaller total absolute cost are not plotted.
-    """
     timeindex = next(iter(all_flow_dict.values()))["flow_df"].index
 
-    # Precompute (flow, cost_type) -> DataFrame(time x origin/part) breakdowns.
-    # In the "total" view every origin is split into a "(fix)" and a "(var)"
-    # part; in the "fix"/"var" views the columns are the origins themselves.
-    # Filtering is always applied per column on the absolute (EUR) totals.
     breakdown = {}
     for f, rec in all_flow_dict.items():
         contrib = rec["contrib"].copy()
         if contrib.empty:
             merged = pd.DataFrame(
                 0.0, index=timeindex,
-                columns=pd.MultiIndex.from_arrays([[], []],
-                                                  names=["origin", "type"]),
+                columns=pd.MultiIndex.from_arrays([[], []], names=["origin", "type"]),
             )
         else:
             merged = _sum_columns_by_level(contrib, [0, 1])
@@ -224,8 +138,7 @@ def plot_flow_cost_breakdown(all_flow_dict: dict, specific: bool = True,
 
         fix = keep_columns(fix)
         var = keep_columns(var)
-        total = pd.DataFrame(0.0, index=timeindex,
-                             columns=pd.Index([], name="part"))
+        total = pd.DataFrame(0.0, index=timeindex, columns=pd.Index([], name="part"))
         for o in fix.columns:
             total[f"{o} (fix)"] = fix[o]
         for o in var.columns:
@@ -242,13 +155,6 @@ def plot_flow_cost_breakdown(all_flow_dict: dict, specific: bool = True,
 
     combos = [(f, "total") for f in all_flow_dict]
 
-    # Fixed number of trace slots (one positive and one negative stack per
-    # contributor, + 1 for the total line) so the dropdown can swap trace data
-    # without changing the trace count. All positive traces are kept together,
-    # followed by all negative traces: interleaving pos/neg stackgroup traces
-    # can make middle traces of a stack disappear in rendering. The legend
-    # shows only the positive traces, so within each block the per-origin
-    # (fix) -> (var) ordering gives the requested fix-then-var legend order.
     n_slots = 2 * max(len(breakdown[c].columns) for c in breakdown) + 1
     palette = px.colors.qualitative.Plotly
     hover_fmt = ".4f" if specific else ".2f"
@@ -256,15 +162,10 @@ def plot_flow_cost_breakdown(all_flow_dict: dict, specific: bool = True,
 
     def button_args(f, ctype):
         dfm = breakdown[(f, ctype)]
-        # Order the contributors so the (fix) and (var) parts of the same
-        # component always sit right next to each other in the legend, fix
-        # first. The positive stack traces carry the legend entries, so this
-        # order also decides the legend order.
         cols = list(dfm.columns)
         bases = []
         for c in cols:
-            base = c[:-6] if c.endswith(" (fix)") else (
-                c[:-6] if c.endswith(" (var)") else c)
+            base = c[:-6] if c.endswith(" (fix)") else (c[:-6] if c.endswith(" (var)") else c)
             if base not in bases:
                 bases.append(base)
         origins = []
@@ -287,13 +188,6 @@ def plot_flow_cost_breakdown(all_flow_dict: dict, specific: bool = True,
         customdata = [None] * n_slots
         hovertemplate = [None] * n_slots
         hoverinfo = [None] * n_slots
-        # Each contributor is split into a positive part (stacked above 0) and
-        # a negative part (stacked below 0) so positive and negative
-        # contributions never cancel each other out in the diagram. Both parts
-        # share one color (the identical line color is what fills the stacked
-        # areas in plotly.js), one legend entry (the positive trace's) and one
-        # hover entry showing their net sum, so the legend and the hover never
-        # show duplicate labels/values.
         for i, o in enumerate(origins):
             color = dict(color=palette[i % len(palette)])
             col = dfm[o]
@@ -305,18 +199,12 @@ def plot_flow_cost_breakdown(all_flow_dict: dict, specific: bool = True,
             mode[i] = mode[n + i] = "none"
             vis[i] = vis[n + i] = True
             line[i] = line[n + i] = color
-            # Explicit fill color (== line color, fully opaque hex) so the
-            # stacked area renders exactly in the color the legend shows:
-            # an unset fillcolor lets the fill fall back to the default
-            # colorway (and a translucent one) instead of our color, making
-            # the areas look mismatched/washed out next to the legend.
             fillcolor[i] = fillcolor[n + i] = color["color"]
             legendgroup[i] = legendgroup[n + i] = str(o)
             showlegend[i] = True
             customdata[i] = col.to_list()
             hovertemplate[i] = f"{o}<br>%{{customdata:{hover_fmt}}} {unit}"
             hoverinfo[n + i] = "skip"
-        # Black total line (pos + neg stack).
         total_i = 2 * n
         y[total_i] = dfm.sum(axis=1).to_list()
         names[total_i] = "total"
@@ -335,7 +223,7 @@ def plot_flow_cost_breakdown(all_flow_dict: dict, specific: bool = True,
 
     buttons = []
     for f, ctype in combos:
-        label = f"{f[0].label} → {f[1].label} (total)"
+        label = f"{f[0].label} -> {f[1].label} (total)"
         buttons.append(dict(label=label, method="update",
                             args=[button_args(f, ctype)]))
 
@@ -360,8 +248,6 @@ def plot_flow_cost_breakdown(all_flow_dict: dict, specific: bool = True,
         yaxis_title="Specific cost [EUR/kWh]" if specific else "Cost [EUR]",
         hovermode="x unified",
         legend_title_text="Contributing flows",
-        # Legend outside the diagram on the right side, dropdown above it (not
-        # inside the legend).
         margin=dict(t=150, r=350),
         legend=dict(x=1.02, y=0.98, xanchor="left", yanchor="top",
                     itemdoubleclick=False),
@@ -372,12 +258,6 @@ def plot_flow_cost_breakdown(all_flow_dict: dict, specific: bool = True,
         )],
     )
 
-    # plotly.js breaks stacked-area fills when traces are hidden/shown via the
-    # legend (known bug, plotly.js#6138, still open in 6.x): after a click the
-    # stack is not re-computed correctly and series get wrong areas/colors.
-    # Forcing a full redraw after every legend click re-computes the fills
-    # from scratch, so they stay correct; double-click isolation is disabled
-    # since it is the main trigger for the scrambled ordering.
     fig.write_html(
         filename,
         include_plotlyjs="cdn",
@@ -391,21 +271,6 @@ def plot_flow_cost_breakdown(all_flow_dict: dict, specific: bool = True,
     )
 
 
-def build_graph_timestep(flow_df: pd.DataFrame, threshold: float = 1e-6) -> nx.DiGraph:
-    """Build a directed graph of all flows that are active over the year.
-
-    An edge source -> target is added whenever the flow carries more than
-    ``threshold`` energy in total. The graph is used to detect cycles.
-    """
-    G = nx.DiGraph()
-
-    for (source, target) in flow_df.columns:
-        series = flow_df[(source, target)]
-        if series.sum() > threshold:
-            G.add_edge(source.label, target.label)
-
-    return G
-
 def print_flow_cost_summary(all_flow_dict):
     print(f"\n{'Flow':<40} {'Avg Spec Fix':>14} {'Avg Spec Var':>14} {'Avg Spec Tot':>14} {'Tot Fix':>12} {'Tot Var':>12} {'Tot Total':>12}")
     print("-" * 122)
@@ -414,12 +279,8 @@ def print_flow_cost_summary(all_flow_dict):
         df = data["flow_df"]
         label = f"{f[0].label}->{f[1].label}"
 
-        mask = df["flow_v"] > 0
-
-        avg_spec_fix = df["fix_c_tot_p"].sum() / df["flow_v"].sum() if df[
-                                                                           "flow_v"].sum() > 0 else 0
-        avg_spec_var = df["var_c_tot_p"].sum() / df["flow_v"].sum() if df[
-                                                                           "flow_v"].sum() > 0 else 0
+        avg_spec_fix = df["fix_c_tot_p"].sum() / df["flow_v"].sum() if df["flow_v"].sum() > 0 else 0
+        avg_spec_var = df["var_c_tot_p"].sum() / df["flow_v"].sum() if df["flow_v"].sum() > 0 else 0
         avg_spec_tot = avg_spec_fix + avg_spec_var
 
         tot_fix = df["fix_c_tot_p"].sum()
@@ -427,4 +288,3 @@ def print_flow_cost_summary(all_flow_dict):
         tot_total = tot_fix + tot_var
 
         print(f"{label:<40} {avg_spec_fix:>14.4f} {avg_spec_var:>14.4f} {avg_spec_tot:>14.4f} {tot_fix:>12.2f} {tot_var:>12.2f} {tot_total:>12.2f}")
-

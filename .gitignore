@@ -74,6 +74,11 @@ docs/_build
 .mypy_cache/
 
 */results/*
+!/examples/results/flow_cost_calculation/
+!/examples/results/flow_cost_calculation/*.py
+!/examples/results/flow_cost_calculation/*.csv
+/examples/results/flow_cost_calculation/*.html
+/examples/results/flow_cost_calculation/*.log
 /examples/solve_any_datapackage
 *.graphml
 !tests/test_data/openPlan_package/datapackage.graphml

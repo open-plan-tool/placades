@@ -1,26 +1,30 @@
 import logging
-import os
+from pathlib import Path
 
 import oemof.solph
-from oemof.solph import EnergySystem, Model, buses, components, create_time_index, flows, processing, Results
+import pandas as pd
+from oemof.solph import EnergySystem
+from oemof.solph import Model
+from oemof.solph import Results
+from oemof.solph import buses
+from oemof.solph import components
+from oemof.solph import create_time_index
+from oemof.solph import flows
 from oemof.tools import logger
 
-from oemof.eesyplan.postprocessing import (
-    calculate_costs_of_all_flows,
-    plot_all_flows_plotly,
-    plot_flow_cost_breakdown,
-    print_flow_cost_summary,
-)
+from oemof.eesyplan.postprocessing import calculate_costs_of_all_flows
+from oemof.eesyplan.postprocessing import plot_all_flows_plotly
+from oemof.eesyplan.postprocessing import plot_flow_cost_breakdown
+from oemof.eesyplan.postprocessing import print_flow_cost_summary
+
+DATA_PATH = Path(__file__).parent
 
 
 def get_data_from_file_path(file_path: str):
     try:
-        import pandas as pd
         data = pd.read_csv(file_path)
     except FileNotFoundError:
-        dir_path = os.path.dirname(os.path.abspath(__file__))
-        import pandas as pd
-        data = pd.read_csv(os.path.join(dir_path, file_path))
+        data = pd.read_csv(Path(DATA_PATH, file_path))
     return data
 
 
@@ -56,7 +60,9 @@ def create_energysystem():
             outputs={
                 bus_electricity: flows.Flow(
                     max=data["wind"],
-                    nominal_capacity=oemof.solph.Investment(ep_costs=1100/12),
+                    nominal_capacity=oemof.solph.Investment(
+                        ep_costs=1100 / 12
+                    ),
                     variable_costs=0.001,
                 )
             },
@@ -69,7 +75,7 @@ def create_energysystem():
             outputs={
                 bus_electricity: flows.Flow(
                     max=data["pv"],
-                    nominal_capacity=oemof.solph.Investment(ep_costs=800/12),
+                    nominal_capacity=oemof.solph.Investment(ep_costs=800 / 12),
                     variable_costs=0.001,
                 )
             },
@@ -108,9 +114,7 @@ def create_energysystem():
     energysystem.add(
         components.Sink(
             label="sold",
-            inputs={
-                bus_electricity: flows.Flow(variable_costs=-0.1)
-            },
+            inputs={bus_electricity: flows.Flow(variable_costs=-0.1)},
         )
     )
 
@@ -120,10 +124,10 @@ def create_energysystem():
             inputs={bus_gas: flows.Flow()},
             outputs={
                 bus_electricity: flows.Flow(
-                    nominal_capacity=oemof.solph.Investment(ep_costs=600/12),
-                    variable_costs=0.01
+                    nominal_capacity=oemof.solph.Investment(ep_costs=600 / 12),
+                    variable_costs=0.01,
                 ),
-                bus_heat: flows.Flow()
+                bus_heat: flows.Flow(),
             },
             conversion_factors={bus_electricity: 0.3, bus_heat: 0.5},
         )
@@ -135,7 +139,9 @@ def create_energysystem():
             inputs={bus_electricity: flows.Flow()},
             outputs={
                 bus_gas: flows.Flow(
-                    nominal_capacity=oemof.solph.Investment(ep_costs=60/12, maximum=10),
+                    nominal_capacity=oemof.solph.Investment(
+                        ep_costs=60 / 12, maximum=10
+                    ),
                     variable_costs=0,
                 )
             },
@@ -143,7 +149,7 @@ def create_energysystem():
         )
     )
 
-    nominal_capacity = oemof.solph.Investment(ep_costs=1/12, maximum=100)
+    nominal_capacity = oemof.solph.Investment(ep_costs=1 / 12, maximum=100)
     gas_storage = components.GenericStorage(
         nominal_capacity=nominal_capacity,
         label="gas_storage",
@@ -160,7 +166,7 @@ def create_energysystem():
     )
     energysystem.add(gas_storage)
 
-    nominal_capacity = oemof.solph.Investment(ep_costs=10/12)
+    nominal_capacity = oemof.solph.Investment(ep_costs=10 / 12)
     battery_storage = components.GenericStorage(
         nominal_capacity=nominal_capacity,
         label="battery_storage",
@@ -177,7 +183,7 @@ def create_energysystem():
     )
     energysystem.add(battery_storage)
 
-    nominal_capacity = oemof.solph.Investment(ep_costs=0.1/12)
+    nominal_capacity = oemof.solph.Investment(ep_costs=0.1 / 12)
     heat_storage = components.GenericStorage(
         nominal_capacity=nominal_capacity,
         label="heat_storage",
@@ -219,15 +225,14 @@ def optimize_energysystem(energysystem):
     logging.info("Store the energy system with the results.")
 
     results = Results(energysystem_model)
-    result_dict = processing.results(energysystem_model)
     print("Energy System Optimized")
 
-    return results, result_dict
+    return results
 
 
 def main():
     energysystem = create_energysystem()
-    results, result_dict = optimize_energysystem(energysystem)
+    results = optimize_energysystem(energysystem)
 
     all_flow_dict = calculate_costs_of_all_flows(results)
 
@@ -238,28 +243,42 @@ def main():
 
     plot_all_flows_plotly(all_flow_dict, storage_content, specific=True)
     plot_all_flows_plotly(all_flow_dict, storage_content, specific=False)
-    plot_flow_cost_breakdown(all_flow_dict, specific=True,
-                             filename="flow_cost_breakdown_specific.html")
-    plot_flow_cost_breakdown(all_flow_dict, specific=False,
-                             filename="flow_cost_breakdown_total.html")
+    plot_flow_cost_breakdown(
+        all_flow_dict,
+        specific=True,
+        filename="flow_cost_breakdown_specific.html",
+    )
+    plot_flow_cost_breakdown(
+        all_flow_dict,
+        specific=False,
+        filename="flow_cost_breakdown_total.html",
+    )
 
     print_flow_cost_summary(all_flow_dict)
 
     print(results.keys())
     print("Objective:", results["objective"])
 
-    heat_key = next(f for f in all_flow_dict
-                    if f[0].label == "bus_heat" and f[1].label == "demand_heat")
+    heat_key = next(
+        f
+        for f in all_flow_dict
+        if f[0].label == "bus_heat" and f[1].label == "demand_heat"
+    )
     heat_df = all_flow_dict[heat_key]["flow_df"]
-    lcoh_heat = ((heat_df["var_c_tot_p"].sum() + heat_df["fix_c_tot_p"].sum())
-                 / all_flow_dict[heat_key]["tot_flow"])
+    lcoh_heat = (
+        heat_df["var_c_tot_p"].sum() + heat_df["fix_c_tot_p"].sum()
+    ) / all_flow_dict[heat_key]["tot_flow"]
     print(f"LCOH heat = {lcoh_heat:.6f} EUR/kWh")
 
-    el_key = next(f for f in all_flow_dict
-                  if f[0].label == "electricity" and f[1].label == "demand_el")
+    el_key = next(
+        f
+        for f in all_flow_dict
+        if f[0].label == "electricity" and f[1].label == "demand_el"
+    )
     el_df = all_flow_dict[el_key]["flow_df"]
-    lcoe_el = ((el_df["var_c_tot_p"].sum() + el_df["fix_c_tot_p"].sum())
-               / all_flow_dict[el_key]["tot_flow"])
+    lcoe_el = (
+        el_df["var_c_tot_p"].sum() + el_df["fix_c_tot_p"].sum()
+    ) / all_flow_dict[el_key]["tot_flow"]
     print(f"LCOE electricity = {lcoe_el:.6f} EUR/kWh")
 
     return results, all_flow_dict

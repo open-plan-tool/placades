@@ -18,9 +18,12 @@ FLOW_COLUMNS = [
 ]
 
 ZERO_WHEN_NO_FLOW = [
-    "var_c_tot", "var_c_spec",
-    "fix_c_tot_p", "fix_c_spec_p",
-    "var_c_tot_p", "var_c_spec_p",
+    "var_c_tot",
+    "var_c_spec",
+    "fix_c_tot_p",
+    "fix_c_spec_p",
+    "var_c_tot_p",
+    "var_c_spec_p",
 ]
 
 FROM_SOURCE = "from_source"
@@ -59,7 +62,11 @@ def fix_simultaneous_storage_flows(f_all: dict, storage_nodes: set) -> dict:
         if n_conflicts == 0:
             continue
 
-        logging.info("Storage %s: fixing %d simultaneous charge/discharge timesteps", storage, n_conflicts)
+        logging.info(
+            "Storage %s: fixing %d simultaneous charge/discharge timesteps",
+            storage,
+            n_conflicts,
+        )
 
         net = in_flow - out_flow
 
@@ -68,18 +75,27 @@ def fix_simultaneous_storage_flows(f_all: dict, storage_nodes: set) -> dict:
         f_all[f_out_key]["flow_df"].loc[load_mask, "flow_v"] = 0.0
 
         discharge_mask = both_active & (net < 0)
-        f_all[f_out_key]["flow_df"].loc[discharge_mask, "flow_v"] = (-net)[discharge_mask]
+        f_all[f_out_key]["flow_df"].loc[discharge_mask, "flow_v"] = (-net)[
+            discharge_mask
+        ]
         f_all[f_in_key]["flow_df"].loc[discharge_mask, "flow_v"] = 0.0
 
         for f_key, mask, new_flow, old_flow in [
             (f_in_key, load_mask, net[load_mask], in_flow[load_mask]),
-            (f_out_key, discharge_mask, (-net)[discharge_mask], out_flow[discharge_mask]),
+            (
+                f_out_key,
+                discharge_mask,
+                (-net)[discharge_mask],
+                out_flow[discharge_mask],
+            ),
         ]:
             scale = new_flow / old_flow.replace(0, np.nan)
             f_all[f_key]["flow_df"].loc[mask, "var_c_tot"] *= scale.fillna(0)
             fv = f_all[f_key]["flow_df"]["flow_v"]
             vc = f_all[f_key]["flow_df"]["var_c_tot"]
-            f_all[f_key]["flow_df"]["var_c_spec"] = np.where(fv == 0, 0, vc / fv)
+            f_all[f_key]["flow_df"]["var_c_spec"] = np.where(
+                fv == 0, 0, vc / fv
+            )
 
         for f_key in [f_in_key, f_out_key]:
             zero_mask = f_all[f_key]["flow_df"]["flow_v"] == 0
@@ -112,7 +128,9 @@ def find_circular_nodes(f_all: dict, cycles: list) -> tuple:
     return circular_nodes, internal_flows
 
 
-def get_cycle_inflows_outflows(f_all: dict, circular_nodes: set, internal_flows: set) -> tuple:
+def get_cycle_inflows_outflows(
+    f_all: dict, circular_nodes: set, internal_flows: set
+) -> tuple:
     cycle_inflows = set()
     cycle_outflows = set()
 
@@ -138,11 +156,15 @@ def _extract_storage(results) -> tuple:
     return storage_content, storage_nodes
 
 
-def _build_flow_frame(flow_series: pd.Series, var_cost_series: pd.Series, timeindex: pd.Index) -> pd.DataFrame:
+def _build_flow_frame(
+    flow_series: pd.Series, var_cost_series: pd.Series, timeindex: pd.Index
+) -> pd.DataFrame:
     frame = pd.DataFrame(np.nan, index=timeindex, columns=FLOW_COLUMNS)
     frame["flow_v"] = flow_series.values.clip(min=0)
     frame["var_c_tot"] = var_cost_series
-    frame["var_c_spec"] = np.where(frame["flow_v"] == 0, 0, frame["var_c_tot"] / frame["flow_v"])
+    frame["var_c_spec"] = np.where(
+        frame["flow_v"] == 0, 0, frame["var_c_tot"] / frame["flow_v"]
+    )
     frame.loc[frame["flow_v"] == 0, ZERO_WHEN_NO_FLOW] = 0
     return frame
 
@@ -157,9 +179,13 @@ def _classify_flow_type(source, target, storage_nodes: set) -> str:
     return NORMAL
 
 
-def _init_flow_records(flow_v: pd.DataFrame, abs_var_cost_values: pd.DataFrame,
-                       invest_costs_df: pd.DataFrame, storage_nodes: set,
-                       flows_to: dict) -> dict:
+def _init_flow_records(
+    flow_v: pd.DataFrame,
+    abs_var_cost_values: pd.DataFrame,
+    invest_costs_df: pd.DataFrame,
+    storage_nodes: set,
+    flows_to: dict,
+) -> dict:
     timeindex = flow_v.index
     f_all = {}
     for f in flow_v.columns:
@@ -168,8 +194,11 @@ def _init_flow_records(flow_v: pd.DataFrame, abs_var_cost_values: pd.DataFrame,
         total_flow = frame["flow_v"].sum()
 
         has_invest = f in invest_costs_df.columns
-        fix_c_spec = (invest_costs_df[f].iloc[0] / total_flow
-                      if has_invest and total_flow != 0 else 0)
+        fix_c_spec = (
+            invest_costs_df[f].iloc[0] / total_flow
+            if has_invest and total_flow != 0
+            else 0
+        )
 
         f_all[f] = {
             "flow_df": frame,
@@ -179,8 +208,11 @@ def _init_flow_records(flow_v: pd.DataFrame, abs_var_cost_values: pd.DataFrame,
             "inputs": flows_to[source],
             "calculated": False,
             "contrib": pd.DataFrame(
-                0.0, index=timeindex,
-                columns=pd.MultiIndex.from_arrays([[], []], names=["origin", "type"]),
+                0.0,
+                index=timeindex,
+                columns=pd.MultiIndex.from_arrays(
+                    [[], []], names=["origin", "type"]
+                ),
             ),
         }
     return f_all
@@ -190,7 +222,8 @@ def _own_contrib(f, f_all: dict) -> pd.DataFrame:
     df = f_all[f]["flow_df"]
     self_label = f"{f[0].label}->{f[1].label}"
     own = pd.DataFrame(
-        0.0, index=df.index,
+        0.0,
+        index=df.index,
         columns=pd.MultiIndex.from_arrays([[], []], names=["origin", "type"]),
     )
     own[(self_label, "fix")] = f_all[f]["fix_c_spec"] * df["flow_v"]
@@ -202,8 +235,14 @@ def _validate_no_simultaneous_storage(f_all: dict, storage_nodes: set) -> None:
     for storage in storage_nodes:
         f_in = next(f for f in f_all if f[1] == storage)
         f_out = next(f for f in f_all if f[0] == storage)
-        both = ((f_all[f_in]["flow_df"]["flow_v"] > 0) & (f_all[f_out]["flow_df"]["flow_v"] > 0))
-        logging.debug("Storage %s: %d simultaneous timesteps remain", storage, int(both.sum()))
+        both = (f_all[f_in]["flow_df"]["flow_v"] > 0) & (
+            f_all[f_out]["flow_df"]["flow_v"] > 0
+        )
+        logging.debug(
+            "Storage %s: %d simultaneous timesteps remain",
+            storage,
+            int(both.sum()),
+        )
 
 
 def _seed_source_flows(f_all: dict) -> None:
@@ -235,24 +274,35 @@ def _inputs_ready(f, f_all: dict) -> bool:
                 return False
             continue
 
-        if (f_all[f]["type"] == TO_STORAGE
-                and rec_in["type"] == FROM_STORAGE
-                and f_in[1] == f[0]):
+        if (
+            f_all[f]["type"] == TO_STORAGE
+            and rec_in["type"] == FROM_STORAGE
+            and f_in[1] == f[0]
+        ):
             continue
 
-        both_active = ((f_all[f]["flow_df"]["flow_v"] != 0) & (rec_in["flow_df"]["flow_v"] != 0))
+        both_active = (f_all[f]["flow_df"]["flow_v"] != 0) & (
+            rec_in["flow_df"]["flow_v"] != 0
+        )
         if both_active.any():
             return False
 
     return True
 
 
-def _propagate_circular_outflow(f, f_all: dict, internal_flows: set,
-                                cycle_inflows: set, cycle_outflows: set,
-                                required_inflows: set = None) -> bool:
+def _propagate_circular_outflow(
+    f,
+    f_all: dict,
+    internal_flows: set,
+    cycle_inflows: set,
+    cycle_outflows: set,
+    required_inflows: set | None = None,
+) -> bool:
     if required_inflows is None:
         required_inflows = cycle_inflows
-    if not all(f_all[fi]["calculated"] for fi in internal_flows | required_inflows):
+    if not all(
+        f_all[fi]["calculated"] for fi in internal_flows | required_inflows
+    ):
         return False
 
     df = f_all[f]["flow_df"]
@@ -265,8 +315,12 @@ def _propagate_circular_outflow(f, f_all: dict, internal_flows: set,
         f_all[fi]["flow_df"]["var_c_tot"] for fi in internal_flows
     )
 
-    inflow_fix = sum(f_all[fi]["flow_df"]["fix_c_tot_p"] for fi in required_inflows)
-    inflow_var = sum(f_all[fi]["flow_df"]["var_c_tot_p"] for fi in required_inflows)
+    inflow_fix = sum(
+        f_all[fi]["flow_df"]["fix_c_tot_p"] for fi in required_inflows
+    )
+    inflow_var = sum(
+        f_all[fi]["flow_df"]["var_c_tot_p"] for fi in required_inflows
+    )
 
     tot_outflow = sum(f_all[fo]["flow_df"]["flow_v"] for fo in cycle_outflows)
     weight = pd.Series(
@@ -276,22 +330,31 @@ def _propagate_circular_outflow(f, f_all: dict, internal_flows: set,
 
     block_fix = internal_own_fix + inflow_fix
     block_var = internal_own_var + inflow_var
-    df["fix_c_tot_p"] = f_all[f]["fix_c_spec"] * df["flow_v"] + block_fix * weight
+    df["fix_c_tot_p"] = (
+        f_all[f]["fix_c_spec"] * df["flow_v"] + block_fix * weight
+    )
     df["var_c_tot_p"] = df["var_c_tot"] + block_var * weight
 
     active = df["flow_v"] != 0
-    df.loc[active, "fix_c_spec_p"] = df.loc[active, "fix_c_tot_p"] / df.loc[active, "flow_v"]
-    df.loc[active, "var_c_spec_p"] = df.loc[active, "var_c_tot_p"] / df.loc[active, "flow_v"]
+    df.loc[active, "fix_c_spec_p"] = (
+        df.loc[active, "fix_c_tot_p"] / df.loc[active, "flow_v"]
+    )
+    df.loc[active, "var_c_spec_p"] = (
+        df.loc[active, "var_c_tot_p"] / df.loc[active, "flow_v"]
+    )
 
     contrib = _own_contrib(f, f_all)
     internal_own = pd.DataFrame(
-        0.0, index=df.index,
+        0.0,
+        index=df.index,
         columns=pd.MultiIndex.from_arrays([[], []], names=["origin", "type"]),
     )
     for fi in internal_flows:
         fi_df = f_all[fi]["flow_df"]
         label = f"{fi[0].label}->{fi[1].label}"
-        internal_own[(label, "fix")] = f_all[fi]["fix_c_spec"] * fi_df["flow_v"]
+        internal_own[(label, "fix")] = (
+            f_all[fi]["fix_c_spec"] * fi_df["flow_v"]
+        )
         internal_own[(label, "var")] = fi_df["var_c_tot"]
     for fi in cycle_inflows:
         if fi not in required_inflows:
@@ -317,7 +380,11 @@ def _storage_soc_bounds(storage_content, storage, index) -> tuple:
         soc_start = soc.reindex(index)
         soc_after = soc_start.shift(-1)
         soc_after.iloc[-1] = soc_start.iloc[-1]
-        logging.warning("Unexpected storage_content length %d for %d timesteps; using fallback alignment", len(soc), n)
+        logging.warning(
+            "Unexpected storage_content length %d for %d timesteps; using fallback alignment",
+            len(soc),
+            n,
+        )
     return soc_start, soc_after
 
 
@@ -331,7 +398,9 @@ def _propagate_storage_outflow(f, f_all: dict, storage_content) -> bool:
         return False
 
     df = f_all[f]["flow_df"]
-    soc_start, soc_after = _storage_soc_bounds(storage_content, storage, df.index)
+    soc_start, soc_after = _storage_soc_bounds(
+        storage_content, storage, df.index
+    )
 
     out_v = df["flow_v"].to_numpy()
     ss = soc_start.to_numpy()
@@ -411,14 +480,22 @@ def _propagate_storage_outflow(f, f_all: dict, storage_content) -> bool:
 
 
 def _propagate_generic_flow(f, f_all: dict, flows_from: dict) -> None:
-    source, target = f
+    source = f[0]
     df = f_all[f]["flow_df"]
 
-    tot_f_out = sum(f_all[fo]["flow_df"]["flow_v"] for fo in flows_from[source])
+    tot_f_out = sum(
+        f_all[fo]["flow_df"]["flow_v"] for fo in flows_from[source]
+    )
 
-    usable_inputs = [fi for fi in f_all[f]["inputs"] if _input_is_usable(f_all[fi])]
-    f_in_var_sum = sum(f_all[fi]["flow_df"]["var_c_tot_p"] for fi in usable_inputs)
-    f_in_fix_sum = sum(f_all[fi]["flow_df"]["fix_c_tot_p"] for fi in usable_inputs)
+    usable_inputs = [
+        fi for fi in f_all[f]["inputs"] if _input_is_usable(f_all[fi])
+    ]
+    f_in_var_sum = sum(
+        f_all[fi]["flow_df"]["var_c_tot_p"] for fi in usable_inputs
+    )
+    f_in_fix_sum = sum(
+        f_all[fi]["flow_df"]["fix_c_tot_p"] for fi in usable_inputs
+    )
 
     weight = pd.Series(
         np.where(tot_f_out != 0, df["flow_v"] / tot_f_out, 0),
@@ -426,11 +503,17 @@ def _propagate_generic_flow(f, f_all: dict, flows_from: dict) -> None:
     )
 
     df["var_c_tot_p"] = f_in_var_sum * weight + df["var_c_tot"]
-    df["fix_c_tot_p"] = f_in_fix_sum * weight + f_all[f]["fix_c_spec"] * df["flow_v"]
+    df["fix_c_tot_p"] = (
+        f_in_fix_sum * weight + f_all[f]["fix_c_spec"] * df["flow_v"]
+    )
 
     active = df["flow_v"] != 0
-    df.loc[active, "var_c_spec_p"] = df.loc[active, "var_c_tot_p"] / df.loc[active, "flow_v"]
-    df.loc[active, "fix_c_spec_p"] = df.loc[active, "fix_c_tot_p"] / df.loc[active, "flow_v"]
+    df.loc[active, "var_c_spec_p"] = (
+        df.loc[active, "var_c_tot_p"] / df.loc[active, "flow_v"]
+    )
+    df.loc[active, "fix_c_spec_p"] = (
+        df.loc[active, "fix_c_tot_p"] / df.loc[active, "flow_v"]
+    )
 
     contrib = _own_contrib(f, f_all)
     for fi in usable_inputs:
@@ -443,11 +526,18 @@ def _propagate_generic_flow(f, f_all: dict, flows_from: dict) -> None:
     f_all[f]["calculated"] = True
 
 
-def _propagate_until_complete(f_all: dict, flows_from: dict, storage_content,
-                              internal_flows: set, cycle_inflows: set,
-                              cycle_outflows: set) -> None:
+def _propagate_until_complete(
+    f_all: dict,
+    flows_from: dict,
+    storage_content,
+    internal_flows: set,
+    cycle_inflows: set,
+    cycle_outflows: set,
+) -> None:
     progress = True
-    storage_inflows = {fi for fi in cycle_inflows if f_all[fi]["type"] == FROM_STORAGE}
+    storage_inflows = {
+        fi for fi in cycle_inflows if f_all[fi]["type"] == FROM_STORAGE
+    }
     storage_sources = {fi[0] for fi in storage_inflows}
     while progress:
         progress = False
@@ -463,11 +553,19 @@ def _propagate_until_complete(f_all: dict, flows_from: dict, storage_content,
                 continue
 
             if ftype == CIRCULAR_OUTFLOW:
-                required = ((cycle_inflows - storage_inflows)
-                            if f[1] in storage_sources else cycle_inflows)
-                if _propagate_circular_outflow(f, f_all, internal_flows,
-                                               cycle_inflows, cycle_outflows,
-                                               required):
+                required = (
+                    (cycle_inflows - storage_inflows)
+                    if f[1] in storage_sources
+                    else cycle_inflows
+                )
+                if _propagate_circular_outflow(
+                    f,
+                    f_all,
+                    internal_flows,
+                    cycle_inflows,
+                    cycle_outflows,
+                    required,
+                ):
                     progress = True
                 continue
 
@@ -483,12 +581,18 @@ def _propagate_until_complete(f_all: dict, flows_from: dict, storage_content,
 
     for f, rec in f_all.items():
         if not rec["calculated"]:
-            logging.warning("Cost calculation did not converge for %s->%s", f[0].label, f[1].label)
+            logging.warning(
+                "Cost calculation did not converge for %s->%s",
+                f[0].label,
+                f[1].label,
+            )
 
 
-def build_graph_timestep(flow_df: pd.DataFrame, threshold: float = 1e-6) -> nx.DiGraph:
+def build_graph_timestep(
+    flow_df: pd.DataFrame, threshold: float = 1e-6
+) -> nx.DiGraph:
     G = nx.DiGraph()
-    for (source, target) in flow_df.columns:
+    for source, target in flow_df.columns:
         series = flow_df[(source, target)]
         if series.sum() > threshold:
             G.add_edge(source.label, target.label)
@@ -498,8 +602,11 @@ def build_graph_timestep(flow_df: pd.DataFrame, threshold: float = 1e-6) -> nx.D
 def calculate_costs_of_all_flows(results) -> dict:
     flow_v = results.to_df("flow")
     abs_var_cost_values = results.to_df("variable_costs")
-    invest_costs_df = (results.to_df("investment_costs")
-                       if "investment_costs" in results.keys() else pd.DataFrame())
+    invest_costs_df = (
+        results.to_df("investment_costs")
+        if "investment_costs" in results.keys()
+        else pd.DataFrame()
+    )
 
     graph = build_graph_timestep(flow_v)
     cycles = list(nx.simple_cycles(graph))
@@ -514,11 +621,15 @@ def calculate_costs_of_all_flows(results) -> dict:
 
     storage_content, storage_nodes = _extract_storage(results)
 
-    f_all = _init_flow_records(flow_v, abs_var_cost_values, invest_costs_df, storage_nodes, flows_to)
+    f_all = _init_flow_records(
+        flow_v, abs_var_cost_values, invest_costs_df, storage_nodes, flows_to
+    )
     f_all = fix_simultaneous_storage_flows(f_all, storage_nodes)
 
     circular_nodes, internal_flows = find_circular_nodes(f_all, cycles)
-    cycle_inflows, cycle_outflows = get_cycle_inflows_outflows(f_all, circular_nodes, internal_flows)
+    cycle_inflows, cycle_outflows = get_cycle_inflows_outflows(
+        f_all, circular_nodes, internal_flows
+    )
     for f in f_all:
         if f in internal_flows:
             f_all[f]["type"] = CIRCULAR_INTERNAL
@@ -530,15 +641,26 @@ def calculate_costs_of_all_flows(results) -> dict:
     _validate_no_simultaneous_storage(f_all, storage_nodes)
 
     _seed_source_flows(f_all)
-    _propagate_until_complete(f_all, flows_from, storage_content,
-                              internal_flows, cycle_inflows, cycle_outflows)
+    _propagate_until_complete(
+        f_all,
+        flows_from,
+        storage_content,
+        internal_flows,
+        cycle_inflows,
+        cycle_outflows,
+    )
 
     for f, rec in f_all.items():
         df = rec["flow_df"]
         if rec["contrib"].empty:
             continue
         if not isinstance(rec["contrib"].columns, pd.MultiIndex):
-            logging.warning("Breakdown columns not a MultiIndex for %s->%s: %r", f[0].label, f[1].label, rec["contrib"].columns)
+            logging.warning(
+                "Breakdown columns not a MultiIndex for %s->%s: %r",
+                f[0].label,
+                f[1].label,
+                rec["contrib"].columns,
+            )
             continue
         for ctype, col in (("fix", "fix_c_tot_p"), ("var", "var_c_tot_p")):
             if df[col].isna().any():
@@ -547,11 +669,20 @@ def calculate_costs_of_all_flows(results) -> dict:
                 continue
             total = rec["contrib"].xs(ctype, level="type", axis=1).sum(axis=1)
             if not np.allclose(total, df[col], rtol=1e-6, atol=1e-6):
-                logging.warning("Breakdown mismatch for %s->%s (%s cost): max diff %.6f",
-                                f[0].label, f[1].label, ctype,
-                                float((total - df[col]).abs().max()))
+                logging.warning(
+                    "Breakdown mismatch for %s->%s (%s cost): max diff %.6f",
+                    f[0].label,
+                    f[1].label,
+                    ctype,
+                    float((total - df[col]).abs().max()),
+                )
 
     for f, rec in f_all.items():
-        logging.debug("%s->%s: fix_c_spec=%.6f", f[0].label, f[1].label, rec["fix_c_spec"])
+        logging.debug(
+            "%s->%s: fix_c_spec=%.6f",
+            f[0].label,
+            f[1].label,
+            rec["fix_c_spec"],
+        )
 
     return f_all

@@ -6,6 +6,9 @@ from oemof.solph import Results as SolphResults
 from oemof.solph import create_time_index
 
 
+CONSTRAINT_GROUPS = []
+
+
 class EnergySystem(SolphES):
     def __init__(
         self,
@@ -85,9 +88,11 @@ class Results(SolphResults):
 def optimise(energy_system, solver="cbc", debug=False):
     """Optimise the energy system."""
     logging.info("Create model")
-    optimization_model = Model(energysystem=energy_system)
 
-    # solve problem
+    optimization_model = Model(
+        energysystem=energy_system, constraint_groups=CONSTRAINT_GROUPS
+    )
+
     logging.info("Solve model")
 
     if debug:

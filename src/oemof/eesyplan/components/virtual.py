@@ -31,7 +31,7 @@ class PeakPricingBlock(ScalarBlock):
         self.invest_equal = Constraint(group, rule=_invest_equal_rule)
 
 
-CONSTRAINT_GROUPS.append(PeakPricingBlock)
+Model.CONSTRAINT_GROUPS.append(ExtraPricingBlock)
 
 
 class PeakPricing(Node):

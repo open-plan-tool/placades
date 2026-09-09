@@ -1,5 +1,5 @@
 from oemof.network import Node
-from oemof.solph import Bus
+from oemof.solph import Bus, Investment
 from oemof.solph import Flow
 from oemof.solph.components import Converter
 from oemof.solph.components import Sink
@@ -11,12 +11,12 @@ class DSO(Node):
         self,
         name,
         bus,
+        maximum_capacity,
         energy_price,
         feedin_tariff,
         peak_demand_pricing=0,
-        peak_demand_pricing_period=1,
-        renewable_share=0.44,
-        feedin_cap=None,
+        # peak_demand_pricing_period=1, ToDo: Still important? Not used!
+        basic_amount=0,  # Warnung, weil nur für Profis :-)
     ):
         """
         Energy provider for electricity distribution.
@@ -64,37 +64,35 @@ class DSO(Node):
         """
         self.name = name
         self.bus = bus
+        self.maximum_capacity = maximum_capacity
         self.energy_price = energy_price
         self.feedin_tariff = feedin_tariff
         self.peak_demand_pricing = peak_demand_pricing
-        self.peak_demand_pricing_period = peak_demand_pricing_period
-        self.renewable_share = renewable_share  # Specific emission
-        self.feedin_cap = feedin_cap
+        self.fix_cost = basic_amount
 
         super().__init__(label=self.name)
 
-        internal_bus = self.subnode(Bus, local_name="internal_bus")
-
         self.subnode(
-            Converter,
-            inputs={self.bus: Flow(variable_costs=self.feedin_tariff * -1)},
-            outputs={internal_bus: Flow()},
-            local_name="feedin_converter",
-        )
-
-        self.subnode(
-            Sink, inputs={internal_bus: Flow()}, local_name="feedin_sink"
-        )
-
-        self.subnode(
-            Converter,
-            inputs={internal_bus: Flow()},
-            outputs={self.bus: Flow(variable_costs=self.energy_price)},
-            local_name="consumption_converter",
+            Sink,
+            inputs={
+                self.bus: Flow(
+                    variable_costs=self.feedin_tariff * -1,
+                    nominal_capacity=self.maximum_capacity,
+                )
+            },
+            local_name="feedin_sink",
         )
 
         self.subnode(
             Source,
-            outputs={internal_bus: Flow()},
+            outputs={
+                self.bus: Flow(
+                    variable_costs=self.energy_price,
+                    nominal_capacity=Investment(
+                        ep_costs=self.peak_demand_pricing,
+                        maximum=self.maximum_capacity,
+                    ),
+                )
+            },
             local_name="consumption_source",
         )

@@ -85,9 +85,9 @@ class Results(SolphResults):
 def optimise(energy_system, solver="cbc", debug=False):
     """Optimise the energy system."""
     logging.info("Create model")
+
     optimization_model = Model(energysystem=energy_system)
 
-    # solve problem
     logging.info("Solve model")
 
     if debug:

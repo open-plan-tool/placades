@@ -95,3 +95,5 @@ if __name__ == "__main__":
     # print (res.keys())
     print(res["investment_costs"])
     print(res["objective"])
+
+

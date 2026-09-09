@@ -136,13 +136,13 @@ def create_energysystem():
     energysystem.add(
         components.Converter(
             label="backwards",
-            inputs={bus_electricity: flows.Flow()},
+            inputs={bus_heat: flows.Flow()},
             outputs={
                 bus_gas: flows.Flow(
                     nominal_capacity=oemof.solph.Investment(
-                        ep_costs=60 / 12, maximum=10
+                        ep_costs=60 / 12, maximum=100
                     ),
-                    variable_costs=0,
+                    variable_costs=-10,
                 )
             },
             conversion_factors={bus_gas: 1},

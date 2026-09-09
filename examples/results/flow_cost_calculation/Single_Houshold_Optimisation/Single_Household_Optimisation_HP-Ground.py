@@ -17,6 +17,7 @@ from oemof.eesyplan.postprocessing import plot_all_flows_plotly
 from oemof.eesyplan.postprocessing import plot_flow_cost_breakdown
 from oemof.eesyplan.postprocessing import print_flow_cost_summary
 from oemof.eesyplan.postprocessing import sankey_from_results
+from oemof.eesyplan.postprocessing import sankey_for_flow_costs
 
 DATA_PATH = Path(__file__).parent
 
@@ -256,6 +257,16 @@ def main():
     fig, links_df = sankey_from_results(results)
     fig.write_html("sankey.html")
     fig.show()
+
+    fig_cost, links_cost_df = sankey_for_flow_costs(results)
+    fig_cost.write_html("cost_sankey.html")
+    fig_cost.show()
+    print("Cost Sankey saved to cost_sankey.html")
+    print(
+        f"Cost-sankey links: {len(links_cost_df)}, "
+        f"total costs: {links_cost_df['value'].clip(lower=0).sum():,.2f} EUR, "
+        f"revenues: {links_cost_df['value'].clip(upper=0).sum():,.2f} EUR"
+    )
 
     return results, all_flow_dict
 

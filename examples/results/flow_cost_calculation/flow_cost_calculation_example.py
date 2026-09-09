@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-import plotly.io as pio
 
 import oemof.solph
 import pandas as pd
@@ -17,10 +16,10 @@ from oemof.eesyplan.postprocessing import calculate_costs_of_all_flows
 from oemof.eesyplan.postprocessing import plot_all_flows_plotly
 from oemof.eesyplan.postprocessing import plot_flow_cost_breakdown
 from oemof.eesyplan.postprocessing import print_flow_cost_summary
+from oemof.eesyplan.postprocessing import sankey_for_flow_costs
 from oemof.eesyplan.postprocessing import sankey_from_results
 
 DATA_PATH = Path(__file__).parent
-pio.renderers.default = "browser"
 
 
 def get_data_from_file_path(file_path: str):
@@ -284,9 +283,20 @@ def main():
     ) / all_flow_dict[el_key]["tot_flow"]
     print(f"LCOE electricity = {lcoe_el:.6f} EUR/kWh")
 
-    fig, links_df = sankey_from_results(results)
+    fig, _ = sankey_from_results(results)
     fig.write_html("sankey.html")
+    print("Sankey saved to sankey.html")
     fig.show()
+
+    fig_cost, links_cost_df = sankey_for_flow_costs(results)
+    fig_cost.write_html("cost_sankey.html")
+    fig_cost.show()
+    print("Cost Sankey saved to cost_sankey.html")
+    print(
+        f"Cost-sankey links: {len(links_cost_df)}, "
+        f"total costs: {links_cost_df['value'].clip(lower=0).sum():,.2f} EUR, "
+        f"revenues: {links_cost_df['value'].clip(upper=0).sum():,.2f} EUR"
+    )
 
 
 

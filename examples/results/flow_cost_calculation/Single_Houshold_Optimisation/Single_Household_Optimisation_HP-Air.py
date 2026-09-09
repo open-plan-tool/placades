@@ -16,6 +16,7 @@ from oemof.eesyplan.postprocessing import calculate_costs_of_all_flows
 from oemof.eesyplan.postprocessing import plot_all_flows_plotly
 from oemof.eesyplan.postprocessing import plot_flow_cost_breakdown
 from oemof.eesyplan.postprocessing import print_flow_cost_summary
+from oemof.eesyplan.postprocessing import sankey_from_results
 
 DATA_PATH = Path(__file__).parent
 
@@ -249,6 +250,10 @@ def main():
         el_df["var_c_tot_p"].sum() + el_df["fix_c_tot_p"].sum()
     ) / all_flow_dict[el_key]["tot_flow"]
     print(f"LCOE electricity = {lcoe_el:.6f} EUR/kWh")
+
+    fig, links_df = sankey_from_results(results)
+    fig.write_html("sankey.html")
+    fig.show()
 
     return results, all_flow_dict
 

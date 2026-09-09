@@ -4,6 +4,56 @@ import plotly.graph_objects as go
 from oemof.eesyplan import CarrierBus
 from oemof.eesyplan import EnergySystem
 
+def sankey_from_results(
+    results,
+    title: str = "Sankey Diagram",
+    row: int | str | pd.Timestamp | None = None,
+    agg: str = "sum",
+    drop_zero_links: bool = False,
+) -> tuple[go.Figure, pd.DataFrame]:
+    """
+    Create a Plotly Sankey diagram directly from an oemof.solph Result object.
+
+    This is a convenience wrapper around ``graphs.sankey`` that extracts the
+    flow DataFrame and the energy system from the result object so the caller
+    does not have to do so manually.
+
+    Parameters
+    ----------
+    results : oemof.solph.Results
+        Result object obtained from ``Results(model)`` after solving.
+    title : str
+        Figure title.
+    row : int | str | pd.Timestamp | None
+        If None, aggregate across rows using *agg*.
+        If provided, use only that row (by integer position or index label).
+    agg : str
+        Aggregation across rows when *row* is None.
+        One of: ``"sum"``, ``"mean"``, ``"max"``.
+    drop_zero_links : bool
+        Whether to remove links with value == 0.
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+        Plotly Sankey figure.
+    links_df : pandas.DataFrame
+        Parsed links table with columns: source, target, value.
+    """
+    flows: pd.DataFrame = results.to_df("flow")
+
+    es: EnergySystem | None = None
+    if hasattr(results, "_model") and hasattr(results._model, "es"):
+        es = results._model.es
+
+    return sankey(
+        flows,
+        es=es,
+        title=title,
+        row=row,
+        agg=agg,
+        drop_zero_links=drop_zero_links,
+    )
 
 def sankey(
     flows: pd.DataFrame,
